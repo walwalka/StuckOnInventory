@@ -2,7 +2,7 @@ import "dotenv/config";
 import pg from 'pg'
 import fs from 'fs';
 import path from 'path';
-import { sqlIp , sqlDb, sqlPass, sqlUser, sqlPort } from '../inventoryBackend/config.js';
+import { sqlIp , sqlDb, sqlPass, sqlUser, sqlPort } from './config-db.js';
 
 const { Pool } = pg;
 
