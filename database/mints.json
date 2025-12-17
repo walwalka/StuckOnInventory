@@ -1,0 +1,11 @@
+[
+  { "name": "Philadelphia Mint", "city": "Philadelphia", "state": "Pennsylvania" },
+  { "name": "Denver Mint", "city": "Denver", "state": "Colorado" },
+  { "name": "San Francisco Mint", "city": "San Francisco", "state": "California" },
+  { "name": "West Point Mint", "city": "West Point", "state": "New York" },
+  { "name": "Carson City Mint", "city": "Carson City", "state": "Nevada" },
+  { "name": "New Orleans Mint", "city": "New Orleans", "state": "Louisiana" },
+  { "name": "Charlotte Mint", "city": "Charlotte", "state": "North Carolina" },
+  { "name": "Dahlonega Mint", "city": "Dahlonega", "state": "Georgia" },
+  { "name": "Manila Mint", "city": "Manila", "state": "Philippines" }
+]

@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--usd-green: #146A39;
+	--usd-green-2: #1F8A52;
+	--usd-silver: #C0C0C0;
+	--usd-silver-dark: #9EA3A8;
+	--usd-copper: #B87333;
+	--usd-copper-dark: #8B5A2B;
+	--bg-primary: #f5f5f4;
+	--bg-secondary: #e7e5e4;
+	--bg-accent: var(--usd-silver-dark);
+	--text-primary: #565656;
+	--text-secondary: #565656;
+	--accent-green: var(--usd-green);
+	--accent-silver: var(--usd-silver);
+	--accent-copper: var(--usd-copper);
+	--bg-primary-opacity: 1;
+	--bg-secondary-opacity: 1;
+	font-family: Calibri, Candara, Segoe, Segoe UI, Optima, sans-serif;
+}
+
+.theme-usd {
+	--bg-primary: hwb(0 7% 93%);
+	--bg-secondary: #3c3c3c;
+	--text-primary: #FFFFFF;
+	--text-secondary: #D1D5DB;
+	--bg-secondary-opacity: 1;
+}
+
+.usd-bg { background-color: var(--bg-primary); opacity: var(--bg-primary-opacity); }
+.usd-panel { background-color: var(--bg-secondary); opacity: var(--bg-secondary-opacity); }
+.usd-text { color: var(--text-primary); }
+.usd-muted { color: var(--text-secondary); }
+.usd-border-green { border-color: var(--accent-green); }
+.usd-border-silver { border-color: var(--accent-silver); }
+.usd-border-copper { border-color: var(--accent-copper); }
+.usd-btn-green { background-color: var(--usd-green); color: #fff; }
+.usd-btn-silver { background-color: var(--usd-silver); color: #111827; }
+.usd-btn-copper { background-color: var(--usd-copper); color: #111827; }
+.usd-header { background: linear-gradient(90deg, var(--usd-green) 0%, var(--usd-green-2) 100%); color: #fff; }
