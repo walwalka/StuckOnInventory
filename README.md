@@ -1,4 +1,4 @@
-# Coin Lists – Full Stack (Docker Compose)
+# Stuck On Inventory – Full Stack (Docker Compose)
 
 This repository contains a React frontend (Vite + Nginx), a Node/Express backend, and a PostgreSQL database. A single Docker Compose file runs all three services together.
 
