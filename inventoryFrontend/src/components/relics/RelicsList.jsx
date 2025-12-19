@@ -27,7 +27,7 @@ const RelicsList = ({ showType, onShowTypeChange }) => {
   return (
     <div className='p-4'>
       <div className='flex justify-between items-center'>
-        <h1 className='text-3xl my-8'>Indian Relics Inventory</h1>
+        <h1 className='text-3xl my-8'>Native American Relics Inventory</h1>
         <div className='flex gap-x-4 justify-end'>
           <Link to='/relics/create'>
             <MdOutlineAddBox className='text-4xl' style={{ color: 'var(--usd-copper)' }} />

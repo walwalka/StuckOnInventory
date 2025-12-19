@@ -42,8 +42,8 @@ const Home = () => {
           <HubCard
             to="/relics"
             icon={GiArrowhead}
-            title="Indian Relics"
-            description="View, create, edit, and manage your indian relics."
+            title="Native American Relics"
+            description="View, create, edit, and manage your native American relics."
           />
           <HubCard
             to="/stamps"
