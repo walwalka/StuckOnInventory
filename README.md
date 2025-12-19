@@ -1,6 +1,6 @@
-# Stuck On Inventory – Full Stack (Docker Compose)
+# Stuck On Inventory
 
-This repository contains a React frontend (Vite + Nginx), a Node/Express backend, and a PostgreSQL database. A single Docker Compose file runs all three services together.
+The app is deisgned for handling collectible inventories, currently supporting; US coins, Native Amaerican Relics, US stamps and Bunnykins with ability to be expanded in the future. This repository contains a React frontend (Vite + Nginx), a Node/Express backend, and a PostgreSQL database sharing a single Docker Compose file runs all three services together. 
 
 ## Services
 - Frontend: Nginx serving the Vite build on http://localhost:8080
