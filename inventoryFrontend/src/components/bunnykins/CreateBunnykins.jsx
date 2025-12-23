@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import BackButton from '../BackButton';
 import Spinner from '../Spinner';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import api from '../../api/client';
@@ -85,51 +84,56 @@ const CreateBunnykins = () => {
   };
 
   return (
-    <div className='p-4'>
-      <BackButton destination="/bunnykins" />
-      <h1 className='text-3xl my-4'>Create Bunnykins Record</h1>
-      {loading ? <Spinner /> : ''}
-      
-      <div className='flex flex-col border-2 usd-border-green rounded-xl w-[600px] p-4 mx-auto usd-panel'>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4 overflow-y-auto">
+      <div className='flex flex-col border-2 usd-border-green bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
+        <button
+          onClick={() => navigate('/bunnykins')}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold"
+        >
+          ✕
+        </button>
+
+        <h1 className='text-3xl mb-6'>Create Bunnykins Record</h1>
+        {loading ? <Spinner /> : ''}
           <div className='my-4'>
-            <label className='text-xl mr-4 usd-muted'>Name</label>
+            <label className='text-xl mr-4 usd-muted'>Name *</label>
             <input
               type='text'
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2 w-full'
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
               placeholder="e.g., Teacher Bunnykins, etc."
             />
           </div>
-          
+
           <div className='my-4'>
-            <label className='text-xl mr-4 usd-muted'>Series</label>
+            <label className='text-xl mr-4 usd-muted'>Series *</label>
             <input
               type='text'
               value={series}
               onChange={(e) => setSeries(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2 w-full'
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
               placeholder="e.g., Royal Doulton, Bunnykins Series 1, etc."
             />
           </div>
-          
+
           <div className='my-4'>
-            <label className='text-xl mr-4 usd-muted'>Production Year</label>
+            <label className='text-xl mr-4 usd-muted'>Production Year *</label>
             <input
               type='text'
               value={productionyear}
               onChange={(e) => setProductionYear(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2 w-full'
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
               placeholder="e.g., 1990, 1985-1995, etc."
             />
           </div>
-          
+
           <div className='my-4'>
-            <label className='text-xl mr-4 usd-muted'>Condition</label>
-            <select 
+            <label className='text-xl mr-4 usd-muted'>Condition *</label>
+            <select
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2 w-full'
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
             >
               <option value="">Please Select a value</option>
               <option value="Mint in Box">Mint in Box</option>
@@ -146,7 +150,7 @@ const CreateBunnykins = () => {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2 w-full'
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
               rows='4'
               placeholder="Additional details about the Bunnykins figurine..."
             />
@@ -197,9 +201,9 @@ const CreateBunnykins = () => {
           <button className='p-2 usd-btn-green m-8 rounded hover:opacity-90' onClick={handleSaveBunnykin}>
             Save
           </button>
-        </div>
       </div>
-    );
+    </div>
+  );
 }
 
 export default CreateBunnykins;

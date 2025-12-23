@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import BackButton from '../BackButton';
 import Spinner from '../Spinner';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import api from '../../api/client';
@@ -133,19 +132,24 @@ const CreateCoins = () => {
   };
 
   return (
-    <div className='p-4'>
-      <BackButton />
-      <h1 className='text-3xl my-4'>Create Coin Record</h1>
-      {loading ? <Spinner /> : ''}
-      
-      <div className='flex flex-col border-2 usd-border-green rounded-xl w-[600px] p-4 mx-auto usd-panel'>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4 overflow-y-auto">
+      <div className='flex flex-col border-2 usd-border-green bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
+        <button
+          onClick={() => navigate('/coins')}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold"
+        >
+          ✕
+        </button>
+
+        <h1 className='text-3xl mb-6'>Create Coin Record</h1>
+        {loading ? <Spinner /> : ''}
           <div className='my-4'>
-            <label className='text-xl mr-4 usd-muted'>Type</label>
-            <select 
+            <label className='text-xl mr-4 usd-muted'>Type *</label>
+            <select
               label="Type of Coin"
               value={type}
               onChange={(e) => handleTypeChange(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2  w-full '
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
             >
               <option value="">Please Select a value</option>
               {coinTypes.map((ct) => (
@@ -156,12 +160,12 @@ const CreateCoins = () => {
             </select>
           </div>
           <div className='my-4'>
-            <label className='text-xl mr-4 text-gray-500'>Mint Location</label>
+            <label className='text-xl mr-4 usd-muted'>Mint Location *</label>
             <select
               disabled={false}
               value={mintlocation}
               onChange={(e) => setMintLocation(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2  w-full '
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
           >
               <option value="">Please Select a mint location</option>
               {optionList.map((item, value) => (
@@ -172,11 +176,11 @@ const CreateCoins = () => {
           </select>
           </div>
           <div className='my-4'>
-            <label className='text-xl mr-4 text-gray-500'>Mint Year</label>
+            <label className='text-xl mr-4 usd-muted'>Mint Year *</label>
             <select
               value={mintyear}
               onChange={(e) => setMintYear(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2 w-full'
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
               required
             >
               <option value=''>Select year</option>
@@ -186,12 +190,12 @@ const CreateCoins = () => {
             </select>
           </div>
           <div className='my-4'>
-          <label className='text-xl mr-4 text-gray-500'>Circulation</label>
-            <select 
+          <label className='text-xl mr-4 usd-muted'>Circulation *</label>
+            <select
               label="Circulated?"
               value={circulation}
               onChange={(e) => setCirculation(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2  w-full '
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
             >
               <option value="">Please Select a value</option>
               <option value="Yes">Yes</option>
@@ -200,12 +204,13 @@ const CreateCoins = () => {
             </select>
           </div>
           <div className='my-4'>
-            <label className='text-xl mr-4 text-gray-500'>Grade</label>
+            <label className='text-xl mr-4 usd-muted'>Grade *</label>
             <input
               type='text'
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2  w-full '
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
+              placeholder="e.g., MS-65, AU-50, VF-20, Good-4"
             />
           </div>
           <div className='my-4'>
@@ -215,7 +220,7 @@ const CreateCoins = () => {
               step='0.01'
               value={faceValue}
               onChange={(e) => setFaceValue(e.target.value)}
-              className='border-2 border-gray-500 px-4 py-2 w-full'
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded'
               placeholder='Auto-filled from coin type'
             />
           </div>
@@ -267,9 +272,9 @@ const CreateCoins = () => {
           <button className='p-2 usd-btn-green m-8 rounded hover:opacity-90' onClick={handleSaveCoin}>
             Save
           </button>
-        </div>
       </div>
-    );
+    </div>
+  );
 }
 
 export default CreateCoins

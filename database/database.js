@@ -226,12 +226,111 @@ export const pool = new Pool({
           image3 VARCHAR(500)
         );
       `;
-  
+
       await pool.query(query);
       console.log('Bunnykins table created');
     } catch (error) {
       console.error(error);
       console.error('Bunnykins table creation failed');
+    }
+  }
+
+  async function createComicsTable() {
+    try {
+      const query = `
+        CREATE TABLE IF NOT EXISTS comics (
+          id SERIAL PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          publisher VARCHAR(255) NOT NULL,
+          series VARCHAR(255) NOT NULL,
+          issuenumber VARCHAR(100) NOT NULL,
+          publicationyear VARCHAR(100) NOT NULL,
+          grade VARCHAR(100) NOT NULL,
+          condition VARCHAR(255) NOT NULL,
+          variant VARCHAR(255),
+          description TEXT,
+          image1 VARCHAR(500),
+          image2 VARCHAR(500),
+          image3 VARCHAR(500),
+          added_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        );
+      `;
+
+      await pool.query(query);
+      console.log('Comics table created');
+    } catch (error) {
+      console.error(error);
+      console.error('Comics table creation failed');
+    }
+  }
+
+  // Create relic types lookup table
+  async function createRelicTypesTable() {
+    try {
+      const query = `
+        CREATE TABLE IF NOT EXISTS relictypes (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL UNIQUE
+        );
+      `;
+      await pool.query(query);
+    } catch (error) {
+      console.error(error);
+      console.error('Relic types table creation failed');
+    }
+  }
+
+  async function seedRelicTypes() {
+    try {
+      const types = ['Arrowhead', 'Pottery', 'Tool', 'Jewelry', 'Weapon', 'Other'];
+      for (const type of types) {
+        await pool.query(
+          'INSERT INTO relictypes (name) VALUES ($1) ON CONFLICT (name) DO NOTHING;',
+          [type]
+        );
+      }
+    } catch (error) {
+      console.error('Seeding relic types failed:', error);
+    }
+  }
+
+  // Create comic publishers lookup table
+  async function createComicPublishersTable() {
+    try {
+      const query = `
+        CREATE TABLE IF NOT EXISTS comicpublishers (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL UNIQUE
+        );
+      `;
+      await pool.query(query);
+    } catch (error) {
+      console.error(error);
+      console.error('Comic publishers table creation failed');
+    }
+  }
+
+  async function seedComicPublishers() {
+    try {
+      const publishers = [
+        'Marvel',
+        'DC Comics',
+        'Image Comics',
+        'Dark Horse',
+        'IDW Publishing',
+        'Boom! Studios',
+        'Valiant',
+        'Archie Comics',
+        'Other'
+      ];
+      for (const publisher of publishers) {
+        await pool.query(
+          'INSERT INTO comicpublishers (name) VALUES ($1) ON CONFLICT (name) DO NOTHING;',
+          [publisher]
+        );
+      }
+    } catch (error) {
+      console.error('Seeding comic publishers failed:', error);
     }
   }
 
@@ -243,9 +342,14 @@ export const pool = new Pool({
       await seedCoinTypes();
       await createMintTable();
       await seedMintLocations();
+      await createRelicTypesTable();
+      await seedRelicTypes();
       await createRelicsTable();
       await createStampsTable();
       await createBunnykinTable();
+      await createComicsTable();
+      await createComicPublishersTable();
+      await seedComicPublishers();
     } catch (err) {
       console.error('Database init failed', err);
     }

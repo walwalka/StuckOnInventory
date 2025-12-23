@@ -5,8 +5,11 @@ import coinRoute from './routes/coinRoute.js';
 import mintRoute from './routes/mintRoute.js';
 import coinTypeRoute from './routes/coinTypeRoute.js';
 import relicRoute from './routes/relicRoute.js';
+import relicTypeRoute from './routes/relicTypeRoute.js';
 import stampRoute from './routes/stampRoute.js';
 import bunnykinRoute from './routes/bunnykinRoute.js';
+import comicRoute from './routes/comicRoute.js';
+import comicPublisherRoute from './routes/comicPublisherRoute.js';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -62,11 +65,20 @@ app.use('/api/cointypes', coinTypeRoute);
 // Relics endpoints under /api
 app.use('/api/relics', relicRoute);
 
+// Relic types endpoints under /api
+app.use('/api/relictypes', relicTypeRoute);
+
 // Stamps endpoints under /api
 app.use('/api/stamps', stampRoute);
 
 // Bunnykins endpoints under /api
 app.use('/api/bunnykins', bunnykinRoute);
+
+// Comics endpoints under /api
+app.use('/api/comics', comicRoute);
+
+// Comic publishers endpoints under /api
+app.use('/api/comicpublishers', comicPublisherRoute);
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)

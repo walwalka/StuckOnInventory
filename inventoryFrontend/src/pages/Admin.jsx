@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MdOutlineTableRows } from 'react-icons/md';
+import { MdOutlineTableRows, MdMenuBook } from 'react-icons/md';
 import { RiAdminLine } from 'react-icons/ri';
-import { GiTwoCoins } from 'react-icons/gi';
+import { GiTwoCoins, GiArrowhead } from 'react-icons/gi';
 
 const Admin = () => {
   return (
@@ -36,7 +36,7 @@ const Admin = () => {
           </Link>
 
           {/* Coin Types Card */}
-          <Link 
+          <Link
             to='/cointypes'
             className='block border-2 usd-border-silver rounded-xl p-6 hover:shadow-lg transition-shadow usd-panel group'
           >
@@ -49,6 +49,40 @@ const Admin = () => {
             </div>
             <p className='usd-muted text-sm'>
               View, create, edit, and delete coin types used to auto-fill face values.
+            </p>
+          </Link>
+
+          {/* Relic Types Card */}
+          <Link
+            to='/relictypes'
+            className='block border-2 usd-border-silver rounded-xl p-6 hover:shadow-lg transition-shadow usd-panel group'
+          >
+            <div className='flex items-center gap-4 mb-4'>
+              <GiArrowhead className='text-5xl usd-text-green group-hover:scale-110 transition-transform' />
+              <div>
+                <h2 className='text-2xl font-semibold usd-text-green'>Relic Types</h2>
+                <p className='text-sm usd-muted'>Manage relic classifications</p>
+              </div>
+            </div>
+            <p className='usd-muted text-sm'>
+              View, create, edit, and delete relic types used for classifying Indian relics.
+            </p>
+          </Link>
+
+          {/* Comic Publishers Card */}
+          <Link
+            to='/comicpublishers'
+            className='block border-2 usd-border-silver rounded-xl p-6 hover:shadow-lg transition-shadow usd-panel group'
+          >
+            <div className='flex items-center gap-4 mb-4'>
+              <MdMenuBook className='text-5xl usd-text-green group-hover:scale-110 transition-transform' />
+              <div>
+                <h2 className='text-2xl font-semibold usd-text-green'>Comic Publishers</h2>
+                <p className='text-sm usd-muted'>Manage publisher names</p>
+              </div>
+            </div>
+            <p className='usd-muted text-sm'>
+              View, create, edit, and delete comic publishers used for comic book records.
             </p>
           </Link>
         </div>

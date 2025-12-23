@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { GiTwoCoins, GiArrowhead, GiStamper, GiRabbit } from 'react-icons/gi';
 import { RiAdminLine } from 'react-icons/ri';
-import { MdDashboard, MdLocationOn } from 'react-icons/md';
+import { MdDashboard, MdLocationOn, MdMenuBook } from 'react-icons/md';
 import { BsGrid3X3Gap } from 'react-icons/bs';
 
 const WaffleMenu = () => {
@@ -16,6 +16,7 @@ const WaffleMenu = () => {
     { path: '/relics', title: 'Native American Relics', icon: GiArrowhead, color: 'usd-btn-green' },
     { path: '/stamps', title: 'Stamps', icon: GiStamper, color: 'usd-btn-green' },
     { path: '/bunnykins', title: 'Bunnykins', icon: GiRabbit, color: 'usd-btn-green' },
+    { path: '/comics', title: 'Comics', icon: MdMenuBook, color: 'usd-btn-green' },
     { path: '/admin', title: 'Admin', icon: RiAdminLine, color: 'usd-btn-copper' },
   ];
 

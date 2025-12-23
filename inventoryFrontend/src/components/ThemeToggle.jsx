@@ -9,9 +9,9 @@ export default function ThemeToggle() {
   useEffect(() => {
     const root = document.documentElement
     if (usdTheme) {
-      root.classList.add('theme-usd')
+      root.classList.add('theme-usd', 'dark')
     } else {
-      root.classList.remove('theme-usd')
+      root.classList.remove('theme-usd', 'dark')
     }
     localStorage.setItem('theme-usd', usdTheme ? 'true' : 'false')
   }, [usdTheme])

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaCoins } from 'react-icons/fa';
 import { RiAdminLine } from 'react-icons/ri';
-import { GiArrowhead, GiStamper, GiRabbit } from 'react-icons/gi';
+import { GiArrowhead, GiStamper, GiRabbit, GiBookCover } from 'react-icons/gi';
 
 // Reusable card component for consistent styling
 const HubCard = ({ to, icon: Icon, title, description }) => (
@@ -56,6 +56,12 @@ const Home = () => {
             icon={GiRabbit}
             title="Bunnykins"
             description="View, create, edit, and manage your bunnykins."
+          />
+          <HubCard
+            to="/comics"
+            icon={GiBookCover}
+            title="Comic Books"
+            description="View, create, edit, and manage your comic books."
           />
           <HubCard
             to="/admin"

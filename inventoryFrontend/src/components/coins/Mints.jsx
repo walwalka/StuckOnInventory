@@ -32,13 +32,14 @@ const Mint = ({ showType, onShowTypeChange }) => {
 
   return (
     <div className='p-4'>
-      <div className='flex justify-inbetween items-center'>
-        <h1 className='text-3xl my-8'>mintList</h1>
-        <div className='flex gap-x-4 justify-end'>
+      <div className='flex justify-between items-center mb-6'>
+        <div>
+        <h1 className='text-3xl font-semibold usd-text-green'>Mint List</h1>
+          <p className='usd-muted text-sm'>Manage the default mint values for each coin type.</p>
+        </div>
         <Link to='/mintlocations/create'>
             <MdOutlineAddBox className='text-4xl' style={{ color: 'var(--usd-green)' }} />
           </Link>
-      </div>
       </div>
 
       {loading ? (

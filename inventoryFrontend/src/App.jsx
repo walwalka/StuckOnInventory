@@ -28,6 +28,11 @@ import CreateBunnykins from './components/bunnykins/CreateBunnykins.jsx';
 import ShowBunnykin from './components/bunnykins/ShowBunnykin.jsx';
 import EditBunnykin from './components/bunnykins/EditBunnykin.jsx';
 import DeleteBunnykin from './components/bunnykins/DeleteBunnykin.jsx';
+import ComicsList from './components/comics/ComicsList.jsx';
+import CreateComics from './components/comics/CreateComics.jsx';
+import ShowComic from './components/comics/ShowComic.jsx';
+import EditComic from './components/comics/EditComic.jsx';
+import DeleteComic from './components/comics/DeleteComic.jsx';
 import Admin from './pages/Admin.jsx';
 import CreateMint from './components/coins/CreateMints.jsx';
 import Mints from './components/coins/Mints.jsx';
@@ -38,6 +43,16 @@ import Login from './components/Login/Login.jsx';
 import useToken from './components/useToken.jsx';
 import CoinTypesList from './components/cointypes/CoinTypesList.jsx';
 import CreateCoinType from './components/cointypes/CreateCoinType.jsx';
+import RelicTypesList from './components/relictypes/RelicTypesList.jsx';
+import CreateRelicType from './components/relictypes/CreateRelicType.jsx';
+import ShowRelicType from './components/relictypes/ShowRelicType.jsx';
+import EditRelicType from './components/relictypes/EditRelicType.jsx';
+import DeleteRelicType from './components/relictypes/DeleteRelicType.jsx';
+import ComicPublishersList from './components/comicpublishers/ComicPublishersList.jsx';
+import CreateComicPublisher from './components/comicpublishers/CreateComicPublisher.jsx';
+import ShowComicPublisher from './components/comicpublishers/ShowComicPublisher.jsx';
+import EditComicPublisher from './components/comicpublishers/EditComicPublisher.jsx';
+import DeleteComicPublisher from './components/comicpublishers/DeleteComicPublisher.jsx';
 import ShowCoinType from './components/cointypes/ShowCoinType.jsx';
 import EditCoinType from './components/cointypes/EditCoinType.jsx';
 import DeleteCoinType from './components/cointypes/DeleteCoinType.jsx';
@@ -105,6 +120,11 @@ const App = () => {
           <Route path='/bunnykins/details/:id' element={<ShowBunnykin />} />
           <Route path='/bunnykins/edit/:id' element={<EditBunnykin />} />
           <Route path='/bunnykins/delete/:id' element={<DeleteBunnykin />} />
+          <Route path='/comics' element={<ComicsList showType={showType} onShowTypeChange={setShowType} />} />
+          <Route path='/comics/create' element={<CreateComics />} />
+          <Route path='/comics/details/:id' element={<ShowComic />} />
+          <Route path='/comics/edit/:id' element={<EditComic />} />
+          <Route path='/comics/delete/:id' element={<DeleteComic />} />
           <Route path='/admin' element={<Admin />} />
           <Route path='/mintlocations' element={<Mints showType={showType} onShowTypeChange={setShowType} />} />
           <Route path='/mintlocations/create' element={<CreateMint />} />
@@ -116,6 +136,16 @@ const App = () => {
           <Route path='/cointypes/details/:id' element={<ShowCoinType />} />
           <Route path='/cointypes/edit/:id' element={<EditCoinType />} />
           <Route path='/cointypes/delete/:id' element={<DeleteCoinType />} />
+          <Route path='/relictypes' element={<RelicTypesList />} />
+          <Route path='/relictypes/create' element={<CreateRelicType />} />
+          <Route path='/relictypes/details/:id' element={<ShowRelicType />} />
+          <Route path='/relictypes/edit/:id' element={<EditRelicType />} />
+          <Route path='/relictypes/delete/:id' element={<DeleteRelicType />} />
+          <Route path='/comicpublishers' element={<ComicPublishersList />} />
+          <Route path='/comicpublishers/create' element={<CreateComicPublisher />} />
+          <Route path='/comicpublishers/details/:id' element={<ShowComicPublisher />} />
+          <Route path='/comicpublishers/edit/:id' element={<EditComicPublisher />} />
+          <Route path='/comicpublishers/delete/:id' element={<DeleteComicPublisher />} />
         </Routes>
       </main>
     </div>
