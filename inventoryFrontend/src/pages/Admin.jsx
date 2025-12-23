@@ -1,90 +1,61 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MdOutlineTableRows, MdMenuBook } from 'react-icons/md';
-import { RiAdminLine } from 'react-icons/ri';
 import { GiTwoCoins, GiArrowhead } from 'react-icons/gi';
+
+// Reusable card component for consistent styling
+const AdminCard = ({ to, icon: Icon, title, description }) => (
+  <div className="w-full md:w-96">
+    <Link
+      to={to}
+      className="block usd-panel border-2 usd-border-green rounded-lg p-6 hover:shadow-lg transition h-full"
+    >
+      <div className="flex items-center gap-4">
+        <Icon className="text-5xl flex-shrink-0" style={{ color: 'var(--usd-copper)' }} />
+        <div className="flex-1 min-w-0">
+          <div className="text-2xl font-semibold usd-text-green">
+            {title}
+          </div>
+          <div className="text-sm usd-muted">
+            {description}
+          </div>
+        </div>
+      </div>
+    </Link>
+  </div>
+);
 
 const Admin = () => {
   return (
-    <div className='p-8'>
-      <div className='max-w-4xl mx-auto'>
-        <div className='flex items-center gap-3 mb-8'>
-          <RiAdminLine className='text-4xl usd-text-green' />
-          <h1 className='text-4xl font-bold usd-text-green'>Admin Panel</h1>
-        </div>
-        
-        <p className='text-lg usd-muted mb-8'>
-          Manage system settings and data.
-        </p>
-
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-          {/* Mint Locations Card */}
-          <Link 
-            to='/mintlocations'
-            className='block border-2 usd-border-silver rounded-xl p-6 hover:shadow-lg transition-shadow usd-panel group'
-          >
-            <div className='flex items-center gap-4 mb-4'>
-              <MdOutlineTableRows className='text-5xl usd-text-green group-hover:scale-110 transition-transform' />
-              <div>
-                <h2 className='text-2xl font-semibold usd-text-green'>Mint Locations</h2>
-                <p className='text-sm usd-muted'>Manage mint location data</p>
-              </div>
-            </div>
-            <p className='usd-muted text-sm'>
-              View, create, edit, and delete mint locations used for coin records.
-            </p>
-          </Link>
-
-          {/* Coin Types Card */}
-          <Link
-            to='/cointypes'
-            className='block border-2 usd-border-silver rounded-xl p-6 hover:shadow-lg transition-shadow usd-panel group'
-          >
-            <div className='flex items-center gap-4 mb-4'>
-              <GiTwoCoins className='text-5xl usd-text-green group-hover:scale-110 transition-transform' />
-              <div>
-                <h2 className='text-2xl font-semibold usd-text-green'>Coin Types</h2>
-                <p className='text-sm usd-muted'>Manage default face values</p>
-              </div>
-            </div>
-            <p className='usd-muted text-sm'>
-              View, create, edit, and delete coin types used to auto-fill face values.
-            </p>
-          </Link>
-
-          {/* Relic Types Card */}
-          <Link
-            to='/relictypes'
-            className='block border-2 usd-border-silver rounded-xl p-6 hover:shadow-lg transition-shadow usd-panel group'
-          >
-            <div className='flex items-center gap-4 mb-4'>
-              <GiArrowhead className='text-5xl usd-text-green group-hover:scale-110 transition-transform' />
-              <div>
-                <h2 className='text-2xl font-semibold usd-text-green'>Relic Types</h2>
-                <p className='text-sm usd-muted'>Manage relic classifications</p>
-              </div>
-            </div>
-            <p className='usd-muted text-sm'>
-              View, create, edit, and delete relic types used for classifying Indian relics.
-            </p>
-          </Link>
-
-          {/* Comic Publishers Card */}
-          <Link
-            to='/comicpublishers'
-            className='block border-2 usd-border-silver rounded-xl p-6 hover:shadow-lg transition-shadow usd-panel group'
-          >
-            <div className='flex items-center gap-4 mb-4'>
-              <MdMenuBook className='text-5xl usd-text-green group-hover:scale-110 transition-transform' />
-              <div>
-                <h2 className='text-2xl font-semibold usd-text-green'>Comic Publishers</h2>
-                <p className='text-sm usd-muted'>Manage publisher names</p>
-              </div>
-            </div>
-            <p className='usd-muted text-sm'>
-              View, create, edit, and delete comic publishers used for comic book records.
-            </p>
-          </Link>
+    <div className="flex justify-center p-4">
+      <div className="max-w-full">
+        <h1 className='text-3xl my-8'>Admin Panel</h1>
+        <p className='usd-muted mb-6'>Manage system settings and data.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-start items-stretch gap-6 mt-10">
+          <AdminCard
+            to="/mintlocations"
+            icon={MdOutlineTableRows}
+            title="Mint Locations"
+            description="View, create, edit, and delete mint locations used for coin records."
+          />
+          <AdminCard
+            to="/cointypes"
+            icon={GiTwoCoins}
+            title="Coin Types"
+            description="View, create, edit, and delete coin types used to auto-fill face values."
+          />
+          <AdminCard
+            to="/relictypes"
+            icon={GiArrowhead}
+            title="Relic Types"
+            description="View, create, edit, and delete relic types used for classifying Indian relics."
+          />
+          <AdminCard
+            to="/comicpublishers"
+            icon={MdMenuBook}
+            title="Comic Publishers"
+            description="View, create, edit, and delete comic publishers used for comic book records."
+          />
         </div>
       </div>
     </div>

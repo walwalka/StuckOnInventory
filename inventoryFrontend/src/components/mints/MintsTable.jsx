@@ -5,21 +5,21 @@ import { MdOutlineAddBox, MdOutlineDelete } from 'react-icons/md';
 
 const MintsTable = ({ mints }) => {
   return (
-    <div className="overflow-x-auto rounded-lg border-2 usd-border-silver shadow-sm">
+    <div className="overflow-x-auto rounded-lg border-2 usd-border-green shadow-sm">
       <table className='w-full border-collapse'>
         <thead className='bg-gray-100 dark:bg-[#3c3c3c]'>
           <tr>
-            <th className='border-b-2 usd-border-silver px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>ID</th>
-            <th className='border-b-2 usd-border-silver px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>ID</th>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
               Name
             </th>
-            <th className='border-b-2 usd-border-silver px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
               City
             </th>
-            <th className='border-b-2 usd-border-silver px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
               State
             </th>
-            <th className='border-b-2 usd-border-silver px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-stone-200'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-stone-200'>
               Actions
             </th>
           </tr>

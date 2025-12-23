@@ -32,6 +32,7 @@
 
 .usd-bg { background-color: var(--bg-primary); opacity: var(--bg-primary-opacity); }
 .usd-panel { background-color: var(--bg-secondary); opacity: var(--bg-secondary-opacity); }
+.usd-input { background-color: var(--bg-secondary) !important; }
 .usd-text { color: var(--text-primary); }
 .usd-muted { color: var(--text-secondary); }
 .usd-border-green { border-color: var(--accent-green); }

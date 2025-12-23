@@ -36,10 +36,10 @@ const CreateMint = () => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4 overflow-y-auto">
-      <div className='flex flex-col border-2 usd-border-green bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
+      <div className='flex flex-col border-2 usd-border-green bg-white dark:bg-[#2c2c2c] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
         <button
           onClick={() => navigate('/mintlocations')}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold"
         >
           ✕
         </button>
@@ -52,7 +52,7 @@ const CreateMint = () => {
             type='text'
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full rounded'
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           />
         </div>
         <div className='my-4'>
@@ -61,7 +61,7 @@ const CreateMint = () => {
             type='text'
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full rounded'
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           />
         </div>
         <div className='my-4'>
@@ -70,7 +70,7 @@ const CreateMint = () => {
             type='text'
             value={usState}
             onChange={(e) => setusState(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full rounded'
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           />
         </div>
         <button className='p-2 usd-btn-green m-8 rounded hover:opacity-90' onClick={handleSaveMint}>

@@ -37,6 +37,7 @@ import Admin from './pages/Admin.jsx';
 import CreateMint from './components/coins/CreateMints.jsx';
 import Mints from './components/coins/Mints.jsx';
 import ShowMint from './components/coins/ShowMint.jsx';
+import EditMint from './components/coins/EditMint.jsx';
 import SelectMint from './components/mints/mintSelect.jsx';
 import DeleteMint from './components/coins/DeleteMint.jsx';
 import Login from './components/Login/Login.jsx';
@@ -129,6 +130,7 @@ const App = () => {
           <Route path='/mintlocations' element={<Mints showType={showType} onShowTypeChange={setShowType} />} />
           <Route path='/mintlocations/create' element={<CreateMint />} />
           <Route path='/mintlocations/details/:id' element={<ShowMint />} />
+          <Route path='/mintlocations/edit/:id' element={<EditMint />} />
           <Route path='/mintselect' element={<SelectMint />} />
           <Route path='/mintlocations/delete/:id' element={<DeleteMint />} />
           <Route path='/cointypes' element={<CoinTypesList />} />

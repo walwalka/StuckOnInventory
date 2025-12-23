@@ -4,52 +4,54 @@ import { useSnackbar } from 'notistack';
 import api from '../../api/client';
 import Spinner from '../Spinner';
 
-const EditCoinType = () => {
+const EditMint = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const [name, setName] = useState('');
-  const [faceValue, setFaceValue] = useState('');
+  const [city, setCity] = useState('');
+  const [usState, setUsState] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
     api
-      .get(`/cointypes/${id}`)
+      .get(`/mintlocations/mints/${id}`)
       .then((response) => {
-        console.log('Coin type data loaded:', response.data);
+        console.log('Mint data loaded:', response.data);
         setName(response.data.name || '');
-        setFaceValue(response.data.face_value || '');
+        setCity(response.data.city || '');
+        setUsState(response.data.state || '');
       })
       .catch((error) => {
-        console.log('Error loading coin type:', error);
-        enqueueSnackbar('Error loading coin type', { variant: 'error' });
+        console.log('Error loading mint:', error);
+        enqueueSnackbar('Error loading mint location', { variant: 'error' });
       })
       .finally(() => setLoading(false));
   }, [id, enqueueSnackbar]);
 
   const handleUpdate = () => {
-    if (!name || faceValue === '') {
-      enqueueSnackbar('Name and face value are required', { variant: 'warning' });
+    if (!name) {
+      enqueueSnackbar('Name is required', { variant: 'warning' });
       return;
     }
 
-    const parsed = parseFloat(faceValue);
-    if (Number.isNaN(parsed)) {
-      enqueueSnackbar('Face value must be numeric', { variant: 'warning' });
-      return;
-    }
+    const data = {
+      name,
+      city,
+      state: usState,
+    };
 
     setLoading(true);
     api
-      .put(`/cointypes/${id}`, { name, face_value: parsed })
+      .put(`/mintlocations/mints/${id}`, data)
       .then(() => {
-        enqueueSnackbar('Coin type updated', { variant: 'success' });
-        navigate('/cointypes');
+        enqueueSnackbar('Mint location updated successfully', { variant: 'success' });
+        navigate('/mintlocations');
       })
       .catch((error) => {
-        console.log(error);
-        enqueueSnackbar('Error updating coin type', { variant: 'error' });
+        console.log('Error updating mint:', error);
+        enqueueSnackbar('Error updating mint location', { variant: 'error' });
       })
       .finally(() => setLoading(false));
   };
@@ -58,13 +60,13 @@ const EditCoinType = () => {
     <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4 overflow-y-auto">
       <div className='flex flex-col border-2 usd-border-green bg-white dark:bg-[#2c2c2c] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
         <button
-          onClick={() => navigate('/cointypes')}
+          onClick={() => navigate('/mintlocations')}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold"
         >
           ✕
         </button>
 
-        <h1 className='text-3xl mb-6 usd-text-green'>Edit Coin Type</h1>
+        <h1 className='text-3xl mb-6 usd-text-green'>Edit Mint Location</h1>
         {loading ? <Spinner /> : null}
         <div className='my-4'>
           <label className='text-xl mr-4 usd-muted'>Name</label>
@@ -76,12 +78,20 @@ const EditCoinType = () => {
           />
         </div>
         <div className='my-4'>
-          <label className='text-xl mr-4 usd-muted'>Face Value (USD)</label>
+          <label className='text-xl mr-4 usd-muted'>City</label>
           <input
-            type='number'
-            step='0.01'
-            value={faceValue}
-            onChange={(e) => setFaceValue(e.target.value)}
+            type='text'
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
+          />
+        </div>
+        <div className='my-4'>
+          <label className='text-xl mr-4 usd-muted'>State</label>
+          <input
+            type='text'
+            value={usState}
+            onChange={(e) => setUsState(e.target.value)}
             className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           />
         </div>
@@ -97,4 +107,4 @@ const EditCoinType = () => {
   );
 };
 
-export default EditCoinType;
+export default EditMint;
