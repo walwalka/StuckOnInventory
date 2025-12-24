@@ -87,13 +87,7 @@ export default function Login( { setToken } ) {
             Login
           </button>
         </form>
-        <div className='mt-6 space-y-3 text-center'>
-          <p className='usd-muted'>
-            Don't have an account?{' '}
-            <Link to="/register" className='usd-text-green hover:underline font-semibold'>
-              Register here
-            </Link>
-          </p>
+        <div className='mt-6 text-center'>
           <p className='usd-muted text-sm'>
             <Link to="/forgot-password" className='usd-text-green hover:underline'>
               Forgot your password?
