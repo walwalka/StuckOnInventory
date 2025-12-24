@@ -37,6 +37,21 @@ services:
       UPLOAD_DIR: ${UPLOAD_DIR:-/app/data/uploads}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5-nano}
+      # JWT Configuration
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_EXPIRY: ${JWT_ACCESS_EXPIRY:-15m}
+      JWT_REFRESH_EXPIRY: ${JWT_REFRESH_EXPIRY:-7d}
+      # Email Configuration
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM}
+      FRONTEND_URL: ${FRONTEND_URL}
+      # Token Expiry
+      EMAIL_VERIFICATION_EXPIRY: ${EMAIL_VERIFICATION_EXPIRY:-24h}
+      PASSWORD_RESET_EXPIRY: ${PASSWORD_RESET_EXPIRY:-1h}
     ports:
       - "${APP_PORT:-5081}:${APP_PORT:-5081}"
     volumes:

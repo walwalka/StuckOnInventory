@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../../api/client';
 import Spinner from '../Spinner';
-import { Link } from 'react-router-dom';
+import { Link, Routes, Route } from 'react-router-dom';
 import { MdOutlineAddBox } from 'react-icons/md';
 import BunnykinsTable from './BunnykinsTable';
 import BunnykinsCard from './BunnykinsCard';
+import ShowBunnykin from './ShowBunnykin';
+import EditBunnykin from './EditBunnykin';
+import DeleteBunnykin from './DeleteBunnykin';
 
-const BunnykinsList = ({ showType, onShowTypeChange }) => {
+const BunnykinsList = ({ showType }) => {
   const [bunnykins, setBunnykins] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -42,6 +45,13 @@ const BunnykinsList = ({ showType, onShowTypeChange }) => {
       ) : (
         <BunnykinsCard bunnykins={bunnykins} />
       )}
+
+      {/* Render modals as overlays when on details/edit/delete routes */}
+      <Routes>
+        <Route path="details/:id" element={<ShowBunnykin />} />
+        <Route path="edit/:id" element={<EditBunnykin />} />
+        <Route path="delete/:id" element={<DeleteBunnykin />} />
+      </Routes>
     </div>
   );
 };

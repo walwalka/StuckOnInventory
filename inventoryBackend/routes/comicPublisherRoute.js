@@ -1,7 +1,11 @@
 import express from 'express';
 import { pool } from '../database/database.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
+
+// Protect all routes in this router with authentication
+router.use(requireAuth);
 
 // List all comic publishers
 router.get('/', async (_req, res) => {

@@ -8,6 +8,7 @@ A comprehensive full-stack inventory management system for collectables includin
 - [Tech Stack](#tech-stack)
 - [Quick Start](#quick-start)
 - [Project Structure](#project-structure)
+- [Authentication](#authentication)
 - [Development](#development)
 - [User Guide](#user-guide)
 - [API Documentation](#api-documentation)
@@ -38,7 +39,10 @@ Stuck On Inventory is a modern web application designed to help collectors catal
 - ✅ Responsive design - works seamlessly on mobile, tablet, and desktop
 - ✅ Dark/light theme toggle
 - ✅ Real-time notifications for user actions
-- ✅ Authentication and session management
+- ✅ Secure JWT-based authentication with email verification
+- ✅ Password reset and recovery functionality
+- ✅ Automatic token refresh for seamless sessions
+- ✅ Rate limiting to prevent abuse
 
 **Advanced Features**
 - AI-powered coin value estimation (OpenAI integration)
@@ -82,10 +86,12 @@ Stuck On Inventory is a modern web application designed to help collectors catal
 ### Backend
 - **Runtime**: Node.js
 - **Framework**: Express.js
-- **Database**: PostgreSQL 13+
+- **Database**: PostgreSQL 16+
 - **ORM**: pg (node-postgres)
 - **File Upload**: Multer
-- **Authentication**: JWT-based token system
+- **Authentication**: Passport.js with JWT strategy
+- **Security**: bcrypt for password hashing, express-rate-limit for DDoS protection
+- **Email**: Nodemailer for transactional emails
 - **Environment**: dotenv for configuration
 
 ### DevOps
@@ -124,12 +130,21 @@ open http://localhost:8080
 
 The application will be available at **http://localhost:8080**
 
-### Default Login
-```
-Username: admin
-Password: test123
-```
-*(Note: This is a demo token system - update for production use)*
+### First-Time Setup
+
+1. **Register an Account**
+   - Navigate to http://localhost:8080/register
+   - Create an account with email and password (min 6 characters)
+   - You'll receive a verification email (check backend logs for the link if SMTP not configured)
+
+2. **Verify Your Email**
+   - Click the verification link from your email
+   - Or check Docker logs: `docker logs inventory_backend | grep "verify-email"`
+   - Copy and paste the verification URL into your browser
+
+3. **Login**
+   - After verification, login at http://localhost:8080/login
+   - Your session will last 15 minutes with automatic token refresh
 
 ## Project Structure
 
@@ -179,6 +194,270 @@ StuckOnInventory/
 ├── .env.example               # Environment variable template
 └── README.md
 ```
+
+## Authentication
+
+Stuck On Inventory uses a secure JWT-based authentication system with Passport.js. All inventory routes are protected and require valid authentication.
+
+### Authentication Flow
+
+**Registration → Email Verification → Login → Access**
+
+1. User registers with email and password
+2. System generates verification token and sends email
+3. User clicks verification link to activate account
+4. User logs in and receives JWT tokens
+5. Frontend automatically includes tokens in all API requests
+6. Tokens refresh automatically for seamless sessions
+
+### Security Features
+
+**Password Security**
+- bcrypt hashing with 10 salt rounds
+- Minimum 6 character password requirement
+- Secure password reset with time-limited tokens (1 hour expiry)
+
+**Token Management**
+- **Access Token**: Short-lived (15 minutes) for API authentication
+- **Refresh Token**: Long-lived (7 days) for obtaining new access tokens
+- Cryptographically signed JWT tokens with secret key
+- Automatic token refresh on 401 responses
+- Server-side refresh token invalidation on logout
+
+**Rate Limiting**
+- Auth endpoints: 5 requests per 15 minutes per IP
+- Password reset: 3 requests per hour per IP
+- Email verification: 3 requests per hour per IP
+- General API: 100 requests per 15 minutes per IP
+
+**Email Verification**
+- Required before login access
+- 24-hour verification token expiry
+- Resend verification option available
+
+### Authentication Endpoints
+
+**User Registration**
+```http
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "securepassword"
+}
+
+Response:
+{
+  "message": "User registered successfully. Please check your email to verify your account.",
+  "accessToken": "eyJhbGc...",
+  "refreshToken": "eyJhbGc...",
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "emailVerified": false,
+    "createdAt": "2024-01-01T12:00:00Z"
+  }
+}
+```
+
+**User Login**
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "securepassword"
+}
+
+Response:
+{
+  "message": "Login successful",
+  "accessToken": "eyJhbGc...",
+  "refreshToken": "eyJhbGc...",
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "emailVerified": true,
+    "createdAt": "2024-01-01T12:00:00Z"
+  }
+}
+```
+
+**Email Verification**
+```http
+POST /api/auth/verify-email
+Content-Type: application/json
+
+{
+  "token": "abc123def456..."
+}
+
+Response:
+{
+  "message": "Email verified successfully. You can now log in.",
+  "emailVerified": true
+}
+```
+
+**Resend Verification Email**
+```http
+POST /api/auth/resend-verification
+Content-Type: application/json
+
+{
+  "email": "user@example.com"
+}
+
+Response:
+{
+  "message": "Verification email sent successfully. Please check your inbox."
+}
+```
+
+**Forgot Password**
+```http
+POST /api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "user@example.com"
+}
+
+Response:
+{
+  "message": "If an account exists with this email, a password reset link has been sent."
+}
+```
+
+**Reset Password**
+```http
+POST /api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "abc123def456...",
+  "newPassword": "newsecurepassword"
+}
+
+Response:
+{
+  "message": "Password reset successfully. You can now log in with your new password."
+}
+```
+
+**Refresh Access Token**
+```http
+POST /api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGc..."
+}
+
+Response:
+{
+  "message": "Token refreshed successfully",
+  "accessToken": "eyJhbGc...",
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "emailVerified": true
+  }
+}
+```
+
+**Logout**
+```http
+POST /api/auth/logout
+Authorization: Bearer <accessToken>
+
+Response:
+{
+  "message": "Logout successful"
+}
+```
+
+### Frontend Routes
+
+- `/register` - User registration form
+- `/login` - User login form
+- `/logout` - Logout confirmation
+- `/verify-email?token=xxx` - Email verification handler
+- `/resend-verification` - Resend verification email form
+- `/forgot-password` - Request password reset
+- `/reset-password?token=xxx` - Password reset form
+
+### Email Configuration (Optional)
+
+For production deployments, configure SMTP settings in `.env`:
+
+```bash
+# Email Configuration
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+SMTP_FROM=noreply@stuckoninventory.com
+FRONTEND_URL=http://localhost:5173
+```
+
+**Development Mode**: Without SMTP configuration, verification links are logged to the backend console. Check logs with:
+```bash
+docker logs inventory_backend | grep "verify-email"
+```
+
+### Database Schema - Users Table
+
+```sql
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  email_verified BOOLEAN DEFAULT false,
+  verification_token VARCHAR(255),
+  verification_token_expires TIMESTAMPTZ,
+  password_reset_token VARCHAR(255),
+  password_reset_token_expires TIMESTAMPTZ,
+  refresh_token TEXT,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_users_verification_token ON users(verification_token);
+CREATE INDEX idx_users_password_reset_token ON users(password_reset_token);
+CREATE INDEX idx_users_email_verified ON users(email_verified);
+```
+
+### Protected Routes
+
+All inventory routes require authentication:
+- `/api/coins/*`
+- `/api/comics/*`
+- `/api/relics/*`
+- `/api/stamps/*`
+- `/api/bunnykins/*`
+- `/api/mintlocations/*`
+- `/api/cointypes/*`
+- `/api/comicpublishers/*`
+- `/api/relictypes/*`
+
+Requests must include the JWT access token in the Authorization header:
+```http
+Authorization: Bearer <accessToken>
+```
+
+### Automatic Token Refresh
+
+The frontend API client automatically handles token refresh:
+
+1. Request fails with 401 Unauthorized
+2. Client attempts to refresh using refresh token
+3. On success, retry original request with new access token
+4. On failure, redirect to login page
+
+This provides a seamless user experience with automatic re-authentication.
 
 ## Development
 
@@ -265,11 +544,35 @@ SQL_USER=postgres
 SQL_DB=inventory_db
 SQL_PASS=your_secure_password
 
+# JWT Configuration (required)
+JWT_SECRET=your_secure_random_secret_key_here
+JWT_ACCESS_EXPIRY=15m
+JWT_REFRESH_EXPIRY=7d
+
+# Email Configuration (optional - logs to console if not configured)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+SMTP_FROM=noreply@stuckoninventory.com
+FRONTEND_URL=http://localhost:5173
+
+# Token Expiry
+EMAIL_VERIFICATION_EXPIRY=24h
+PASSWORD_RESET_EXPIRY=1h
+
 # Optional: OpenAI API for coin value estimation
 OPENAI_API_KEY=your_openai_key
 
 # Optional: Custom upload directory
 UPLOAD_DIR=/app/uploads
+```
+
+**Generating JWT_SECRET**
+```bash
+# Generate a secure random secret (256 bits)
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
 
 **Frontend (.env)**
@@ -337,10 +640,12 @@ http://localhost:5081/api
 ```
 
 ### Authentication
-All endpoints require a valid JWT token in the Authorization header:
+All inventory endpoints require a valid JWT token in the Authorization header:
 ```
-Authorization: Bearer <token>
+Authorization: Bearer <accessToken>
 ```
+
+See the [Authentication](#authentication) section for details on registration, login, and token management.
 
 ### Common Endpoints Pattern
 
@@ -408,12 +713,6 @@ Response: { ...updatedItem }
 ```http
 GET /api/health
 Response: "coinList backend server online"
-```
-
-**Login**
-```http
-POST /api/login
-Response: { token: "test123" }
 ```
 
 **Coin Value Estimation**
@@ -542,7 +841,21 @@ CREATE TABLE cointypes (
 ```bash
 # Set production values in .env
 NODE_ENV=production
-SQL_PASS=<strong_password>
+SQL_PASS=<strong_database_password>
+
+# Generate secure JWT secret
+JWT_SECRET=$(node -e "console.log(require('crypto').randomBytes(64).toString('hex'))")
+
+# Configure SMTP for email verification (required for production)
+SMTP_HOST=smtp.your-provider.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@domain.com
+SMTP_PASS=your-smtp-password
+SMTP_FROM=noreply@yourdomain.com
+FRONTEND_URL=https://yourdomain.com
+
+# Optional: OpenAI for coin value estimation
 OPENAI_API_KEY=<your_key>
 ```
 
@@ -635,6 +948,33 @@ lsof -i :5081
 - Verify `VITE_ENV_URL` in frontend `.env`
 - Check backend is running: `curl http://localhost:5081/api/health`
 - Ensure CORS is enabled in `inventoryBackend/index.js`
+
+**Authentication Issues**
+
+*"JwtStrategy requires a secret or key"*
+- Ensure `JWT_SECRET` is set in `.env`
+- Verify environment variables are passed in `docker-compose.yml`
+- Restart backend: `docker compose restart backend`
+
+*Can't login - "Email not verified"*
+- Check backend logs for verification link: `docker logs inventory_backend | grep "verify-email"`
+- Or use the resend verification page at `/resend-verification`
+- Copy the verification URL and open in browser
+
+*401 Unauthorized on API requests*
+- Token may have expired (15 minute lifetime)
+- Frontend should auto-refresh - check browser console for errors
+- Clear localStorage and login again: `localStorage.clear()`
+
+*Email verification link not working*
+- Token expires after 24 hours - request a new one at `/resend-verification`
+- Check that `FRONTEND_URL` in `.env` matches your actual frontend URL
+- Verify token in URL matches what's in the database
+
+*Rate limit errors*
+- Wait 15 minutes for general rate limit reset
+- Wait 1 hour for password reset/verification rate limits
+- Rate limits are per IP address
 
 ## Contributing
 

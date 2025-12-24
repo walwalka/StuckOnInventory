@@ -1,9 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, Routes, Route } from 'react-router-dom';
 import api from '../../api/client';
 import Spinner from '../Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import ComicPublishersTable from './ComicPublishersTable';
+import ShowComicPublisher from './ShowComicPublisher';
+import EditComicPublisher from './EditComicPublisher';
+import DeleteComicPublisher from './DeleteComicPublisher';
 
 const ComicPublishersList = () => {
   const [publishers, setPublishers] = useState([]);
@@ -57,6 +60,13 @@ const ComicPublishersList = () => {
       </div>
 
       {loading ? <Spinner /> : <ComicPublishersTable publishers={filtered} />}
+
+      {/* Render modals as overlays when on details/edit/delete routes */}
+      <Routes>
+        <Route path="details/:id" element={<ShowComicPublisher />} />
+        <Route path="edit/:id" element={<EditComicPublisher />} />
+        <Route path="delete/:id" element={<DeleteComicPublisher />} />
+      </Routes>
     </div>
   );
 };

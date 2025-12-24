@@ -1,9 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, Routes, Route } from 'react-router-dom';
 import api from '../../api/client';
 import Spinner from '../Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import CoinTypesTable from './CoinTypesTable';
+import ShowCoinType from './ShowCoinType';
+import EditCoinType from './EditCoinType';
+import DeleteCoinType from './DeleteCoinType';
 
 const CoinTypesList = () => {
   const [coinTypes, setCoinTypes] = useState([]);
@@ -136,6 +139,13 @@ const CoinTypesList = () => {
       </div>
 
       {loading ? <Spinner /> : <CoinTypesTable coinTypes={sorted} />}
+
+      {/* Render modals as overlays when on details/edit/delete routes */}
+      <Routes>
+        <Route path="details/:id" element={<ShowCoinType />} />
+        <Route path="edit/:id" element={<EditCoinType />} />
+        <Route path="delete/:id" element={<DeleteCoinType />} />
+      </Routes>
     </div>
   );
 };

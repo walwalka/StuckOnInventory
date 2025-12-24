@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PORT } from './config.js';
 import express from 'express';
+import passport from 'passport';
 import coinRoute from './routes/coinRoute.js';
 import mintRoute from './routes/mintRoute.js';
 import coinTypeRoute from './routes/coinTypeRoute.js';
@@ -11,6 +12,8 @@ import bunnykinRoute from './routes/bunnykinRoute.js';
 import comicRoute from './routes/comicRoute.js';
 import comicPublisherRoute from './routes/comicPublisherRoute.js';
 import authRoute from './routes/authRoute.js';
+import configurePassport from './config/passport.js';
+import { generalLimiter } from './middleware/rateLimiter.js';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -27,6 +30,13 @@ app.use(express.json());
 
 // middleware for handling CORS policy
 app.use(cors());
+
+// Initialize Passport for JWT authentication
+configurePassport(passport);
+app.use(passport.initialize());
+
+// Apply general rate limiter to all routes
+app.use(generalLimiter);
 
 // OpenAI key presence check (no value logged)
 if (!process.env.OPENAI_API_KEY) {

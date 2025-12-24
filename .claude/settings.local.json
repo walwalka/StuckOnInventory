@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(docker compose stop:*)",
+      "Bash(docker compose rm:*)",
+      "Bash(docker compose build:*)",
+      "Bash(docker compose:*)"
     ]
   }
 }

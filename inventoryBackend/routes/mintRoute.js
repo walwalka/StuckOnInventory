@@ -1,7 +1,11 @@
 import express, { response } from 'express';
 import { pool } from '../database/database.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = express.Router();
+
+// Protect all routes in this router with authentication
+router.use(requireAuth);
 
 // Below are the routes for the mint locations
 

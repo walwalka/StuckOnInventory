@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../../api/client';
 import Spinner from '../Spinner';
-import { Link } from 'react-router-dom';
+import { Link, Routes, Route } from 'react-router-dom';
 import { MdOutlineAddBox } from 'react-icons/md';
 import CoinsTable from './CoinsTable';
 import CoinsCard from './CoinsCard';
+import ShowCoin from './ShowCoin';
+import EditCoin from './EditCoin';
+import DeleteCoin from './DeleteCoin';
 
-const CoinsList = ({ showType, onShowTypeChange }) => {
+const CoinsList = ({ showType }) => {
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -46,6 +49,13 @@ const CoinsList = ({ showType, onShowTypeChange }) => {
       ) : (
         <CoinsCard coins={coins} />
       )}
+
+      {/* Render modals as overlays when on details/edit/delete routes */}
+      <Routes>
+        <Route path="details/:id" element={<ShowCoin />} />
+        <Route path="edit/:id" element={<EditCoin />} />
+        <Route path="delete/:id" element={<DeleteCoin />} />
+      </Routes>
     </div>
   );
 };

@@ -1,30 +1,44 @@
 import { useState } from 'react';
 import {
-  getToken as getStoredToken,
-  saveToken as persistToken,
-  clearToken as removeToken
+  getAccessToken,
+  getRefreshToken,
+  saveTokens,
+  clearTokens
 } from '../auth/token';
 
 export default function useToken() {
-  const [token, setToken] = useState(() => getStoredToken());
+  const [accessToken, setAccessTokenState] = useState(() => getAccessToken());
+  const [refreshToken, setRefreshTokenState] = useState(() => getRefreshToken());
 
-  const saveToken = (authResponse) => {
-    const tokenValue =
-      typeof authResponse === 'string'
-        ? authResponse
-        : authResponse?.token ?? null;
-    persistToken(tokenValue);
-    setToken(tokenValue);
+  const setToken = (authResponse) => {
+    // Handle different response formats
+    if (typeof authResponse === 'string') {
+      // Legacy: single token string (treat as access token)
+      saveTokens(authResponse, '');
+      setAccessTokenState(authResponse);
+    } else if (authResponse?.accessToken && authResponse?.refreshToken) {
+      // New format: object with both tokens
+      saveTokens(authResponse.accessToken, authResponse.refreshToken);
+      setAccessTokenState(authResponse.accessToken);
+      setRefreshTokenState(authResponse.refreshToken);
+    } else if (authResponse?.token) {
+      // Backward compatibility: object with single 'token' property
+      saveTokens(authResponse.token, '');
+      setAccessTokenState(authResponse.token);
+    }
   };
 
   const clear = () => {
-    removeToken();
-    setToken(null);
+    clearTokens();
+    setAccessTokenState(null);
+    setRefreshTokenState(null);
   };
 
   return {
-    token,
-    setToken: saveToken,
+    token: accessToken, // For backward compatibility
+    accessToken,
+    refreshToken,
+    setToken,
     clear
   };
 }

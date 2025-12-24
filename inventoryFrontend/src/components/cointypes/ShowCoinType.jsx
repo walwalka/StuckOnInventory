@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/client';
-import BackButton from '../BackButton';
 import Spinner from '../Spinner';
 
 const ShowCoinType = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [coinType, setCoinType] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -23,27 +23,42 @@ const ShowCoinType = () => {
   }, [id]);
 
   return (
-    <div className='p-4'>
-      <BackButton destination='/cointypes' />
-      <h1 className='text-3xl my-4'>Coin Type</h1>
-      {loading ? (
-        <Spinner />
-      ) : coinType ? (
-        <div className='flex flex-col border-2 usd-border-green rounded-xl w-fit p-4 usd-panel'>
-          <div className='my-2'>
-            <span className='text-xl mr-4 usd-muted'>ID</span>
-            <span>{coinType.id}</span>
-          </div>
-          <div className='my-2'>
-            <span className='text-xl mr-4 usd-muted'>Name</span>
-            <span>{coinType.name}</span>
-          </div>
-          <div className='my-2'>
-            <span className='text-xl mr-4 usd-muted'>Face Value</span>
-            <span>${Number(coinType.face_value).toFixed(2)}</span>
-          </div>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50 p-4 overflow-y-auto">
+      <div className='flex flex-col border-2 usd-border-green bg-white dark:bg-[#2c2c2c] rounded-xl max-w-md w-full p-6 shadow-2xl'>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className='text-3xl dark:text-gray-100'>Coin Type</h1>
+          <button
+            onClick={() => navigate('/cointypes')}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold leading-none"
+          >
+            ✕
+          </button>
         </div>
-      ) : null}
+        {loading ? (
+          <Spinner />
+        ) : coinType ? (
+          <>
+            <div className='my-2'>
+              <span className='text-xl mr-4 usd-muted dark:text-gray-400'>ID</span>
+              <span className='dark:text-gray-100'>{coinType.id}</span>
+            </div>
+            <div className='my-2'>
+              <span className='text-xl mr-4 usd-muted dark:text-gray-400'>Name</span>
+              <span className='dark:text-gray-100'>{coinType.name}</span>
+            </div>
+            <div className='my-2 mb-4'>
+              <span className='text-xl mr-4 usd-muted dark:text-gray-400'>Face Value</span>
+              <span className='dark:text-gray-100'>${Number(coinType.face_value).toFixed(2)}</span>
+            </div>
+            <button
+              onClick={() => navigate('/cointypes')}
+              className='w-full p-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600'
+            >
+              Close
+            </button>
+          </>
+        ) : null}
+      </div>
     </div>
   );
 };

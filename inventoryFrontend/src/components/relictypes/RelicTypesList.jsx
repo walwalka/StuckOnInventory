@@ -1,9 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, Routes, Route } from 'react-router-dom';
 import api from '../../api/client';
 import Spinner from '../Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import RelicTypesTable from './RelicTypesTable';
+import ShowRelicType from './ShowRelicType';
+import EditRelicType from './EditRelicType';
+import DeleteRelicType from './DeleteRelicType';
 
 const RelicTypesList = () => {
   const [relicTypes, setRelicTypes] = useState([]);
@@ -57,6 +60,13 @@ const RelicTypesList = () => {
       </div>
 
       {loading ? <Spinner /> : <RelicTypesTable relicTypes={filtered} />}
+
+      {/* Render modals as overlays when on details/edit/delete routes */}
+      <Routes>
+        <Route path="details/:id" element={<ShowRelicType />} />
+        <Route path="edit/:id" element={<EditRelicType />} />
+        <Route path="delete/:id" element={<DeleteRelicType />} />
+      </Routes>
     </div>
   );
 };

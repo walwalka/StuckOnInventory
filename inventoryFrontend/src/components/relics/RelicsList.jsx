@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../../api/client';
 import Spinner from '../Spinner';
-import { Link } from 'react-router-dom';
+import { Link, Routes, Route } from 'react-router-dom';
 import { MdOutlineAddBox } from 'react-icons/md';
 import RelicsTable from './RelicsTable';
 import RelicsCard from './RelicsCard';
+import ShowRelic from './ShowRelic';
+import EditRelic from './EditRelic';
+import DeleteRelic from './DeleteRelic';
 
-const RelicsList = ({ showType, onShowTypeChange }) => {
+const RelicsList = ({ showType }) => {
   const [relics, setRelics] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -42,6 +45,13 @@ const RelicsList = ({ showType, onShowTypeChange }) => {
       ) : (
         <RelicsCard relics={relics} />
       )}
+
+      {/* Render modals as overlays when on details/edit/delete routes */}
+      <Routes>
+        <Route path="details/:id" element={<ShowRelic />} />
+        <Route path="edit/:id" element={<EditRelic />} />
+        <Route path="delete/:id" element={<DeleteRelic />} />
+      </Routes>
     </div>
   );
 };

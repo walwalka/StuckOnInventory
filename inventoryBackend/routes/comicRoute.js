@@ -4,11 +4,15 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { requireAuth } from '../middleware/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const router = express.Router();
+
+// Protect all routes in this router with authentication
+router.use(requireAuth);
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, '../uploads');
 

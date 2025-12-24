@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../../api/client';
 import Spinner from '../Spinner';
-import { Link } from 'react-router-dom';
+import { Link, Routes, Route } from 'react-router-dom';
 import { MdOutlineAddBox } from 'react-icons/md';
 import ComicsTable from './ComicsTable';
 import ComicsCard from './ComicsCard';
+import ShowComic from './ShowComic';
+import EditComic from './EditComic';
+import DeleteComic from './DeleteComic';
 
-const ComicsList = ({ showType, onShowTypeChange }) => {
+const ComicsList = ({ showType }) => {
   const [comics, setComics] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -42,6 +45,13 @@ const ComicsList = ({ showType, onShowTypeChange }) => {
       ) : (
         <ComicsCard comics={comics} />
       )}
+
+      {/* Render modals as overlays when on details/edit/delete routes */}
+      <Routes>
+        <Route path="details/:id" element={<ShowComic />} />
+        <Route path="edit/:id" element={<EditComic />} />
+        <Route path="delete/:id" element={<DeleteComic />} />
+      </Routes>
     </div>
   );
 };

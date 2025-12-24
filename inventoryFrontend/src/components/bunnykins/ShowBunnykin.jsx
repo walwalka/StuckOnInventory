@@ -66,16 +66,16 @@ const ShowBunnykin = () => {
   }, [bunnykin.image1, bunnykin.image2, bunnykin.image3]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4 overflow-y-auto">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50 p-4 overflow-y-auto">
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center"><Spinner /></div>
       )}
-      <div className='flex flex-col border-2 usd-border-green bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
-        <div className="flex items-center justify-between mb-4 sticky top-0 bg-white pb-3 border-b usd-border-green">
+      <div className='flex flex-col border-2 usd-border-green bg-white dark:bg-[#2c2c2c] rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
+        <div className="flex items-center justify-between mb-4 sticky top-0 bg-white dark:bg-[#2c2c2c] pb-3 border-b usd-border-green dark:border-gray-700">
           <h1 className='text-2xl usd-text-green font-semibold'>Bunnykin Details</h1>
           <button
             onClick={() => navigate('/bunnykins')}
-            className="text-gray-500 hover:text-gray-700 text-2xl font-bold leading-none"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold leading-none"
             aria-label="Close"
           >
             ✕
@@ -85,27 +85,27 @@ const ShowBunnykin = () => {
         <div className="grid grid-cols-2 gap-4">
           <div className='py-2'>
             <div className='text-sm font-semibold usd-text-green mb-1'>ID</div>
-            <div className='text-gray-700'>{bunnykin.id}</div>
+            <div className='text-gray-700 dark:text-gray-100'>{bunnykin.id}</div>
           </div>
           <div className='py-2'>
             <div className='text-sm font-semibold usd-text-green mb-1'>Name</div>
-            <div className='text-gray-700'>{bunnykin.name}</div>
+            <div className='text-gray-700 dark:text-gray-100'>{bunnykin.name}</div>
           </div>
           <div className='py-2'>
             <div className='text-sm font-semibold usd-text-green mb-1'>Series</div>
-            <div className='text-gray-700'>{bunnykin.series}</div>
+            <div className='text-gray-700 dark:text-gray-100'>{bunnykin.series}</div>
           </div>
           <div className='py-2'>
             <div className='text-sm font-semibold usd-text-green mb-1'>Production Year</div>
-            <div className='text-gray-700'>{bunnykin.productionyear}</div>
+            <div className='text-gray-700 dark:text-gray-100'>{bunnykin.productionyear}</div>
           </div>
           <div className='py-2'>
             <div className='text-sm font-semibold usd-text-green mb-1'>Condition</div>
-            <div className='text-gray-700'>{bunnykin.condition}</div>
+            <div className='text-gray-700 dark:text-gray-100'>{bunnykin.condition}</div>
           </div>
           <div className='py-2 col-span-2'>
             <div className='text-sm font-semibold usd-text-green mb-1'>Description</div>
-            <div className='text-gray-700'>{bunnykin.description || 'No description provided'}</div>
+            <div className='text-gray-700 dark:text-gray-100'>{bunnykin.description || 'No description provided'}</div>
           </div>
         </div>
 
@@ -114,26 +114,26 @@ const ShowBunnykin = () => {
             <div className='text-lg font-semibold usd-text-green mb-3'>Images</div>
             <div className='grid grid-cols-3 gap-4'>
               {imageUrls[0] && (
-                <img 
-                  src={imageUrls[0]} 
-                  alt="Bunnykin 1" 
-                  className="w-full h-48 object-cover rounded border-2 usd-border-silver hover:scale-105 transition-transform cursor-pointer"
+                <img
+                  src={imageUrls[0]}
+                  alt="Bunnykin 1"
+                  className="w-full h-48 object-cover rounded border-2 usd-border-silver dark:border-gray-700 hover:scale-105 transition-transform cursor-pointer"
                   onClick={() => window.open(imageUrls[0], '_blank')}
                 />
               )}
               {imageUrls[1] && (
-                <img 
-                  src={imageUrls[1]} 
-                  alt="Bunnykin 2" 
-                  className="w-full h-48 object-cover rounded border-2 usd-border-silver hover:scale-105 transition-transform cursor-pointer"
+                <img
+                  src={imageUrls[1]}
+                  alt="Bunnykin 2"
+                  className="w-full h-48 object-cover rounded border-2 usd-border-silver dark:border-gray-700 hover:scale-105 transition-transform cursor-pointer"
                   onClick={() => window.open(imageUrls[1], '_blank')}
                 />
               )}
               {imageUrls[2] && (
-                <img 
-                  src={imageUrls[2]} 
-                  alt="Bunnykin 3" 
-                  className="w-full h-48 object-cover rounded border-2 usd-border-silver hover:scale-105 transition-transform cursor-pointer"
+                <img
+                  src={imageUrls[2]}
+                  alt="Bunnykin 3"
+                  className="w-full h-48 object-cover rounded border-2 usd-border-silver dark:border-gray-700 hover:scale-105 transition-transform cursor-pointer"
                   onClick={() => window.open(imageUrls[2], '_blank')}
                 />
               )}

@@ -1,13 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MdCheckCircle } from 'react-icons/md';
+import api from '../../api/client';
 
 const Logout = ({ clearToken }) => {
+  const [logoutComplete, setLogoutComplete] = useState(false);
+
   useEffect(() => {
-    // Clear the token when component mounts
-    if (clearToken) {
-      clearToken();
-    }
+    const performLogout = async () => {
+      try {
+        // Call backend logout endpoint to invalidate refresh token
+        await api.post('/auth/logout');
+      } catch (error) {
+        // Log error but continue with client-side logout
+        console.error('Logout error:', error);
+      } finally {
+        // Clear tokens from localStorage
+        if (clearToken) {
+          clearToken();
+        }
+        setLogoutComplete(true);
+      }
+    };
+
+    performLogout();
   }, [clearToken]);
 
   return (

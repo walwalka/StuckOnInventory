@@ -26,11 +26,10 @@ export default function Login( { setToken } ) {
 
     try {
       const result = await loginUser({ email, password });
-      const tokenValue = typeof result === 'string' ? result : result?.token;
 
-      if (typeof tokenValue === 'string' && tokenValue.trim().length > 0) {
-        // Persist valid token (useToken accepts both string or { token })
-        setToken(tokenValue);
+      // Handle new JWT response format (accessToken + refreshToken)
+      if (result.accessToken && result.refreshToken) {
+        setToken(result); // Pass entire response with both tokens
         enqueueSnackbar('Login successful!', { variant: 'success' });
 
         // Navigate to the page they were trying to access, or home
@@ -40,8 +39,15 @@ export default function Login( { setToken } ) {
         enqueueSnackbar('Invalid email or password.', { variant: 'error' });
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.error || 'Login failed. Please try again.';
-      enqueueSnackbar(errorMessage, { variant: 'error' });
+      // Handle email not verified error
+      if (err.response?.status === 403 && err.response?.data?.emailVerified === false) {
+        enqueueSnackbar(err.response.data.message || 'Please verify your email before logging in.', { variant: 'warning' });
+        // Optionally redirect to resend verification page after a delay
+        setTimeout(() => navigate('/resend-verification'), 2000);
+      } else {
+        const errorMessage = err.response?.data?.error || 'Login failed. Please try again.';
+        enqueueSnackbar(errorMessage, { variant: 'error' });
+      }
       console.error('Login error:', err);
     }
   }
@@ -81,11 +87,16 @@ export default function Login( { setToken } ) {
             Login
           </button>
         </form>
-        <div className='mt-6 text-center'>
+        <div className='mt-6 space-y-3 text-center'>
           <p className='usd-muted'>
             Don't have an account?{' '}
             <Link to="/register" className='usd-text-green hover:underline font-semibold'>
               Register here
+            </Link>
+          </p>
+          <p className='usd-muted text-sm'>
+            <Link to="/forgot-password" className='usd-text-green hover:underline'>
+              Forgot your password?
             </Link>
           </p>
         </div>

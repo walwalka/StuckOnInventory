@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../../api/client';
 import Spinner from '../Spinner';
-import { Link } from 'react-router-dom';
+import { Link, Routes, Route } from 'react-router-dom';
 import { MdOutlineAddBox } from 'react-icons/md';
 import StampsTable from './StampsTable';
 import StampsCard from './StampsCard';
+import ShowStamp from './ShowStamp';
+import EditStamp from './EditStamp';
+import DeleteStamp from './DeleteStamp';
 
-const StampsList = ({ showType, onShowTypeChange }) => {
+const StampsList = ({ showType }) => {
   const [stamps, setStamps] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -42,6 +45,13 @@ const StampsList = ({ showType, onShowTypeChange }) => {
       ) : (
         <StampsCard stamps={stamps} />
       )}
+
+      {/* Render modals as overlays when on details/edit/delete routes */}
+      <Routes>
+        <Route path="details/:id" element={<ShowStamp />} />
+        <Route path="edit/:id" element={<EditStamp />} />
+        <Route path="delete/:id" element={<DeleteStamp />} />
+      </Routes>
     </div>
   );
 };

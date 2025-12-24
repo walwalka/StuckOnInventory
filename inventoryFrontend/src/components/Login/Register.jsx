@@ -37,10 +37,14 @@ const Register = () => {
         password
       });
 
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        enqueueSnackbar('Registration successful!', { variant: 'success' });
-        navigate('/');
+      // Registration successful - tokens received but email not verified yet
+      if (response.data.accessToken && response.data.refreshToken) {
+        enqueueSnackbar(
+          response.data.message || 'Registration successful! Please check your email to verify your account.',
+          { variant: 'success', autoHideDuration: 6000 }
+        );
+        // Redirect to login page or show verification notice
+        setTimeout(() => navigate('/login'), 3000);
       }
     } catch (error) {
       console.error('Registration error:', error);
