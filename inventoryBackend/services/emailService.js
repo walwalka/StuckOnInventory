@@ -203,3 +203,91 @@ export async function sendPasswordResetEmail(email, token) {
     throw new Error('Failed to send password reset email');
   }
 }
+
+/**
+ * Send invitation email
+ * @param {string} email - Recipient email address
+ * @param {string} token - Invite token
+ * @param {string} inviterName - Name or email of person who sent the invite
+ * @returns {Promise} - Resolves when email is sent
+ */
+export async function sendInviteEmail(email, token, inviterName) {
+  const transport = getTransporter();
+
+  if (!transport) {
+    console.error('Email service not configured. Skipping invite email.');
+    // In development, log the invite link instead
+    console.log(`\n=== INVITE LINK ===`);
+    console.log(`${frontendUrl}/invite/${token}`);
+    console.log(`===================\n`);
+    return;
+  }
+
+  const inviteUrl = `${frontendUrl}/invite/${token}`;
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #2196F3; color: white; padding: 20px; text-align: center; }
+        .content { background-color: #f9f9f9; padding: 30px; border-radius: 5px; }
+        .button { display: inline-block; padding: 12px 30px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>You're Invited!</h1>
+        </div>
+        <div class="content">
+          <h2>Join StuckOnInventory</h2>
+          <p>${inviterName} has invited you to join StuckOnInventory.</p>
+          <p>Click the button below to accept your invitation and create your account:</p>
+          <p style="text-align: center;">
+            <a href="${inviteUrl}" class="button">Accept Invitation</a>
+          </p>
+          <p>Or copy and paste this link into your browser:</p>
+          <p style="word-break: break-all; color: #666;">${inviteUrl}</p>
+          <p><strong>This invitation will expire in 7 days.</strong></p>
+          <p>If you weren't expecting this invitation, you can safely ignore this email.</p>
+        </div>
+        <div class="footer">
+          <p>&copy; 2025 StuckOnInventory. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const textContent = `
+    You're Invited to Join StuckOnInventory!
+
+    ${inviterName} has invited you to join StuckOnInventory.
+
+    Click the link below to accept your invitation and create your account:
+
+    ${inviteUrl}
+
+    This invitation will expire in 7 days.
+
+    If you weren't expecting this invitation, you can safely ignore this email.
+  `;
+
+  try {
+    await transport.sendMail({
+      from: smtpFrom,
+      to: email,
+      subject: 'You\'re Invited to Join StuckOnInventory',
+      text: textContent,
+      html: htmlContent,
+    });
+    console.log(`Invite email sent to ${email}`);
+  } catch (error) {
+    console.error('Error sending invite email:', error);
+    throw new Error('Failed to send invite email');
+  }
+}

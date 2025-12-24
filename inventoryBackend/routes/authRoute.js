@@ -19,14 +19,14 @@ const SALT_ROUNDS = 10;
 
 // ==================== REGISTER ====================
 // POST /api/auth/register
-// Create new user account and send verification email
+// Create new user account using invite token
 router.post('/register', authLimiter, async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, inviteToken } = req.body;
 
     // Validate input
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    if (!email || !password || !inviteToken) {
+      return res.status(400).json({ error: 'Email, password, and invite token are required' });
     }
 
     // Basic email validation
@@ -38,6 +38,33 @@ router.post('/register', authLimiter, async (req, res) => {
     // Password length validation
     if (password.length < 6) {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
+    // Verify invite token
+    const inviteResult = await pool.query(
+      'SELECT id, email, expires_at, used_at FROM invites WHERE token = $1',
+      [inviteToken]
+    );
+
+    if (inviteResult.rows.length === 0) {
+      return res.status(400).json({ error: 'Invalid invitation token' });
+    }
+
+    const invite = inviteResult.rows[0];
+
+    // Check if invite has been used
+    if (invite.used_at) {
+      return res.status(400).json({ error: 'This invitation has already been used' });
+    }
+
+    // Check if invite has expired
+    if (new Date(invite.expires_at) < new Date()) {
+      return res.status(400).json({ error: 'This invitation has expired' });
+    }
+
+    // Verify email matches invite
+    if (invite.email.toLowerCase() !== email.toLowerCase()) {
+      return res.status(400).json({ error: 'Email does not match invitation' });
     }
 
     // Check if user already exists
@@ -53,24 +80,21 @@ router.post('/register', authLimiter, async (req, res) => {
     // Hash password
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // Generate verification token
-    const verificationToken = generateVerificationToken();
-    const verificationExpiry = calculateExpiry(emailVerificationExpiry);
-
-    // Insert new user with verification token
+    // Insert new user (email is automatically verified since they used an invite)
     const result = await pool.query(
-      `INSERT INTO users (email, password_hash, verification_token, verification_token_expires)
+      `INSERT INTO users (email, password_hash, email_verified, role)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, email, email_verified, created_at`,
-      [email.toLowerCase(), passwordHash, verificationToken, verificationExpiry]
+       RETURNING id, email, email_verified, role, created_at`,
+      [email.toLowerCase(), passwordHash, true, 'user']
     );
 
     const user = result.rows[0];
 
-    // Send verification email (async, don't wait)
-    sendVerificationEmail(user.email, verificationToken).catch(err => {
-      console.error('Failed to send verification email:', err);
-    });
+    // Mark invite as used
+    await pool.query(
+      'UPDATE invites SET used_at = NOW(), used_by = $1 WHERE id = $2',
+      [user.id, invite.id]
+    );
 
     // Generate JWT tokens
     const accessToken = generateAccessToken(user.id);
@@ -83,13 +107,14 @@ router.post('/register', authLimiter, async (req, res) => {
     );
 
     res.status(201).json({
-      message: 'User registered successfully. Please check your email to verify your account.',
+      message: 'User registered successfully',
       accessToken,
       refreshToken,
       user: {
         id: user.id,
         email: user.email,
         emailVerified: user.email_verified,
+        role: user.role,
         createdAt: user.created_at
       }
     });

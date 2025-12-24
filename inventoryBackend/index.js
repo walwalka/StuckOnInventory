@@ -12,6 +12,7 @@ import bunnykinRoute from './routes/bunnykinRoute.js';
 import comicRoute from './routes/comicRoute.js';
 import comicPublisherRoute from './routes/comicPublisherRoute.js';
 import authRoute from './routes/authRoute.js';
+import inviteRoute from './routes/inviteRoute.js';
 import configurePassport from './config/passport.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import cors from 'cors';
@@ -49,6 +50,9 @@ app.use('/uploads', express.static(UPLOAD_DIR));
 
 // Authentication endpoints under /api/auth
 app.use('/api/auth', authRoute);
+
+// Invite endpoints under /api/invites
+app.use('/api/invites', inviteRoute);
 
 app.get('/', (request, response) => {
     console.log(request);

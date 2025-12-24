@@ -60,3 +60,36 @@ export function requireVerifiedAuth(req, res, next) {
     requireVerifiedEmail(req, res, next);
   });
 }
+
+/**
+ * Middleware to require admin role
+ * Returns 403 if user is not an admin
+ * Should be used after requireAuth middleware
+ */
+export function requireAdmin(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({
+      message: 'Forbidden',
+      error: 'Admin access required'
+    });
+  }
+
+  next();
+}
+
+/**
+ * Combined middleware: require authentication, verified email, and admin role
+ */
+export function requireAdminAuth(req, res, next) {
+  requireAuth(req, res, (err) => {
+    if (err) return next(err);
+    requireVerifiedEmail(req, res, (err) => {
+      if (err) return next(err);
+      requireAdmin(req, res, next);
+    });
+  });
+}

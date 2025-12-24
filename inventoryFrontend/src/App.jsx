@@ -28,6 +28,7 @@ import Login from './components/Login/Login.jsx';
 import Register from './components/Login/Register.jsx';
 import Logout from './components/Login/Logout.jsx';
 import VerifyEmail from './components/Login/VerifyEmail.jsx';
+import InviteManagement from './components/Admin/InviteManagement.jsx';
 import ForgotPassword from './components/Login/ForgotPassword.jsx';
 import ResetPassword from './components/Login/ResetPassword.jsx';
 import ResendVerification from './components/Login/ResendVerification.jsx';
@@ -90,7 +91,7 @@ const App = () => {
       <main className={isLoginRoute ? "p-8" : "p-4"}>
         <Routes>
           <Route path="/login" element={<Login setToken={setToken} />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/invite/:token" element={<Register />} />
           <Route path="/logout" element={<Logout clearToken={clear} />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -108,6 +109,7 @@ const App = () => {
           <Route path='/comics/create' element={<CreateComics />} />
           <Route path='/comics/*' element={<ComicsList showType={showType} onShowTypeChange={setShowType} />} />
           <Route path='/admin' element={<Admin />} />
+          <Route path='/admin/invites' element={<RequireAuth><InviteManagement /></RequireAuth>} />
           <Route path='/mintlocations' element={<Mints showType={showType} onShowTypeChange={setShowType} />} />
           <Route path='/mintlocations/create' element={<CreateMint />} />
           <Route path='/mintlocations/details/:id' element={<ShowMint />} />

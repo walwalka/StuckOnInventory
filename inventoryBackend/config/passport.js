@@ -20,7 +20,7 @@ export default function configurePassport(passport) {
 
         // Query user from database
         const result = await pool.query(
-          'SELECT id, email, email_verified, created_at FROM users WHERE id = $1',
+          'SELECT id, email, email_verified, role, created_at FROM users WHERE id = $1',
           [userId]
         );
 

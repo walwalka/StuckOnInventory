@@ -352,6 +352,17 @@ export const pool = new Pool({
     }
   }
 
+  async function applyInviteSystemMigration() {
+    try {
+      const migrationPath = path.join(path.dirname(new URL(import.meta.url).pathname), 'migrations', 'add-invite-system.sql');
+      const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
+      await pool.query(migrationSQL);
+      console.log('Invite system migration applied successfully');
+    } catch (error) {
+      console.error('Invite system migration failed:', error);
+    }
+  }
+
   async function initDatabase() {
     try {
       await createCoinTable();
@@ -369,6 +380,7 @@ export const pool = new Pool({
       await createComicPublishersTable();
       await seedComicPublishers();
       await createUsersTable();
+      await applyInviteSystemMigration();
     } catch (err) {
       console.error('Database init failed', err);
     }

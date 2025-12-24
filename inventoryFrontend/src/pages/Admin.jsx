@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MdOutlineTableRows, MdMenuBook } from 'react-icons/md';
+import { MdOutlineTableRows, MdMenuBook, MdEmail } from 'react-icons/md';
 import { GiTwoCoins, GiArrowhead } from 'react-icons/gi';
 
 // Reusable card component for consistent styling
@@ -32,6 +32,12 @@ const Admin = () => {
         <h1 className='text-3xl my-8'>Admin Panel</h1>
         <p className='usd-muted mb-6'>Manage system settings and data.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-start items-stretch gap-6 mt-10">
+          <AdminCard
+            to="/admin/invites"
+            icon={MdEmail}
+            title="User Invitations"
+            description="Send invitations to new users and manage pending invites."
+          />
           <AdminCard
             to="/mintlocations"
             icon={MdOutlineTableRows}
