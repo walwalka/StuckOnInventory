@@ -334,6 +334,24 @@ export const pool = new Pool({
     }
   }
 
+  async function createUsersTable() {
+    try {
+      const query = `
+        CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          email VARCHAR(255) NOT NULL UNIQUE,
+          password_hash VARCHAR(255) NOT NULL,
+          created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        );
+      `;
+      await pool.query(query);
+      console.log('Users table created');
+    } catch (error) {
+      console.error(error);
+      console.error('Users table creation failed');
+    }
+  }
+
   async function initDatabase() {
     try {
       await createCoinTable();
@@ -350,6 +368,7 @@ export const pool = new Pool({
       await createComicsTable();
       await createComicPublishersTable();
       await seedComicPublishers();
+      await createUsersTable();
     } catch (err) {
       console.error('Database init failed', err);
     }

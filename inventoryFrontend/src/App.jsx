@@ -6,7 +6,7 @@ import WaffleMenu from './components/WaffleMenu.jsx';
 import { useSnackbar } from 'notistack';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { RiAdminLine } from 'react-icons/ri';
-import { MdDashboard } from "react-icons/md";
+import { MdLogout } from "react-icons/md";
 import Home from './pages/Home.jsx';
 import CoinsList from './components/coins/CoinsList.jsx';
 import CreateCoin from './components/coins/CreateCoins.jsx';
@@ -41,6 +41,8 @@ import EditMint from './components/coins/EditMint.jsx';
 import SelectMint from './components/mints/mintSelect.jsx';
 import DeleteMint from './components/coins/DeleteMint.jsx';
 import Login from './components/Login/Login.jsx';
+import Register from './components/Login/Register.jsx';
+import Logout from './components/Login/Logout.jsx';
 import useToken from './components/useToken.jsx';
 import CoinTypesList from './components/cointypes/CoinTypesList.jsx';
 import CreateCoinType from './components/cointypes/CreateCoinType.jsx';
@@ -64,7 +66,7 @@ const App = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [showType, setShowType] = useState('table');
   const location = useLocation();
-  const isLoginRoute = location.pathname === '/login';
+  const isLoginRoute = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/logout';
 
   // Listen for auth logout events (e.g., 401 from API client)
   useEffect(() => {
@@ -74,7 +76,7 @@ const App = () => {
     };
     window.addEventListener('auth:logout', handler);
     return () => window.removeEventListener('auth:logout', handler);
-  }, [clear]);
+  }, [clear, enqueueSnackbar]);
 
   return (
     <div className="min-h-screen usd-bg usd-text">
@@ -84,14 +86,22 @@ const App = () => {
             <Link to='/' className="text-2xl font-bold hover:opacity-80">Stuck On Inventory</Link>
             <div className="flex items-center gap-x-4">
               <WaffleMenu />
-              <ThemeToggle />            
-              <Link 
+              <ThemeToggle />
+              <Link
                 to='/admin'
                 className='px-4 py-2 rounded usd-btn-green hover:opacity-90 transition flex items-center gap-2'
                 title='Admin Panel'
               >
                 <RiAdminLine className='text-xl' />
                 <span>Admin</span>
+              </Link>
+              <Link
+                to='/logout'
+                className='px-4 py-2 rounded usd-btn-copper hover:opacity-90 transition flex items-center gap-2'
+                title='Logout'
+              >
+                <MdLogout className='text-xl' />
+                <span>Logout</span>
               </Link>
             </div>
           </div>
@@ -100,6 +110,8 @@ const App = () => {
       <main className={isLoginRoute ? "p-8" : "p-4"}>
         <Routes>
           <Route path="/login" element={<Login setToken={setToken} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/logout" element={<Logout clearToken={clear} />} />
           <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
           <Route path='/coins' element={<CoinsList showType={showType} onShowTypeChange={setShowType} />} />
           <Route path='/coins/create' element={<CreateCoin />} />

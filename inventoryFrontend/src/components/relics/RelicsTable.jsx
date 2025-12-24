@@ -56,56 +56,56 @@ const RelicsTable = ({ relics }) => {
   return (
     <div className="overflow-x-auto rounded-lg border-2 usd-border-green shadow-sm">
       <table className='w-full border-collapse'>
-        <thead className='usd-bg-green-light'>
+        <thead className='bg-gray-100 dark:bg-[#3c3c3c]'>
           <tr>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green'>ID</th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green max-md:hidden'>Added Date</th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green'>Image</th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green'>Type</th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green max-md:hidden'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>ID</th>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>Added Date</th>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>Image</th>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>Type</th>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
               Origin
             </th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green max-md:hidden'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
               Era
             </th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green max-md:hidden'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
               Condition
             </th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-center text-sm font-semibold usd-text-green'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-stone-200'>
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className='bg-white divide-y divide-gray-200'>
+        <tbody className='bg-white dark:bg-[#3c3c3c] divide-y divide-gray-200 dark:divide-stone-700'>
           {relics.map((relic, index) => (
-            <tr key={relic.id} className='hover:bg-gray-50 transition-colors'>
-              <td className='px-4 py-3 text-sm text-gray-700'>
+            <tr key={relic.id} className='hover:bg-gray-50 dark:hover:bg-[#4a4a4a] transition-colors'>
+              <td className='px-4 py-3 text-sm text-gray-700 dark:text-stone-300'>
                 {index + 1}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-600 max-md:hidden'>
+              <td className='px-4 py-3 text-sm text-gray-600 dark:text-stone-300 max-md:hidden'>
                 {relic.added_date ? moment(relic.added_date).format("MM/DD/YYYY") : '-'}
               </td>
               <td className='px-4 py-3'>
                 {relic.image1 ? (
-                  <img 
-                    src={imageMap[relic.id] || getImageUrl(relic.image1)} 
-                    alt="Relic" 
+                  <img
+                    src={imageMap[relic.id] || getImageUrl(relic.image1)}
+                    alt="Relic"
                     className="w-12 h-12 object-cover rounded border usd-border-silver"
                   />
                 ) : (
-                  <span className="text-xs text-gray-400">No image</span>
+                  <span className="text-xs text-gray-400 dark:text-stone-500">No image</span>
                 )}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-700 font-medium'>
+              <td className='px-4 py-3 text-sm text-gray-700 dark:text-stone-300 font-medium'>
                 {relic.type}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-600 max-md:hidden'>
+              <td className='px-4 py-3 text-sm text-gray-600 dark:text-stone-300 max-md:hidden'>
                {relic.origin}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-600 max-md:hidden'>
+              <td className='px-4 py-3 text-sm text-gray-600 dark:text-stone-300 max-md:hidden'>
                 {relic.era}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-600 max-md:hidden'>
+              <td className='px-4 py-3 text-sm text-gray-600 dark:text-stone-300 max-md:hidden'>
                 {relic.condition}
               </td>
               <td className='px-4 py-3'>

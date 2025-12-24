@@ -101,16 +101,16 @@ const EditCoin = () => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4 overflow-y-auto">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50 p-4 overflow-y-auto">
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center"><Spinner /></div>
       )}
-      <div className='flex flex-col border-2 usd-border-green bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
-        <div className="flex items-center justify-between mb-4 sticky top-0 bg-white pb-3 border-b usd-border-green">
+      <div className='flex flex-col border-2 usd-border-green bg-white dark:bg-[#2c2c2c] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
+        <div className="flex items-center justify-between mb-4 sticky top-0 bg-white dark:bg-[#2c2c2c] pb-3 border-b usd-border-green">
           <h1 className='text-2xl usd-text-green font-semibold'>Edit Coin</h1>
           <button
             onClick={() => navigate('/coins')}
-            className="text-gray-500 hover:text-gray-700 text-2xl font-bold leading-none"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold leading-none"
             aria-label="Close"
           >
             ✕
@@ -119,10 +119,10 @@ const EditCoin = () => {
 
         <div className='my-4'>
           <label className='text-sm font-semibold usd-text-green mb-2 block'>Type</label>
-          <select 
+          <select
             value={type}
             onChange={(e) => handleTypeChange(e.target.value)}
-            className='border-2 border-gray-300 rounded px-4 py-2 w-full focus:border-green-500 focus:outline-none'
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           >
             {coinTypes.length === 0 && type ? (
               <option value={type}>{type}</option>
@@ -140,7 +140,7 @@ const EditCoin = () => {
           <select
             value={mintlocation}
             onChange={(e) => setMintLocation(e.target.value)}
-            className='border-2 border-gray-300 rounded px-4 py-2 w-full focus:border-green-500 focus:outline-none'
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           >
             {optionList.map((item, value) => (
             <option key={value} value={item.name}>
@@ -155,7 +155,7 @@ const EditCoin = () => {
           <select
             value={mintyear}
             onChange={(e) => setMintYear(e.target.value)}
-            className='border-2 border-gray-300 rounded px-4 py-2 w-full focus:border-green-500 focus:outline-none'
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           >
             <option value=''>Select year</option>
             {years.map((yr) => (
@@ -166,10 +166,10 @@ const EditCoin = () => {
         
         <div className='my-4'>
           <label className='text-sm font-semibold usd-text-green mb-2 block'>Circulated</label>
-          <select 
+          <select
             value={circulation}
             onChange={(e) => setCirculation(e.target.value)}
-            className='border-2 border-gray-300 rounded px-4 py-2 w-full focus:border-green-500 focus:outline-none'
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           >
             <option value="Yes">Yes</option>
             <option value="No">No</option>
@@ -183,7 +183,7 @@ const EditCoin = () => {
             type='text'
             value={grade}
             onChange={(e) => setGrade(e.target.value)}
-            className='border-2 border-gray-300 rounded px-4 py-2 w-full focus:border-green-500 focus:outline-none'
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           />
         </div>
 
@@ -194,14 +194,14 @@ const EditCoin = () => {
             step='0.01'
             value={faceValue}
             onChange={(e) => setFaceValue(e.target.value)}
-            className='border-2 border-gray-300 rounded px-4 py-2 w-full focus:border-green-500 focus:outline-none'
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           />
         </div>
 
         {/* Image Upload Section */}
         {coinData && (
-          <div className='my-4 pt-4 border-t border-gray-200'>
-            <ImageUpload 
+          <div className='my-4 pt-4 border-t border-gray-200 dark:border-gray-700'>
+            <ImageUpload
               coinId={id}
               existingImages={{
                 image1: coinData.image1,
@@ -213,16 +213,16 @@ const EditCoin = () => {
           </div>
         )}
 
-        <div className="mt-6 pt-4 border-t border-gray-200 flex gap-3">
-          <button 
-            className='flex-1 p-3 usd-btn-green rounded hover:opacity-90 disabled:opacity-60' 
+        <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex gap-3">
+          <button
+            className='flex-1 p-3 usd-btn-green rounded hover:opacity-90 disabled:opacity-60'
             onClick={handleEditCoin}
             disabled={loading}
           >
             Save Changes
           </button>
-          <button 
-            className='flex-1 p-3 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-60' 
+          <button
+            className='flex-1 p-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-60'
             onClick={() => navigate('/coins')}
             disabled={loading}
           >

@@ -10,6 +10,7 @@ import stampRoute from './routes/stampRoute.js';
 import bunnykinRoute from './routes/bunnykinRoute.js';
 import comicRoute from './routes/comicRoute.js';
 import comicPublisherRoute from './routes/comicPublisherRoute.js';
+import authRoute from './routes/authRoute.js';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -36,12 +37,8 @@ if (!process.env.OPENAI_API_KEY) {
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(UPLOAD_DIR));
 
-// Unified API prefix
-app.post('/api/login', (req, res) => {
-  res.send({
-    token: 'test123'
-  });
-});
+// Authentication endpoints under /api/auth
+app.use('/api/auth', authRoute);
 
 app.get('/', (request, response) => {
     console.log(request);

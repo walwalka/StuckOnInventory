@@ -56,36 +56,36 @@ const ComicsTable = ({ comics }) => {
   return (
     <div className="overflow-x-auto rounded-lg border-2 usd-border-green shadow-sm">
       <table className='w-full border-collapse'>
-        <thead className='usd-bg-green-light'>
+        <thead className='bg-gray-100 dark:bg-[#3c3c3c]'>
           <tr>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green'>ID</th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green max-md:hidden'>Added Date</th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green'>Image</th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green'>Title</th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green max-md:hidden'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>ID</th>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>Added Date</th>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>Image</th>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>Title</th>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
               Publisher
             </th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green max-md:hidden'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
               Issue #
             </th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green max-md:hidden'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
               Year
             </th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold usd-text-green max-md:hidden'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>
               Grade
             </th>
-            <th className='border-b-2 usd-border-green px-4 py-3 text-center text-sm font-semibold usd-text-green'>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-stone-200'>
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className='bg-white divide-y divide-gray-200'>
+        <tbody className='bg-white dark:bg-[#3c3c3c] divide-y divide-gray-200 dark:divide-stone-700'>
           {comics.map((comic, index) => (
-            <tr key={comic.id} className='hover:bg-gray-50 transition-colors'>
-              <td className='px-4 py-3 text-sm text-gray-700'>
+            <tr key={comic.id} className='hover:bg-gray-50 dark:hover:bg-[#4a4a4a] transition-colors'>
+              <td className='px-4 py-3 text-sm text-gray-700 dark:text-stone-300'>
                 {index + 1}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-600 max-md:hidden'>
+              <td className='px-4 py-3 text-sm text-gray-600 dark:text-stone-300 max-md:hidden'>
                 {comic.added_date ? moment(comic.added_date).format("MM/DD/YYYY") : '-'}
               </td>
               <td className='px-4 py-3'>
@@ -96,22 +96,22 @@ const ComicsTable = ({ comics }) => {
                     className="w-12 h-12 object-cover rounded border usd-border-silver"
                   />
                 ) : (
-                  <span className="text-xs text-gray-400">No image</span>
+                  <span className="text-xs text-gray-400 dark:text-stone-500">No image</span>
                 )}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-700 font-medium'>
+              <td className='px-4 py-3 text-sm text-gray-700 dark:text-stone-300 font-medium'>
                 {comic.title}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-600 max-md:hidden'>
+              <td className='px-4 py-3 text-sm text-gray-600 dark:text-stone-300 max-md:hidden'>
                {comic.publisher}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-600 max-md:hidden'>
+              <td className='px-4 py-3 text-sm text-gray-600 dark:text-stone-300 max-md:hidden'>
                 {comic.issuenumber}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-600 max-md:hidden'>
+              <td className='px-4 py-3 text-sm text-gray-600 dark:text-stone-300 max-md:hidden'>
                 {comic.publicationyear}
               </td>
-              <td className='px-4 py-3 text-sm text-gray-600 max-md:hidden'>
+              <td className='px-4 py-3 text-sm text-gray-600 dark:text-stone-300 max-md:hidden'>
                 {comic.grade}
               </td>
               <td className='px-4 py-3'>
