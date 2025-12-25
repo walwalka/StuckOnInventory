@@ -10,13 +10,23 @@ if [ ! -f .env.production ]; then
     exit 1
 fi
 
+# Backup existing .env if it exists
+if [ -f .env ]; then
+    echo "📋 Backing up existing .env to .env.backup"
+    cp .env .env.backup
+fi
+
+# Copy production env to .env for Docker Compose
+echo "📝 Using .env.production for deployment"
+cp .env.production .env
+
 # Build containers
 echo "📦 Building containers..."
-docker compose --env-file .env.production -f docker-compose.yml -f docker-compose.production.yml build
+docker compose -f docker-compose.yml -f docker-compose.production.yml build
 
 # Start services
 echo "🚢 Starting services..."
-docker compose --env-file .env.production -f docker-compose.yml -f docker-compose.production.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
 
 # Wait for services to be healthy
 echo "⏳ Waiting for services to be healthy..."
@@ -26,7 +36,7 @@ echo ""
 echo "✅ Production deployment complete!"
 echo ""
 echo "View logs with:"
-echo "  docker compose --env-file .env.production -f docker-compose.yml -f docker-compose.production.yml logs -f"
+echo "  docker compose -f docker-compose.yml -f docker-compose.production.yml logs -f"
 echo ""
 echo "Stop services with:"
-echo "  docker compose --env-file .env.production -f docker-compose.yml -f docker-compose.production.yml down"
+echo "  docker compose -f docker-compose.yml -f docker-compose.production.yml down"

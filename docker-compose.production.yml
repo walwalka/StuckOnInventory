@@ -1,13 +1,13 @@
 version: '3.8'
 
 # Production configuration override
-# Usage: docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
+# Usage:
+#   1. Copy .env.production to .env
+#   2. docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
+# Or use: ./scripts/deploy-production.sh
 
 services:
   db:
-    # Load environment variables from .env.production
-    env_file:
-      - .env.production
     restart: always
     volumes:
       # Use named volume for better production data management
@@ -19,8 +19,6 @@ services:
         max-file: "3"
 
   backend:
-    env_file:
-      - .env.production
     restart: always
     logging:
       driver: "json-file"
@@ -29,8 +27,6 @@ services:
         max-file: "3"
 
   frontend:
-    env_file:
-      - .env.production
     restart: always
     logging:
       driver: "json-file"
