@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import BackButton from '../BackButton';
 import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,7 +7,7 @@ import { useSnackbar } from 'notistack';
 // Setting the const for the environments url
 // Uses shared API client baseURL
 
-// Shows delete coin toast allowing for deletion.
+// Shows delete mint modal allowing for deletion.
 const DeleteMint = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -21,8 +20,8 @@ const DeleteMint = () => {
       .delete('/mintlocations/mints/'+id)
       .then(() => {
         setLoading(false);
-        enqueueSnackbar('Mint Deleted successfully', { variant: 'success' });
-        navigate('/mintlocations/mints/');
+        enqueueSnackbar('Mint deleted successfully', { variant: 'success' });
+        navigate('/mintlocations');
       })
       .catch((error) => {
         setLoading(false);
@@ -33,19 +32,30 @@ const DeleteMint = () => {
   };
   
   return (
-    <div className='p-4'>
-      <BackButton />
-      <h1 className='text-3xl my-4'>Delete Mint</h1>
-      {loading ? <Spinner /> : ''}
-      <div className='flex flex-col items-center border-2 border-sky-400 rounded-xl w-[600px] p-8 mx-auto'>
-        <h3 className='text-2xl'>Are You Sure You want to delete this mint?</h3>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center"><Spinner /></div>
+      )}
+      <div className='flex flex-col items-center border-2 usd-border-copper bg-white dark:bg-[#2c2c2c] rounded-xl w-[420px] p-8 mx-auto shadow-2xl relative'>
+        <h1 className='text-2xl mb-3 usd-text-green'>Delete Mint Location</h1>
+        <p className='text-center text-sm usd-muted mb-6'>Are you sure you want to delete this mint location? This action cannot be undone.</p>
 
-        <button
-          className='p-4 bg-red-600 text-white m-8 w-full'
-          onClick={handleDeleteMint}
-        >
-          Yes, Delete it
-        </button>
+        <div className='w-full space-y-3'>
+          <button
+            className='p-3 w-full usd-btn-copper rounded hover:opacity-90 disabled:opacity-60'
+            onClick={handleDeleteMint}
+            disabled={loading}
+          >
+            Yes, delete it
+          </button>
+          <button
+            className='p-3 w-full usd-btn-green rounded hover:opacity-90 disabled:opacity-60'
+            onClick={() => navigate('/mintlocations')}
+            disabled={loading}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   )

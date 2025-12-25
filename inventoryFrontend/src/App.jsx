@@ -19,11 +19,8 @@ import ComicsList from './components/comics/ComicsList.jsx';
 import CreateComics from './components/comics/CreateComics.jsx';
 import Admin from './pages/Admin.jsx';
 import CreateMint from './components/coins/CreateMints.jsx';
-import Mints from './components/coins/Mints.jsx';
-import ShowMint from './components/coins/ShowMint.jsx';
-import EditMint from './components/coins/EditMint.jsx';
+import MintsList from './components/mints/MintsList.jsx';
 import SelectMint from './components/mints/mintSelect.jsx';
-import DeleteMint from './components/coins/DeleteMint.jsx';
 import Login from './components/Login/Login.jsx';
 import Register from './components/Login/Register.jsx';
 import Logout from './components/Login/Logout.jsx';
@@ -69,14 +66,6 @@ const App = () => {
               <WaffleMenu />
               <ThemeToggle />
               <Link
-                to='/admin'
-                className='px-4 py-2 rounded usd-btn-green hover:opacity-90 transition flex items-center gap-2'
-                title='Admin Panel'
-              >
-                <RiAdminLine className='text-xl' />
-                <span>Admin</span>
-              </Link>
-              <Link
                 to='/logout'
                 className='px-4 py-2 rounded usd-btn-copper hover:opacity-90 transition flex items-center gap-2'
                 title='Logout'
@@ -110,12 +99,9 @@ const App = () => {
           <Route path='/comics/*' element={<ComicsList showType={showType} onShowTypeChange={setShowType} />} />
           <Route path='/admin' element={<Admin />} />
           <Route path='/admin/invites' element={<RequireAuth><InviteManagement /></RequireAuth>} />
-          <Route path='/mintlocations' element={<Mints showType={showType} onShowTypeChange={setShowType} />} />
           <Route path='/mintlocations/create' element={<CreateMint />} />
-          <Route path='/mintlocations/details/:id' element={<ShowMint />} />
-          <Route path='/mintlocations/edit/:id' element={<EditMint />} />
+          <Route path='/mintlocations/*' element={<MintsList showType={showType} onShowTypeChange={setShowType} />} />
           <Route path='/mintselect' element={<SelectMint />} />
-          <Route path='/mintlocations/delete/:id' element={<DeleteMint />} />
           <Route path='/cointypes/*' element={<CoinTypesList />} />
           <Route path='/cointypes/create' element={<CreateCoinType />} />
           <Route path='/relictypes/*' element={<RelicTypesList />} />

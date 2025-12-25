@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { MdLightMode, MdDarkMode } from 'react-icons/md';
 
 export default function ThemeToggle() {
   const [usdTheme, setUsdTheme] = useState(() => {
@@ -16,13 +17,18 @@ export default function ThemeToggle() {
     localStorage.setItem('theme-usd', usdTheme ? 'true' : 'false')
   }, [usdTheme])
 
+  const handleClick = () => {
+    setUsdTheme(!usdTheme)
+  }
+
   return (
     <button
-      className="px-3 py-2 rounded usd-btn-green hover:opacity-90 transition"
-      onClick={() => setUsdTheme(v => !v)}
-      aria-label="Toggle USD theme"
+      onClick={handleClick}
+      className="p-2 rounded usd-btn-green hover:opacity-90 transition"
+      aria-label={usdTheme ? 'Switch to light mode' : 'Switch to dark mode'}
+      title={usdTheme ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      {usdTheme ? 'Dark Mode: On' : 'Dark Mode: Off'}
+      {usdTheme ? <MdLightMode className="text-2xl" /> : <MdDarkMode className="text-2xl" />}
     </button>
   )
 }
