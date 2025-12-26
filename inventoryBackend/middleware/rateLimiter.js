@@ -16,6 +16,8 @@ export const authLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   // Skip successful requests from counting against the limit
   skipSuccessfulRequests: false,
+  // Skip rate limiting in test environment
+  skip: (req) => process.env.NODE_ENV === 'test',
 });
 
 /**
@@ -32,6 +34,7 @@ export const generalLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => process.env.NODE_ENV === 'test',
 });
 
 /**
@@ -48,6 +51,7 @@ export const passwordResetLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => process.env.NODE_ENV === 'test',
 });
 
 /**
@@ -64,4 +68,5 @@ export const emailVerificationLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => process.env.NODE_ENV === 'test',
 });
