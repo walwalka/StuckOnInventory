@@ -97,7 +97,7 @@ router.post('/register', authLimiter, async (req, res) => {
     );
 
     // Generate JWT tokens
-    const accessToken = generateAccessToken(user.id);
+    const accessToken = generateAccessToken(user.id, user.role);
     const refreshToken = generateRefreshToken(user.id);
 
     // Store refresh token in database
@@ -138,7 +138,7 @@ router.post('/login', authLimiter, async (req, res) => {
 
     // Find user by email
     const result = await pool.query(
-      'SELECT id, email, password_hash, email_verified, created_at FROM users WHERE email = $1',
+      'SELECT id, email, password_hash, email_verified, role, is_active, created_at FROM users WHERE email = $1',
       [email.toLowerCase()]
     );
 
@@ -147,6 +147,14 @@ router.post('/login', authLimiter, async (req, res) => {
     }
 
     const user = result.rows[0];
+
+    // Check if account is active
+    if (user.is_active === false) {
+      return res.status(403).json({
+        error: 'Account disabled',
+        message: 'Your account has been disabled. Please contact an administrator.'
+      });
+    }
 
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
@@ -165,12 +173,12 @@ router.post('/login', authLimiter, async (req, res) => {
     }
 
     // Generate JWT tokens
-    const accessToken = generateAccessToken(user.id);
+    const accessToken = generateAccessToken(user.id, user.role);
     const refreshToken = generateRefreshToken(user.id);
 
-    // Store refresh token in database
+    // Store refresh token and update last login in database
     await pool.query(
-      'UPDATE users SET refresh_token = $1 WHERE id = $2',
+      'UPDATE users SET refresh_token = $1, last_login = NOW() WHERE id = $2',
       [refreshToken, user.id]
     );
 
@@ -182,6 +190,7 @@ router.post('/login', authLimiter, async (req, res) => {
         id: user.id,
         email: user.email,
         emailVerified: user.email_verified,
+        role: user.role,
         createdAt: user.created_at
       }
     });
@@ -217,7 +226,7 @@ router.post('/refresh', async (req, res) => {
 
     // Verify refresh token exists in database
     const result = await pool.query(
-      'SELECT id, email, email_verified, refresh_token FROM users WHERE id = $1',
+      'SELECT id, email, email_verified, role, refresh_token FROM users WHERE id = $1',
       [decoded.userId]
     );
 
@@ -233,7 +242,7 @@ router.post('/refresh', async (req, res) => {
     }
 
     // Generate new access token
-    const accessToken = generateAccessToken(user.id);
+    const accessToken = generateAccessToken(user.id, user.role);
 
     res.json({
       message: 'Token refreshed successfully',
@@ -241,7 +250,8 @@ router.post('/refresh', async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        emailVerified: user.email_verified
+        emailVerified: user.email_verified,
+        role: user.role
       }
     });
   } catch (error) {

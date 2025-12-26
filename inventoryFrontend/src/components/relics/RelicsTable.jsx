@@ -59,6 +59,7 @@ const RelicsTable = ({ relics }) => {
         <thead className='bg-gray-100 dark:bg-[#3c3c3c]'>
           <tr>
             <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>ID</th>
+            <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>Quantity</th>
             <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200 max-md:hidden'>Added Date</th>
             <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>Image</th>
             <th className='border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200'>Type</th>
@@ -81,6 +82,9 @@ const RelicsTable = ({ relics }) => {
             <tr key={relic.id} className='hover:bg-gray-50 dark:hover:bg-[#4a4a4a] transition-colors'>
               <td className='px-4 py-3 text-sm text-gray-700 dark:text-stone-300'>
                 {index + 1}
+              </td>
+              <td className='px-4 py-3 text-sm text-gray-700 dark:text-stone-300 font-medium'>
+                {relic.quantity || 1}
               </td>
               <td className='px-4 py-3 text-sm text-gray-600 dark:text-stone-300 max-md:hidden'>
                 {relic.added_date ? moment(relic.added_date).format("MM/DD/YYYY") : '-'}

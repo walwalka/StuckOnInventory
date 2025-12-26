@@ -17,6 +17,7 @@ const EditCoin = () => {
   const [optionList,setOptionList] = useState([]);
   const [coinTypes, setCoinTypes] = useState([]);
   const [faceValue, setFaceValue] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [coinData, setCoinData] = useState(null);
   const navigate = useNavigate();
   const {id} = useParams();
@@ -35,6 +36,7 @@ const EditCoin = () => {
         setCirculation(response.data.circulation)
         setGrade(response.data.grade)
         setFaceValue(response.data.face_value ?? '');
+        setQuantity(response.data.quantity || 1);
         setLoading(false);
       }).catch((error) => {
         setLoading(false);
@@ -56,6 +58,7 @@ const EditCoin = () => {
       circulation,
       grade,
       face_value: faceValue === '' ? null : parseFloat(faceValue),
+      quantity: parseInt(quantity) || 1,
     };
     setLoading(true);
     api
@@ -194,6 +197,17 @@ const EditCoin = () => {
             step='0.01'
             value={faceValue}
             onChange={(e) => setFaceValue(e.target.value)}
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
+          />
+        </div>
+
+        <div className='my-4'>
+          <label className='text-sm font-semibold usd-text-green mb-2 block'>Quantity</label>
+          <input
+            type='number'
+            min='1'
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
             className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
           />
         </div>

@@ -363,6 +363,28 @@ export const pool = new Pool({
     }
   }
 
+  async function applyUserActiveStatusMigration() {
+    try {
+      const migrationPath = path.join(path.dirname(new URL(import.meta.url).pathname), 'migrations', 'add-user-active-status.sql');
+      const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
+      await pool.query(migrationSQL);
+      console.log('User active status migration applied successfully');
+    } catch (error) {
+      console.error('User active status migration failed:', error);
+    }
+  }
+
+  async function applyQuantityColumnsMigration() {
+    try {
+      const migrationPath = path.join(path.dirname(new URL(import.meta.url).pathname), 'migrations', 'add-quantity-columns.sql');
+      const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
+      await pool.query(migrationSQL);
+      console.log('Quantity columns migration applied successfully');
+    } catch (error) {
+      console.error('Quantity columns migration failed:', error);
+    }
+  }
+
   async function initDatabase() {
     try {
       await createCoinTable();
@@ -381,6 +403,8 @@ export const pool = new Pool({
       await seedComicPublishers();
       await createUsersTable();
       await applyInviteSystemMigration();
+      await applyUserActiveStatusMigration();
+      await applyQuantityColumnsMigration();
     } catch (err) {
       console.error('Database init failed', err);
     }

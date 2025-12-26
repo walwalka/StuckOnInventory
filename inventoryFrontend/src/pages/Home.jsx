@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaCoins } from 'react-icons/fa';
 import { RiAdminLine } from 'react-icons/ri';
 import { GiArrowhead, GiStamper, GiRabbit, GiBookCover } from 'react-icons/gi';
+import { isAdmin } from '../auth/token';
 
 // Reusable card component for consistent styling
 const HubCard = ({ to, icon: Icon, title, description }) => (
@@ -27,6 +28,8 @@ const HubCard = ({ to, icon: Icon, title, description }) => (
 );
 
 const Home = () => {
+  const userIsAdmin = isAdmin();
+
   return (
     <div className="flex justify-center p-4">
       <div className="max-w-full">
@@ -63,12 +66,14 @@ const Home = () => {
             title="Comic Books"
             description="View, create, edit, and manage your comic books."
           />
-          <HubCard
-            to="/admin"
-            icon={RiAdminLine}
-            title="Admin Panel"
-            description="View, create, edit, and manage your admin settings."
-          />
+          {userIsAdmin && (
+            <HubCard
+              to="/admin"
+              icon={RiAdminLine}
+              title="Admin Panel"
+              description="View, create, edit, and manage your admin settings."
+            />
+          )}
         </div>
       </div>
     </div>

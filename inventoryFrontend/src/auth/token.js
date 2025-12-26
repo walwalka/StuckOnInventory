@@ -8,7 +8,7 @@
  * @param {string} token - JWT token to decode
  * @returns {Object|null} - Decoded payload or null if invalid
  */
-const decodeJWT = (token) => {
+export const decodeJWT = (token) => {
   try {
     // JWT format: header.payload.signature
     const parts = token.split('.');
@@ -129,4 +129,27 @@ export const getToken = () => {
  */
 export const clearToken = () => {
   clearTokens();
+};
+
+/**
+ * Get user role from access token
+ * @returns {string|null} - User role ('admin' or 'user') or null if not found
+ */
+export const getUserRole = () => {
+  const token = getAccessToken();
+
+  if (!token) {
+    return null;
+  }
+
+  const decoded = decodeJWT(token);
+  return decoded?.role || null;
+};
+
+/**
+ * Check if current user is an admin
+ * @returns {boolean} - True if user is admin, false otherwise
+ */
+export const isAdmin = () => {
+  return getUserRole() === 'admin';
 };

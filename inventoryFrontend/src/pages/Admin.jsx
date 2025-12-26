@@ -33,10 +33,10 @@ const Admin = () => {
         <p className='usd-muted mb-6'>Manage system settings and data.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-start items-stretch gap-6 mt-10">
           <AdminCard
-            to="/admin/invites"
+            to="/admin/users"
             icon={MdEmail}
-            title="User Invitations"
-            description="Send invitations to new users and manage pending invites."
+            title="User Management"
+            description="Manage users, roles, invitations, and account settings."
           />
           <AdminCard
             to="/mintlocations"

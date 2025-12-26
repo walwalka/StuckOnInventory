@@ -44,6 +44,10 @@ const StampSingleCard = ({ stamp }) => {
         <BiUserCircle className='text-2xl' style={{ color: 'var(--usd-copper)' }} />
         <h2 className='my-1'>{stamp.issueyear}</h2>
       </div>
+      <div className='flex justify-start items-center gap-x-2'>
+        <PiBookOpenTextLight className='text-2xl' style={{ color: 'var(--usd-copper)' }} />
+        <h2 className='my-1'>Qty: {stamp.quantity || 1}</h2>
+      </div>
       <div className='flex justify-between items-center gap-x-2 mt-4 p-4'>
         <BiShow
           className='text-3xl cursor-pointer'

@@ -11,6 +11,7 @@ const EditBunnykin = () => {
   const [productionyear, setProductionYear] = useState('');
   const [condition, setCondition] = useState('');
   const [description, setDescription] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [bunnykinData, setBunnykinData] = useState(null);
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const EditBunnykin = () => {
         setProductionYear(response.data.productionyear);
         setCondition(response.data.condition);
         setDescription(response.data.description || '');
+        setQuantity(response.data.quantity || 1);
         setLoading(false);
       }).catch((error) => {
         setLoading(false);
@@ -42,7 +44,8 @@ const EditBunnykin = () => {
       series,
       productionyear,
       condition,
-      description
+      description,
+      quantity: parseInt(quantity) || 1
     };
     setLoading(true);
     api
@@ -129,6 +132,17 @@ const EditBunnykin = () => {
             onChange={(e) => setDescription(e.target.value)}
             className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
             rows='4'
+          />
+        </div>
+
+        <div className='my-4'>
+          <label className='text-sm font-semibold usd-text-green mb-2 block'>Quantity</label>
+          <input
+            type='number'
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
+            min='1'
           />
         </div>
 

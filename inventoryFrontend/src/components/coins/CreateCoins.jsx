@@ -21,6 +21,7 @@ const CreateCoins = () => {
   const [optionList,setOptionList] = useState([]);
   const [coinTypes, setCoinTypes] = useState([]);
   const [faceValue, setFaceValue] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ const CreateCoins = () => {
       circulation,
       grade,
       face_value: faceValue === '' ? null : parseFloat(faceValue),
+      quantity: parseInt(quantity) || 1,
     };
     setLoading(true);
     
@@ -224,7 +226,18 @@ const CreateCoins = () => {
               placeholder='Auto-filled from coin type'
             />
           </div>
-        
+          <div className='my-4'>
+            <label className='text-xl mr-4 usd-muted'>Quantity *</label>
+            <input
+              type='number'
+              min='1'
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
+              placeholder='Number of items'
+            />
+          </div>
+
           {/* Image Upload Section */}
           <div className='my-4'>
             <label className='text-xl mr-4 usd-muted'>Coin Images (Optional, up to 3)</label>

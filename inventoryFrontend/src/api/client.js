@@ -134,7 +134,10 @@ api.interceptors.response.use(
 
             if (typeof window !== 'undefined') {
               window.dispatchEvent(new CustomEvent('auth:logout'));
-              alert('Your session has expired. Please log in again.');
+              // Only show alert if not on logout page
+              if (!window.location.pathname.includes('/logout')) {
+                alert('Your session has expired. Please log in again.');
+              }
             }
 
             return Promise.reject(error);

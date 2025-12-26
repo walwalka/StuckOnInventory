@@ -25,7 +25,7 @@ import Login from './components/Login/Login.jsx';
 import Register from './components/Login/Register.jsx';
 import Logout from './components/Login/Logout.jsx';
 import VerifyEmail from './components/Login/VerifyEmail.jsx';
-import InviteManagement from './components/Admin/InviteManagement.jsx';
+import UserManagement from './components/Admin/UserManagement.jsx';
 import ForgotPassword from './components/Login/ForgotPassword.jsx';
 import ResetPassword from './components/Login/ResetPassword.jsx';
 import ResendVerification from './components/Login/ResendVerification.jsx';
@@ -98,7 +98,7 @@ const App = () => {
           <Route path='/comics/create' element={<CreateComics />} />
           <Route path='/comics/*' element={<ComicsList showType={showType} onShowTypeChange={setShowType} />} />
           <Route path='/admin' element={<Admin />} />
-          <Route path='/admin/invites' element={<RequireAuth><InviteManagement /></RequireAuth>} />
+          <Route path='/admin/users' element={<RequireAuth><UserManagement /></RequireAuth>} />
           <Route path='/mintlocations/create' element={<CreateMint />} />
           <Route path='/mintlocations/*' element={<MintsList showType={showType} onShowTypeChange={setShowType} />} />
           <Route path='/mintselect' element={<SelectMint />} />

@@ -5,15 +5,16 @@ import { jwtSecret, jwtAccessExpiry, jwtRefreshExpiry } from '../config.js';
 /**
  * Generate a JWT access token (short-lived, 15 minutes)
  * @param {number} userId - The user ID to encode in the token
+ * @param {string} role - The user's role ('admin' or 'user')
  * @returns {string} - Signed JWT access token
  */
-export function generateAccessToken(userId) {
+export function generateAccessToken(userId, role = 'user') {
   if (!jwtSecret) {
     throw new Error('JWT_SECRET is not configured in environment variables');
   }
 
   return jwt.sign(
-    { userId, type: 'access' },
+    { userId, role, type: 'access' },
     jwtSecret,
     { expiresIn: jwtAccessExpiry }
   );

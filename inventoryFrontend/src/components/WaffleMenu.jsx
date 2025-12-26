@@ -4,21 +4,26 @@ import { GiTwoCoins, GiArrowhead, GiStamper, GiRabbit } from 'react-icons/gi';
 import { RiAdminLine } from 'react-icons/ri';
 import { MdDashboard, MdLocationOn, MdMenuBook } from 'react-icons/md';
 import { BsGrid3X3Gap } from 'react-icons/bs';
+import { isAdmin } from '../auth/token';
 
 const WaffleMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
+  const userIsAdmin = isAdmin();
 
   // Navigation items - add new pages here and they'll automatically appear
-  const navItems = [
+  const allNavItems = [
     { path: '/', title: 'Inventory Hub', icon: MdDashboard, color: 'usd-btn-green' },
     { path: '/coins', title: 'Coins', icon: GiTwoCoins, color: 'usd-btn-green' },
     { path: '/relics', title: 'Native American Relics', icon: GiArrowhead, color: 'usd-btn-green' },
     { path: '/stamps', title: 'Stamps', icon: GiStamper, color: 'usd-btn-green' },
     { path: '/bunnykins', title: 'Bunnykins', icon: GiRabbit, color: 'usd-btn-green' },
     { path: '/comics', title: 'Comics', icon: MdMenuBook, color: 'usd-btn-green' },
-    { path: '/admin', title: 'Admin', icon: RiAdminLine, color: 'usd-btn-copper' },
+    { path: '/admin', title: 'Admin', icon: RiAdminLine, color: 'usd-btn-copper', adminOnly: true },
   ];
+
+  // Filter navigation items based on admin status
+  const navItems = allNavItems.filter(item => !item.adminOnly || userIsAdmin);
 
   // Close menu when clicking outside
   useEffect(() => {

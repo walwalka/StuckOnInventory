@@ -15,6 +15,7 @@ const EditComic = () => {
   const [condition, setCondition] = useState('');
   const [variant, setVariant] = useState('');
   const [description, setDescription] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [comicData, setComicData] = useState(null);
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ const EditComic = () => {
         setCondition(response.data.condition);
         setVariant(response.data.variant || '');
         setDescription(response.data.description || '');
+        setQuantity(response.data.quantity || 1);
         setLoading(false);
       }).catch((error) => {
         setLoading(false);
@@ -54,7 +56,8 @@ const EditComic = () => {
       grade,
       condition,
       variant,
-      description
+      description,
+      quantity: parseInt(quantity) || 1
     };
     setLoading(true);
     api
@@ -206,6 +209,17 @@ const EditComic = () => {
             onChange={(e) => setDescription(e.target.value)}
             className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
             rows='4'
+          />
+        </div>
+
+        <div className='my-4'>
+          <label className='text-sm font-semibold usd-text-green mb-2 block'>Quantity</label>
+          <input
+            type='number'
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
+            min='1'
           />
         </div>
 

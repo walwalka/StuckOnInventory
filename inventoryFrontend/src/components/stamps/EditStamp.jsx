@@ -11,6 +11,7 @@ const EditStamp = () => {
   const [issueyear, setIssueYear] = useState('');
   const [condition, setCondition] = useState('');
   const [description, setDescription] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [stampData, setStampData] = useState(null);
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const EditStamp = () => {
         setIssueYear(response.data.issueyear);
         setCondition(response.data.condition);
         setDescription(response.data.description || '');
+        setQuantity(response.data.quantity || 1);
         setLoading(false);
       }).catch((error) => {
         setLoading(false);
@@ -42,7 +44,8 @@ const EditStamp = () => {
       denomination,
       issueyear,
       condition,
-      description
+      description,
+      quantity: parseInt(quantity) || 1
     };
     setLoading(true);
     api
@@ -128,6 +131,18 @@ const EditStamp = () => {
             onChange={(e) => setDescription(e.target.value)}
             className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
             rows='4'
+          />
+        </div>
+
+        <div className='my-4'>
+          <label className='text-sm font-semibold usd-text-green mb-2 block'>Quantity</label>
+          <input
+            type='number'
+            min='1'
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
+            placeholder='Number of items'
           />
         </div>
 

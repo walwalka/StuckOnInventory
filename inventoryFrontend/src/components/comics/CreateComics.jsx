@@ -16,6 +16,7 @@ const CreateComics = () => {
   const [condition, setCondition] = useState('');
   const [variant, setVariant] = useState('');
   const [description, setDescription] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
@@ -70,6 +71,7 @@ const CreateComics = () => {
       condition,
       variant,
       description,
+      quantity: parseInt(quantity) || 1,
     };
     setLoading(true);
 
@@ -238,6 +240,18 @@ const CreateComics = () => {
               className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
               rows='4'
               placeholder="Additional details about the comic..."
+            />
+          </div>
+
+          <div className='my-4'>
+            <label className='text-xl mr-4 usd-muted'>Quantity</label>
+            <input
+              type='number'
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
+              min='1'
+              placeholder="1"
             />
           </div>
 

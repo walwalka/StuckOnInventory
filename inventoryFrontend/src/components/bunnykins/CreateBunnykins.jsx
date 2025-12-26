@@ -12,6 +12,7 @@ const CreateBunnykins = () => {
   const [productionyear, setProductionYear] = useState('');
   const [condition, setCondition] = useState('');
   const [description, setDescription] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
@@ -50,6 +51,7 @@ const CreateBunnykins = () => {
       productionyear,
       condition,
       description,
+      quantity: parseInt(quantity) || 1,
     };
     setLoading(true);
     
@@ -155,7 +157,19 @@ const CreateBunnykins = () => {
               placeholder="Additional details about the Bunnykins figurine..."
             />
           </div>
-        
+
+          <div className='my-4'>
+            <label className='text-xl mr-4 usd-muted'>Quantity</label>
+            <input
+              type='number'
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
+              min='1'
+              placeholder="1"
+            />
+          </div>
+
           <div className='my-4'>
             <label className='text-xl mr-4 usd-muted'>Bunnykins Images (Optional, up to 3)</label>
             <div className="flex items-center space-x-2 mt-2">

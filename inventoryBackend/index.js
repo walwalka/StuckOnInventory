@@ -13,6 +13,7 @@ import comicRoute from './routes/comicRoute.js';
 import comicPublisherRoute from './routes/comicPublisherRoute.js';
 import authRoute from './routes/authRoute.js';
 import inviteRoute from './routes/inviteRoute.js';
+import userRoute from './routes/userRoute.js';
 import configurePassport from './config/passport.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import cors from 'cors';
@@ -53,6 +54,9 @@ app.use('/api/auth', authRoute);
 
 // Invite endpoints under /api/invites
 app.use('/api/invites', inviteRoute);
+
+// User management endpoints under /api/users
+app.use('/api/users', userRoute);
 
 app.get('/', (request, response) => {
     console.log(request);

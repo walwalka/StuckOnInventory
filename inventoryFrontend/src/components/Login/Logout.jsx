@@ -1,19 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { MdCheckCircle } from 'react-icons/md';
 import api from '../../api/client';
 
 const Logout = ({ clearToken }) => {
   const [logoutComplete, setLogoutComplete] = useState(false);
+  const hasLoggedOut = useRef(false);
 
   useEffect(() => {
     const performLogout = async () => {
+      // Prevent multiple logout calls
+      if (hasLoggedOut.current) return;
+      hasLoggedOut.current = true;
+
       try {
         // Call backend logout endpoint to invalidate refresh token
         await api.post('/auth/logout');
       } catch (error) {
-        // Log error but continue with client-side logout
-        console.error('Logout error:', error);
+        // Silently handle logout errors (token may already be invalid)
+        // The important part is clearing the client-side tokens
       } finally {
         // Clear tokens from localStorage
         if (clearToken) {
@@ -24,7 +29,8 @@ const Logout = ({ clearToken }) => {
     };
 
     performLogout();
-  }, [clearToken]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - only run once on mount
 
   return (
     <div className="min-h-screen flex items-center justify-center usd-bg">
