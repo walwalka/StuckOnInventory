@@ -59,13 +59,13 @@ async function showMigrationStatus() {
 
     const files = await getMigrationFiles();
 
-    console.log('\n📊 Migration Status:\n');
+    console.log('\nMigration Status:\n');
     console.log('Version | Status     | Name                               | Applied At       | Time (ms)');
     console.log('--------|------------|------------------------------------|-----------------|-----------');
 
     for (const migration of files) {
       const record = applied.rows.find(r => r.version === migration.version);
-      const status = record ? '✅ Applied' : '⏳ Pending';
+      const status = record ? '[Applied]' : '[Pending]';
       const appliedAt = record
         ? record.applied_at.toISOString().split('T')[0]
         : '-';
@@ -80,11 +80,11 @@ async function showMigrationStatus() {
     }
 
     const pendingCount = files.length - applied.rows.length;
-    console.log(`\n📈 Summary: ${applied.rows.length} applied, ${pendingCount} pending\n`);
+    console.log(`\nSummary: ${applied.rows.length} applied, ${pendingCount} pending\n`);
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error showing migration status:', error);
+    console.error('[ERROR] Error showing migration status:', error);
     process.exit(1);
   }
 }

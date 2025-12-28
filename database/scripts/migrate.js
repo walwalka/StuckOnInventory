@@ -67,7 +67,7 @@ async function isMigrationApplied(version) {
 async function runMigration(version, name, sqlFilePath) {
   // Check if already applied
   if (await isMigrationApplied(version)) {
-    console.log(`⏭️  Skipping ${version} - already applied`);
+    console.log(`[SKIP] ${version} - already applied`);
     return;
   }
 
@@ -95,11 +95,11 @@ async function runMigration(version, name, sqlFilePath) {
     // Commit transaction
     await client.query('COMMIT');
 
-    console.log(`✅ Applied ${version}_${name.replace(/ /g, '_')} in ${executionTime}ms`);
+    console.log(`[OK] Applied ${version}_${name.replace(/ /g, '_')} in ${executionTime}ms`);
   } catch (error) {
     // Rollback on any error
     await client.query('ROLLBACK');
-    console.error(`❌ Failed to apply ${version}:`, error.message);
+    console.error(`[ERROR] Failed to apply ${version}:`, error.message);
     throw error;
   } finally {
     client.release();
@@ -110,7 +110,7 @@ async function runMigration(version, name, sqlFilePath) {
  * Main migration runner
  */
 async function runMigrations() {
-  console.log('🚀 Starting database migrations...\n');
+  console.log('Starting database migrations...\n');
 
   try {
     // Ensure migrations table exists
@@ -118,7 +118,7 @@ async function runMigrations() {
 
     // Get all migration files
     const migrations = await getMigrationFiles();
-    console.log(`📁 Found ${migrations.length} migration file(s)\n`);
+    console.log(`Found ${migrations.length} migration file(s)\n`);
 
     // Run each migration
     let appliedCount = 0;
@@ -128,14 +128,14 @@ async function runMigrations() {
         await runMigration(migration.version, migration.name, migration.path);
         appliedCount++;
       } else {
-        console.log(`⏭️  Skipping ${migration.version} - already applied`);
+        console.log(`[SKIP] ${migration.version} - already applied`);
       }
     }
 
-    console.log(`\n✅ Migration complete! Applied ${appliedCount} migration(s)`);
+    console.log(`\n[SUCCESS] Migration complete! Applied ${appliedCount} migration(s)`);
     process.exit(0);
   } catch (error) {
-    console.error('\n❌ Migration failed:', error);
+    console.error('\n[ERROR] Migration failed:', error);
     process.exit(1);
   }
 }

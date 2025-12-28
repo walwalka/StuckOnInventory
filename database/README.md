@@ -73,18 +73,18 @@ npm run migrate:status
 **Example output:**
 
 ```
-🚀 Starting database migrations...
+Starting database migrations...
 
-📁 Found 6 migration file(s)
+Found 6 migration file(s)
 
-✅ Applied 001_initial_tables in 234ms
-✅ Applied 002_seed_reference_data in 89ms
-⏭️  Skipping 003 - already applied
-⏭️  Skipping 004 - already applied
-⏭️  Skipping 005 - already applied
-⏭️  Skipping 006 - already applied
+[OK] Applied 001_initial_tables in 234ms
+[OK] Applied 002_seed_reference_data in 89ms
+[SKIP] 003 - already applied
+[SKIP] 004 - already applied
+[SKIP] 005 - already applied
+[SKIP] 006 - already applied
 
-✅ Migration complete! Applied 2 migration(s)
+[SUCCESS] Migration complete! Applied 2 migration(s)
 ```
 
 ### Checking Migration Status
@@ -96,18 +96,18 @@ npm run migrate:status
 **Example output:**
 
 ```
-📊 Migration Status:
+Migration Status:
 
 Version | Status     | Name                               | Applied At       | Time (ms)
 --------|------------|------------------------------------|-----------------|-----------
-001     | ✅ Applied | initial tables                     | 2024-12-28      | 234
-002     | ✅ Applied | seed reference data                | 2024-12-28      | 89
-003     | ✅ Applied | add auth columns                   | 2024-12-28      | 45
-004     | ⏳ Pending | add invite system                  | -               | -
-005     | ⏳ Pending | add user active status             | -               | -
-006     | ⏳ Pending | add quantity columns               | -               | -
+001     | [Applied]  | initial tables                     | 2024-12-28      | 234
+002     | [Applied]  | seed reference data                | 2024-12-28      | 89
+003     | [Applied]  | add auth columns                   | 2024-12-28      | 45
+004     | [Pending]  | add invite system                  | -               | -
+005     | [Pending]  | add user active status             | -               | -
+006     | [Pending]  | add quantity columns               | -               | -
 
-📈 Summary: 3 applied, 3 pending
+Summary: 3 applied, 3 pending
 ```
 
 ## Docker Integration
@@ -203,7 +203,7 @@ git push
 
 ## Migration Best Practices
 
-### ✅ DO
+### DO
 
 - **Use transactions** - The migration runner handles this automatically
 - **Make migrations idempotent when possible** - Use `IF NOT EXISTS` for checks
@@ -213,7 +213,7 @@ git push
 - **Use descriptive names** - `007_add_wishlist_feature.sql` not `007_update.sql`
 - **Never modify applied migrations** - Create a new migration to fix issues
 
-### ❌ DON'T
+### DON'T
 
 - **Don't modify applied migrations** - Create a new migration instead
 - **Don't include environment-specific settings** - Keep migrations portable
@@ -314,11 +314,11 @@ SQL_PASS=your_password
 - `.sql` - SQL file extension
 
 **Examples:**
-- ✅ `001_initial_tables.sql`
-- ✅ `007_add_user_preferences.sql`
-- ✅ `042_optimize_search_indexes.sql`
-- ❌ `7_update.sql` (not zero-padded, not descriptive)
-- ❌ `add-feature.sql` (no number)
+- GOOD: `001_initial_tables.sql`
+- GOOD: `007_add_user_preferences.sql`
+- GOOD: `042_optimize_search_indexes.sql`
+- BAD: `7_update.sql` (not zero-padded, not descriptive)
+- BAD: `add-feature.sql` (no number)
 
 ## Current Schema
 
