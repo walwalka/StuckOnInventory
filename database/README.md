@@ -15,21 +15,27 @@ This project uses a custom migration system to manage database schema changes in
 
 ```
 database/
-├── migrations/               # All migration SQL files
-│   ├── 001_initial_tables.sql
+├── migrations/                      # All migration SQL files
+│   ├── 001_initial_tables.sql      # Legacy format (no rollback)
 │   ├── 002_seed_reference_data.sql
 │   ├── 003_add_auth_columns.sql
 │   ├── 004_add_invite_system.sql
 │   ├── 005_add_user_active_status.sql
-│   └── 006_add_quantity_columns.sql
-├── scripts/                  # Migration runner scripts
-│   ├── migrate.js           # Runs pending migrations
-│   └── migration-status.js  # Shows migration status
-├── config-db.js             # Database configuration
-├── database.js              # Database connection pool (no auto-init)
-├── mints.json               # Reference data for mint locations
-├── cointypes.json           # Reference data for coin types
-└── README.md                # This file
+│   ├── 006_add_quantity_columns.sql
+│   └── 007_example/                 # New format (with rollback)
+│       ├── up.sql                   # Forward migration
+│       └── down.sql                 # Rollback migration
+├── scripts/                         # Migration management scripts
+│   ├── migrate.js                  # Runs pending migrations
+│   ├── migration-status.js         # Shows migration status
+│   ├── rollback.js                 # Rolls back migrations
+│   └── create-migration.js         # Generates new migrations
+├── config-db.js                    # Database configuration
+├── database.js                     # Database connection pool
+├── mints.json                      # Reference data for mint locations
+├── cointypes.json                  # Reference data for coin types
+├── README.md                       # This file (overview)
+└── MIGRATION_GUIDE.md              # Detailed migration guide
 ```
 
 ## How It Works
@@ -109,6 +115,62 @@ Version | Status     | Name                               | Applied At       | T
 
 Summary: 3 applied, 3 pending
 ```
+
+### Rolling Back Migrations
+
+Roll back the last migration:
+
+```bash
+npm run migrate:rollback
+```
+
+Roll back multiple migrations:
+
+```bash
+npm run migrate:rollback 3  # Rolls back last 3 migrations
+```
+
+**Example output:**
+
+```
+Rolling back last 1 migration(s)...
+
+Found 6 applied migration(s)
+Will rollback 1 migration(s):
+
+  [Available] 007 - add wishlist table
+
+[ROLLBACK] Rolling back 007_add wishlist table...
+[OK] Rolled back 007 in 45ms
+
+[SUCCESS] Rolled back 1 migration(s)
+```
+
+**Important:** Only migrations with rollback files can be rolled back automatically. Legacy migrations (001-006) don't have rollback files and must be reversed manually or with a new forward migration.
+
+### Creating New Migrations
+
+Create a new migration with automatic rollback support:
+
+```bash
+npm run migrate:create add_wishlist_table
+```
+
+This creates:
+
+```
+database/migrations/007_add_wishlist_table/
+  ├── up.sql    # Forward migration
+  └── down.sql  # Rollback migration
+```
+
+Edit both files, then apply the migration:
+
+```bash
+npm run migrate
+```
+
+See `database/MIGRATION_GUIDE.md` for detailed migration creation and rollback examples.
 
 ## Docker Integration
 

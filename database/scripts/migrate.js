@@ -23,6 +23,7 @@ async function ensureMigrationsTable() {
 /**
  * Gets all migration files from the migrations directory
  * Returns them sorted by version number
+ * Supports both legacy (.sql files) and new (directories with up.sql) formats
  */
 async function getMigrationFiles() {
   const migrationsDir = path.join(
@@ -30,24 +31,48 @@ async function getMigrationFiles() {
     '../migrations'
   );
 
-  const files = fs.readdirSync(migrationsDir)
-    .filter(f => f.endsWith('.sql'))
-    .sort(); // Alphabetical = chronological with numbered prefixes
+  const entries = fs.readdirSync(migrationsDir);
+  const migrations = [];
 
-  return files.map(filename => {
-    // Match pattern: 001_migration_name.sql
-    const match = filename.match(/^(\d+)_(.+)\.sql$/);
-    if (!match) {
-      throw new Error(`Invalid migration filename: ${filename}`);
+  for (const entry of entries) {
+    const entryPath = path.join(migrationsDir, entry);
+    const stats = fs.statSync(entryPath);
+
+    // Directory-based migration (new format: 001_name/up.sql)
+    if (stats.isDirectory()) {
+      const match = entry.match(/^(\d+)_(.+)$/);
+      if (match) {
+        const upPath = path.join(entryPath, 'up.sql');
+        if (fs.existsSync(upPath)) {
+          migrations.push({
+            version: match[1],
+            name: match[2].replace(/_/g, ' '),
+            filename: entry,
+            path: upPath,
+            type: 'directory',
+            hasRollback: fs.existsSync(path.join(entryPath, 'down.sql'))
+          });
+        }
+      }
     }
+    // Legacy single-file migration (001_name.sql)
+    else if (entry.endsWith('.sql') && !entry.endsWith('.down.sql')) {
+      const match = entry.match(/^(\d+)_(.+)\.sql$/);
+      if (match) {
+        migrations.push({
+          version: match[1],
+          name: match[2].replace(/_/g, ' '),
+          filename: entry,
+          path: entryPath,
+          type: 'legacy',
+          hasRollback: false
+        });
+      }
+    }
+  }
 
-    return {
-      version: match[1],
-      name: match[2].replace(/_/g, ' '),
-      filename: filename,
-      path: path.join(migrationsDir, filename)
-    };
-  });
+  // Sort by version number
+  return migrations.sort((a, b) => a.version.localeCompare(b.version));
 }
 
 /**
