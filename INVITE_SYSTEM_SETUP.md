@@ -109,13 +109,13 @@ FRONTEND_URL=http://localhost:5173
 
 ## Security Features
 
-- ✅ Invite tokens are 32-byte random hex strings
-- ✅ Invites expire after 7 days
-- ✅ One-time use - can't reuse invite after registration
-- ✅ Email verification automatic (trusted invite source)
-- ✅ Admin-only access to invite management
-- ✅ Rate limiting on all auth endpoints
-- ✅ Users created via invite are automatically verified
+- Invite tokens are 32-byte random hex strings
+- Invites expire after 7 days
+- One-time use - can't reuse invite after registration
+- Email verification automatic (trusted invite source)
+- Admin-only access to invite management
+- Rate limiting on all auth endpoints
+- Users created via invite are automatically verified
 
 ## User Roles
 
@@ -203,10 +203,10 @@ node create-admin-user.js
 
 ## Next Steps
 
-1. ✅ Create your admin account
-2. ✅ Test the invite flow
-3. ✅ Configure SMTP for email delivery
-4. ✅ Send your first invitation
-5. ✅ Review the admin panel features
+1. Create your admin account
+2. Test the invite flow
+3. Configure SMTP for email delivery
+4. Send your first invitation
+5. Review the admin panel features
 
 Your application is now secure with invite-only registration!

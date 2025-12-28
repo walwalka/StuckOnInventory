@@ -112,7 +112,7 @@ const CreateComics = () => {
           onClick={() => navigate('/comics')}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold"
         >
-          ✕
+          X
         </button>
 
         <h1 className='text-3xl mb-6'>Create Comic Book Record</h1>
@@ -289,7 +289,7 @@ const CreateComics = () => {
                       onClick={() => removeFile(index)}
                       className="absolute top-1 right-1 px-2 py-1 text-xs usd-btn-copper rounded opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      ✕
+                      X
                     </button>
                   </div>
                 ))}

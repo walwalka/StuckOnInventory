@@ -82,39 +82,39 @@ npm run test:coverage
 ### Backend (31 Tests - All Passing)
 
 **Login Endpoint** (`/api/auth/login`)
-- ✅ Successful login with valid credentials
-- ✅ Returns accessToken and refreshToken
-- ✅ Returns user object with correct data
-- ✅ Updates last_login timestamp in database
-- ✅ Stores refresh_token in database
-- ✅ Includes user role in response
-- ✅ Returns 400 if email is missing
-- ✅ Returns 400 if password is missing
-- ✅ Returns 401 if user not found
-- ✅ Returns 401 if password is incorrect
-- ✅ Returns 403 if account is disabled
-- ✅ Returns 403 if email is not verified
-- ✅ Handles case-insensitive email lookup
+- Successful login with valid credentials
+- Returns accessToken and refreshToken
+- Returns user object with correct data
+- Updates last_login timestamp in database
+- Stores refresh_token in database
+- Includes user role in response
+- Returns 400 if email is missing
+- Returns 400 if password is missing
+- Returns 401 if user not found
+- Returns 401 if password is incorrect
+- Returns 403 if account is disabled
+- Returns 403 if email is not verified
+- Handles case-insensitive email lookup
 
 **Token Refresh Endpoint** (`/api/auth/refresh`)
-- ✅ Refreshes access token with valid refresh token
-- ✅ Returns new accessToken
-- ✅ Does not change refreshToken
-- ✅ Returns 400 if refreshToken is missing
-- ✅ Returns 401 if refreshToken is invalid
-- ✅ Returns 401 if refreshToken not in database
+- Refreshes access token with valid refresh token
+- Returns new accessToken
+- Does not change refreshToken
+- Returns 400 if refreshToken is missing
+- Returns 401 if refreshToken is invalid
+- Returns 401 if refreshToken not in database
 
 **Authentication Middleware**
-- ✅ requireAuth - allows access with valid JWT
-- ✅ requireAuth - attaches user to req.user
-- ✅ requireAuth - returns 401 without token
-- ✅ requireAuth - returns 401 with invalid token
-- ✅ requireVerifiedEmail - allows if verified
-- ✅ requireVerifiedEmail - returns 403 if not verified
-- ✅ requireAdmin - allows access if admin
-- ✅ requireAdmin - returns 403 if not admin
-- ✅ requireVerifiedAuth - combined middleware works correctly
-- ✅ requireAdminAuth - combined admin middleware works correctly
+- requireAuth - allows access with valid JWT
+- requireAuth - attaches user to req.user
+- requireAuth - returns 401 without token
+- requireAuth - returns 401 with invalid token
+- requireVerifiedEmail - allows if verified
+- requireVerifiedEmail - returns 403 if not verified
+- requireAdmin - allows access if admin
+- requireAdmin - returns 403 if not admin
+- requireVerifiedAuth - combined middleware works correctly
+- requireAdminAuth - combined admin middleware works correctly
 
 ### Frontend Tests (To Be Written)
 

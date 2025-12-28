@@ -50,12 +50,12 @@ async function createAdminFromEnv() {
     );
 
     const admin = result.rows[0];
-    console.log('✅ Admin user created successfully!');
+    console.log('Admin user created successfully!');
     console.log(`   Email: ${admin.email}`);
     console.log(`   Role: ${admin.role}`);
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error creating admin user:', error.message);
+    console.error('Error creating admin user:', error.message);
     process.exit(1);
   }
 }

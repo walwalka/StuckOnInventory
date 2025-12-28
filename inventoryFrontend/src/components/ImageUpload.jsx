@@ -155,7 +155,7 @@ const ImageUpload = ({ coinId, existingImages = {}, onUploadSuccess }) => {
                   onClick={() => removeFile(index)}
                   className="absolute top-1 right-1 px-2 py-1 text-xs usd-btn-copper rounded opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  ✕
+                  X
                 </button>
               </div>
             ))}
