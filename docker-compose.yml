@@ -18,6 +18,24 @@ services:
       timeout: 5s
       retries: 5
 
+  db-migrate:
+    build:
+      context: .
+      dockerfile: ./inventoryBackend/Dockerfile
+      target: base
+    container_name: inventory_db_migrate
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SQL_SERVER_IP: ${SQL_SERVER_IP:-db}
+      SQL_SERVER_PORT: ${SQL_SERVER_PORT:-5432}
+      SQL_USER: ${SQL_USER}
+      SQL_DB: ${SQL_DB}
+      SQL_PASS: ${SQL_PASS}
+    command: npm run migrate
+    restart: "no"
+
   backend:
     build:
       context: .
@@ -29,6 +47,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      db-migrate:
+        condition: service_completed_successfully
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       APP_PORT: ${APP_PORT:-5081}

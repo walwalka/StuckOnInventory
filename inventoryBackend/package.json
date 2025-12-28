@@ -11,7 +11,9 @@
     "local": "NODE_ENV=local nodemon index.js",
     "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
-    "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage"
+    "test:coverage": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "migrate": "node ../database/scripts/migrate.js",
+    "migrate:status": "node ../database/scripts/migration-status.js"
   },
   "keywords": [],
   "author": "",
