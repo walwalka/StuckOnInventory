@@ -4,10 +4,6 @@ import { getAccessToken, getRefreshToken, saveAccessToken, clearTokens } from '.
 const api = axios.create({
   // Use relative /api so Nginx can proxy to backend
   baseURL: '/api',
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-  },
   timeout: 10000,
 });
 
@@ -81,6 +77,13 @@ api.interceptors.request.use(
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Set Content-Type for JSON requests (not for FormData)
+    if (!(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = config.headers['Content-Type'] || 'application/json';
+      config.headers['Accept'] = 'application/json';
+    }
+
     return config;
   },
   (error) => {

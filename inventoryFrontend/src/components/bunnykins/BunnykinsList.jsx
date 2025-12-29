@@ -1,58 +1,40 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client';
-import Spinner from '../Spinner';
-import { Link, Routes, Route } from 'react-router-dom';
-import { MdOutlineAddBox } from 'react-icons/md';
-import BunnykinsTable from './BunnykinsTable';
+import GenericEntityList from '../shared/GenericEntityList';
 import BunnykinsCard from './BunnykinsCard';
 import ShowBunnykin from './ShowBunnykin';
 import EditBunnykin from './EditBunnykin';
 import DeleteBunnykin from './DeleteBunnykin';
+import { bunnykinsTableColumns } from '../../config/bunnykinsConfig';
 
 const BunnykinsList = ({ showType }) => {
-  const [bunnykins, setBunnykins] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    api
-      .get('/bunnykins/')
-      .then((response) => {
-        setBunnykins(response.data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  }, []);
+  const {
+    data: bunnykins = [],
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ['bunnykins'],
+    queryFn: async () => {
+      const response = await api.get('/bunnykins/');
+      return response.data.data || [];
+    },
+  });
 
   return (
-    <div className='p-4'>
-      <div className='flex justify-between items-center'>
-        <h1 className='text-3xl my-8'>Bunnykins Inventory</h1>
-        <div className='flex gap-x-4 justify-end'>
-          <Link to='/bunnykins/create'>
-            <MdOutlineAddBox className='text-4xl' style={{ color: 'var(--usd-copper)' }} />
-          </Link>
-        </div>
-      </div>
-
-      {loading ? (
-        <Spinner />
-      ) : showType === 'table' ? (
-        <BunnykinsTable bunnykins={bunnykins} />
-      ) : (
-        <BunnykinsCard bunnykins={bunnykins} />
-      )}
-
-      {/* Render modals as overlays when on details/edit/delete routes */}
-      <Routes>
-        <Route path="details/:id" element={<ShowBunnykin />} />
-        <Route path="edit/:id" element={<EditBunnykin />} />
-        <Route path="delete/:id" element={<DeleteBunnykin />} />
-      </Routes>
-    </div>
+    <GenericEntityList
+      entityName="bunnykins"
+      entityLabel="Bunnykins Inventory"
+      items={bunnykins}
+      loading={isLoading}
+      onRefresh={refetch}
+      showType={showType}
+      tableColumns={bunnykinsTableColumns}
+      CardComponent={(props) => <BunnykinsCard bunnykins={props.items} />}
+      ShowComponent={ShowBunnykin}
+      EditComponent={EditBunnykin}
+      DeleteComponent={DeleteBunnykin}
+    />
   );
 };
 

@@ -1,62 +1,68 @@
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
 import api from '../../api/client';
-import Spinner from '../Spinner';
-import { Link, Routes, Route } from 'react-router-dom';
-import { MdOutlineAddBox } from 'react-icons/md';
-import CoinsTable from './CoinsTable';
+import GenericEntityList from '../shared/GenericEntityList';
 import CoinsCard from './CoinsCard';
 import ShowCoin from './ShowCoin';
 import EditCoin from './EditCoin';
 import DeleteCoin from './DeleteCoin';
+import { coinsTableColumns, getCoinsCustomActions } from '../../config/coinsConfig';
 
 const CoinsList = ({ showType }) => {
-  const [coins, setCoins] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [estimating, setEstimating] = useState({});
+  const { enqueueSnackbar } = useSnackbar();
 
-  const fetchCoins = () => {
-    setLoading(true);
-    api
-      .get('/coins/')
-      .then((response) => {
-        setCoins(response.data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
+  // Fetch coins using React Query
+  const {
+    data: coins = [],
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ['coins'],
+    queryFn: async () => {
+      const response = await api.get('/coins/');
+      return response.data.data || [];
+    },
+  });
+
+  // Handle AI estimate
+  const handleGetEstimate = async (coinId) => {
+    setEstimating((prev) => ({ ...prev, [coinId]: true }));
+    try {
+      const { data } = await api.post(`/coins/estimate/${coinId}`);
+      const valNum =
+        typeof data?.estimated_value === 'number' ? data.estimated_value : null;
+      const val = valNum !== null ? valNum.toFixed(2) : 'N/A';
+      enqueueSnackbar(`Estimated value: $${val}`, {
+        variant: valNum !== null ? 'success' : 'warning',
       });
+      refetch();
+    } catch (err) {
+      console.error('Estimate error', err);
+      enqueueSnackbar('Failed to get estimate', { variant: 'error' });
+    } finally {
+      setEstimating((prev) => ({ ...prev, [coinId]: false }));
+    }
   };
 
-  useEffect(() => {
-    fetchCoins();
-  }, []);
+  const customActions = getCoinsCustomActions(handleGetEstimate, estimating);
 
   return (
-    <div className='p-4'>
-      <div className='flex justify-between items-center'>
-        <h1 className='text-3xl my-8'>Coin Inventory</h1>
-        <div className='flex gap-x-4 justify-end'>
-          <Link to='/coins/create'>
-            <MdOutlineAddBox className='text-4xl' style={{ color: 'var(--usd-copper)' }} />
-          </Link>
-        </div>
-      </div>
-
-      {loading ? (
-        <Spinner />
-      ) : showType === 'table' ? (
-        <CoinsTable coins={coins} onRefresh={fetchCoins} />
-      ) : (
-        <CoinsCard coins={coins} />
-      )}
-
-      {/* Render modals as overlays when on details/edit/delete routes */}
-      <Routes>
-        <Route path="details/:id" element={<ShowCoin />} />
-        <Route path="edit/:id" element={<EditCoin />} />
-        <Route path="delete/:id" element={<DeleteCoin />} />
-      </Routes>
-    </div>
+    <GenericEntityList
+      entityName="coins"
+      entityLabel="Coin Inventory"
+      items={coins}
+      loading={isLoading}
+      onRefresh={refetch}
+      showType={showType}
+      tableColumns={coinsTableColumns}
+      CardComponent={(props) => <CoinsCard coins={props.items} />}
+      ShowComponent={ShowCoin}
+      EditComponent={EditCoin}
+      DeleteComponent={DeleteCoin}
+      customActions={customActions}
+    />
   );
 };
 

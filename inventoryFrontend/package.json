@@ -18,6 +18,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.15",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "formik": "^2.4.9",

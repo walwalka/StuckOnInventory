@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api/client';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 
 const ImageUpload = ({ coinId, existingImages = {}, onUploadSuccess }) => {
@@ -44,11 +44,7 @@ const ImageUpload = ({ coinId, existingImages = {}, onUploadSuccess }) => {
     });
 
     try {
-      const response = await axios.post(`/api/coins/upload/${coinId}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await api.post(`/coins/upload/${coinId}`, formData);
       
       setSelectedFiles([]);
       setPreviews([]);
