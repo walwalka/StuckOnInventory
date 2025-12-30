@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericModal from '../shared/GenericModal';
 import GenericForm from '../shared/GenericForm';
@@ -12,6 +13,7 @@ const CreateCoins = () => {
   const [coinTypes, setCoinTypes] = useState([]);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     // Fetch mint locations and coin types
@@ -90,6 +92,7 @@ const CreateCoins = () => {
 
       setLoading(false);
       enqueueSnackbar('Coin created successfully', { variant: 'success' });
+      queryClient.invalidateQueries({ queryKey: ['coins'] });
       navigate('/coins');
     } catch (error) {
       setLoading(false);

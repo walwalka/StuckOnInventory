@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericModal from '../shared/GenericModal';
 import GenericForm from '../shared/GenericForm';
@@ -11,6 +12,7 @@ const CreateComics = () => {
   const [formFields, setFormFields] = useState(comicsFormFields);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     api
@@ -63,6 +65,7 @@ const CreateComics = () => {
 
       setLoading(false);
       enqueueSnackbar('Comic created successfully', { variant: 'success' });
+      queryClient.invalidateQueries({ queryKey: ['comics'] });
       navigate('/comics');
     } catch (error) {
       setLoading(false);

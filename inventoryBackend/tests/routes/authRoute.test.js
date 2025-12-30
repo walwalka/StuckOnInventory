@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
-import { pool } from '../../database/database.js';
+import { pool } from '../database/database.js';
 import authRoute from '../../routes/authRoute.js';
 import {
   cleanupTestDB,

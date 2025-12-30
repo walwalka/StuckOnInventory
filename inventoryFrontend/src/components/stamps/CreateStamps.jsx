@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericModal from '../shared/GenericModal';
 import GenericForm from '../shared/GenericForm';
@@ -10,6 +11,7 @@ const CreateStamps = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (formData, selectedFiles) => {
     setLoading(true);
@@ -40,6 +42,7 @@ const CreateStamps = () => {
 
       setLoading(false);
       enqueueSnackbar('Stamp created successfully', { variant: 'success' });
+      queryClient.invalidateQueries({ queryKey: ['stamps'] });
       navigate('/stamps');
     } catch (error) {
       setLoading(false);

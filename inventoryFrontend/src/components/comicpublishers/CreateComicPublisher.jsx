@@ -3,12 +3,14 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CreateComicPublisher = () => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleSavePublisher = () => {
     if (!name) {
@@ -24,6 +26,7 @@ const CreateComicPublisher = () => {
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Comic publisher created successfully', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['comicPublishers'] });
         navigate('/comicpublishers');
       })
       .catch((error) => {

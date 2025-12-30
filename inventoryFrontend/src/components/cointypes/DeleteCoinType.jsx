@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import BackButton from '../BackButton';
 import Spinner from '../Spinner';
@@ -9,6 +10,7 @@ const DeleteCoinType = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
 
   const handleDelete = () => {
@@ -17,6 +19,7 @@ const DeleteCoinType = () => {
       .delete(`/cointypes/${id}`)
       .then(() => {
         enqueueSnackbar('Coin type deleted', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['coinTypes'] });
         navigate('/cointypes');
       })
       .catch((error) => {

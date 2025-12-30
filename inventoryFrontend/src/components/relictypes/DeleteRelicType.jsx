@@ -4,12 +4,14 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 const DeleteRelicType = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleDeleteRelicType = () => {
     setLoading(true);
@@ -18,6 +20,7 @@ const DeleteRelicType = () => {
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Relic type deleted successfully', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['relicTypes'] });
         navigate('/relictypes');
       })
       .catch((error) => {

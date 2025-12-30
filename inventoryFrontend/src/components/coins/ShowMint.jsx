@@ -40,13 +40,6 @@ const ShowMint = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-4 sticky top-0 bg-white dark:bg-[#2c2c2c] pb-3 border-b usd-border-green">
           <h1 className='text-2xl usd-text-green font-semibold'>Mint Location Details</h1>
-          <button
-            onClick={() => navigate('/mintlocations')}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold leading-none"
-            aria-label="Close"
-          >
-            X
-          </button>
         </div>
 
         {/* Content Grid */}

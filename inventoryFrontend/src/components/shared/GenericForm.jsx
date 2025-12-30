@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import Spinner from '../Spinner';
 import heic2any from 'heic2any';
+import LazyImage from './LazyImage';
 
 /**
  * GenericForm - Reusable form component for creating/editing entities
@@ -268,10 +269,11 @@ const GenericForm = ({
             <div className="grid grid-cols-3 gap-2 mt-3">
               {previews.map((preview, index) => (
                 <div key={index} className="relative group">
-                  <img
+                  <LazyImage
                     src={preview}
                     alt={`Preview ${index + 1}`}
                     className="w-full h-24 object-cover rounded border-2 usd-border-green"
+                    eager={true}
                   />
                   <button
                     type="button"

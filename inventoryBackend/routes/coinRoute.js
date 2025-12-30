@@ -15,6 +15,7 @@ import {
   ConflictError,
   ValidationError
 } from '../middleware/errorHandler.js';
+import { processImages } from '../middleware/imageProcessor.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -189,17 +190,20 @@ router.delete('/:id', asyncHandler(async (request, response) => {
 }));
 
 // Upload coin images
-router.post('/upload/:id', uploadWithErrors, asyncHandler(async (request, response) => {
+router.post('/upload/:id', uploadWithErrors, processImages, asyncHandler(async (request, response) => {
   const { id } = request.params;
 
   if (!request.files || request.files.length === 0) {
     throw new BadRequestError('No files uploaded');
   }
 
-  // Build the image paths
+  // Use processed file names from the middleware
   const imagePaths = {};
-  request.files.forEach((file, index) => {
-    imagePaths[`image${index + 1}`] = `/uploads/${file.filename}`;
+  const processedFiles = request.processedFiles || request.files;
+
+  processedFiles.forEach((file, index) => {
+    const filename = file.filename || file.name;
+    imagePaths[`image${index + 1}`] = `/uploads/${filename}`;
   });
 
   // Update the database with image paths
@@ -251,11 +255,18 @@ router.delete('/image/:id/:slot', asyncHandler(async (request, response) => {
   const updateQuery = `UPDATE coins SET ${slot} = NULL WHERE id = $1 RETURNING *;`;
   const updated = await pool.query(updateQuery, [id]);
 
-  // Remove file from disk if exists
+  // Remove file from disk if exists (including processed versions)
   if (imagePath) {
     const filename = path.basename(imagePath);
+    const baseName = path.basename(filename, path.extname(filename));
     const fileOnDisk = path.join(UPLOAD_DIR, filename);
+    const thumbnailFile = path.join(UPLOAD_DIR, `${baseName}-thumb.jpg`);
+    const webpFile = path.join(UPLOAD_DIR, `${baseName}.webp`);
+
+    // Delete main file, thumbnail, and WebP version
     fs.promises.unlink(fileOnDisk).catch(() => {});
+    fs.promises.unlink(thumbnailFile).catch(() => {});
+    fs.promises.unlink(webpFile).catch(() => {});
   }
 
   response.status(200).json(updated.rows[0]);

@@ -4,12 +4,14 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 const DeleteComicPublisher = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleDeletePublisher = () => {
     setLoading(true);
@@ -18,6 +20,7 @@ const DeleteComicPublisher = () => {
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Comic publisher deleted successfully', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['comicPublishers'] });
         navigate('/comicpublishers');
       })
       .catch((error) => {

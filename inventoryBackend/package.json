@@ -28,7 +28,8 @@
     "multer": "^2.0.2",
     "nodemailer": "^7.0.12",
     "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1"
+    "passport-jwt": "^4.0.1",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.23.0",

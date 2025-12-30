@@ -10,6 +10,7 @@ import {
   BadRequestError,
   NotFoundError
 } from '../middleware/errorHandler.js';
+import { processImages } from '../middleware/imageProcessor.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,16 +71,16 @@ const uploadWithErrors = (req, res, next) => {
 
 // Create a comic
 router.post('/', asyncHandler(async (request, response) => {
-    const { title, publisher, series, issuenumber, publicationyear, grade, condition, variant, description, image1, image2, image3 } = request.body;
+    const { title, publisher, series, issuenumber, publicationyear, grade, condition, variant, description, image1, image2, image3, quantity } = request.body;
     if (!title || !publisher || !series || !issuenumber || !publicationyear || !grade || !condition) {
       throw new BadRequestError('Required fields: title, publisher, series, issuenumber, publicationyear, grade, condition');
     }
     const query = `
-      INSERT INTO comics (title, publisher, series, issuenumber, publicationyear, grade, condition, variant, description, image1, image2, image3)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      INSERT INTO comics (title, publisher, series, issuenumber, publicationyear, grade, condition, variant, description, image1, image2, image3, quantity)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       RETURNING id;
     `;
-    const values = [title, publisher, series, issuenumber, publicationyear, grade, condition, variant || '', description || '', image1 || null, image2 || null, image3 || null];
+    const values = [title, publisher, series, issuenumber, publicationyear, grade, condition, variant || '', description || '', image1 || null, image2 || null, image3 || null, quantity || 1];
 
     const result = await pool.query(query, values);
     response.status(200).send({ message: 'New comic record created', comicId: result.rows[0].id });
@@ -110,7 +111,7 @@ router.get('/:id', asyncHandler(async (request, response) => {
 // Update a comic by id
 router.put('/:id', asyncHandler(async (request, response) => {
   const { id } = request.params;
-  const { title, publisher, series, issuenumber, publicationyear, grade, condition, variant, description, image1, image2, image3 } = request.body;
+  const { title, publisher, series, issuenumber, publicationyear, grade, condition, variant, description, image1, image2, image3, quantity } = request.body;
 
   const query = `
     UPDATE comics
@@ -125,11 +126,12 @@ router.put('/:id', asyncHandler(async (request, response) => {
         description = COALESCE($9, description),
         image1 = COALESCE($10, image1),
         image2 = COALESCE($11, image2),
-        image3 = COALESCE($12, image3)
-    WHERE id = $13
+        image3 = COALESCE($12, image3),
+        quantity = COALESCE($13, quantity)
+    WHERE id = $14
     RETURNING *;
   `;
-  const { rows } = await pool.query(query, [title, publisher, series, issuenumber, publicationyear, grade, condition, variant, description, image1, image2, image3, id]);
+  const { rows } = await pool.query(query, [title, publisher, series, issuenumber, publicationyear, grade, condition, variant, description, image1, image2, image3, quantity, id]);
 
   if (rows.length === 0) {
     throw new NotFoundError('Comic not found');
@@ -152,16 +154,20 @@ router.delete('/:id', asyncHandler(async (request, response) => {
 }));
 
 // Upload comic images
-router.post('/upload/:id', uploadWithErrors, asyncHandler(async (request, response) => {
+router.post('/upload/:id', uploadWithErrors, processImages, asyncHandler(async (request, response) => {
   const { id } = request.params;
 
   if (!request.files || request.files.length === 0) {
     throw new BadRequestError('No files uploaded');
   }
 
+  // Use processed file names from the middleware
   const imagePaths = {};
-  request.files.forEach((file, index) => {
-    imagePaths[`image${index + 1}`] = `/uploads/${file.filename}`;
+  const processedFiles = request.processedFiles || request.files;
+
+  processedFiles.forEach((file, index) => {
+    const filename = file.filename || file.name;
+    imagePaths[`image${index + 1}`] = `/uploads/${filename}`;
   });
 
   const updateFields = [];
@@ -200,6 +206,7 @@ router.delete('/image/:id/:slot', asyncHandler(async (request, response) => {
     throw new BadRequestError('Invalid image slot');
   }
 
+  // Fetch current image path
   const selectQuery = `SELECT ${slot} FROM comics WHERE id = $1;`;
   const { rows } = await pool.query(selectQuery, [id]);
   if (rows.length === 0) {
@@ -207,13 +214,22 @@ router.delete('/image/:id/:slot', asyncHandler(async (request, response) => {
   }
   const imagePath = rows[0][slot];
 
+  // Clear DB field
   const updateQuery = `UPDATE comics SET ${slot} = NULL WHERE id = $1 RETURNING *;`;
   const updated = await pool.query(updateQuery, [id]);
 
+  // Remove file from disk if exists (including processed versions)
   if (imagePath) {
     const filename = path.basename(imagePath);
+    const baseName = path.basename(filename, path.extname(filename));
     const fileOnDisk = path.join(UPLOAD_DIR, filename);
+    const thumbnailFile = path.join(UPLOAD_DIR, `${baseName}-thumb.jpg`);
+    const webpFile = path.join(UPLOAD_DIR, `${baseName}.webp`);
+
+    // Delete main file, thumbnail, and WebP version
     fs.promises.unlink(fileOnDisk).catch(() => {});
+    fs.promises.unlink(thumbnailFile).catch(() => {});
+    fs.promises.unlink(webpFile).catch(() => {});
   }
 
   response.status(200).json(updated.rows[0]);

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { pool } from '../../database/database.js';
+import { pool } from '../database/database.js';
 import { generateAccessToken, generateRefreshToken } from '../../utils/jwt.js';
 
 /**

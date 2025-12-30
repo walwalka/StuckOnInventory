@@ -3,6 +3,7 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CreateMint = () => {
   const [name, setName] = useState('');
@@ -11,6 +12,7 @@ const CreateMint = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleSaveMint = () => {
     const data = {
@@ -24,6 +26,7 @@ const CreateMint = () => {
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Mint Created successfully', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['mints'] });
         navigate('/mintlocations');
       })
       .catch((error) => {

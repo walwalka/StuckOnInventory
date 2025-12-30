@@ -3,12 +3,14 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 const DeleteBunnykin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleDeleteBunnykin = () => {
     setLoading(true);
@@ -17,6 +19,7 @@ const DeleteBunnykin = () => {
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Bunnykin deleted', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['bunnykins'] });
         navigate('/bunnykins');
       })
       .catch((error) => {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericModal from '../shared/GenericModal';
 import GenericForm from '../shared/GenericForm';
@@ -11,6 +12,7 @@ const CreateRelics = () => {
   const [formFields, setFormFields] = useState(relicsFormFields);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     api
@@ -59,6 +61,7 @@ const CreateRelics = () => {
 
       setLoading(false);
       enqueueSnackbar('Relic created successfully', { variant: 'success' });
+      queryClient.invalidateQueries({ queryKey: ['relics'] });
       navigate('/relics');
     } catch (error) {
       setLoading(false);

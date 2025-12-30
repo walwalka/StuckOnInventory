@@ -3,6 +3,7 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Setting the const for the environments url
 // Uses shared API client baseURL
@@ -13,6 +14,7 @@ const DeleteMint = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleDeleteMint = () => {
     setLoading(true);
@@ -21,6 +23,7 @@ const DeleteMint = () => {
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Mint deleted successfully', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['mints'] });
         navigate('/mintlocations');
       })
       .catch((error) => {

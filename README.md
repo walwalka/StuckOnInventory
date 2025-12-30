@@ -33,7 +33,13 @@ That's it. The database sets itself up on first run.
 - Bunnykins figurines (series, production year)
 
 **Features:**
-- Upload 3 images per item (HEIC converts automatically)
+- Upload 3 images per item with automatic compression
+  - HEIC/HEIF converts to JPEG automatically
+  - Images resized to max 1920x1080
+  - 85% quality JPEG compression
+  - WebP format generation for modern browsers
+  - Thumbnail generation (300x300) for lists
+  - Lazy loading for optimal performance
 - Dark mode
 - Mobile-friendly
 - JWT auth with email verification
@@ -144,6 +150,25 @@ StuckOnInventory/
 - `/api/comics/*`, `/api/relics/*`, etc.
 
 ## Development
+
+### Quick Start (Recommended)
+
+Use the development scripts for the easiest setup:
+
+```bash
+# Start all services (database, backend, frontend)
+./dev-start.sh
+
+# Check status
+./dev-status.sh
+
+# Stop all services
+./dev-stop.sh
+```
+
+See [DEV_SCRIPTS.md](DEV_SCRIPTS.md) for detailed documentation.
+
+### Manual Setup (Alternative)
 
 **Run without Docker:**
 
