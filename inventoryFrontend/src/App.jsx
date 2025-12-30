@@ -36,8 +36,9 @@ import RelicTypesList from './components/relictypes/RelicTypesList.jsx';
 import CreateRelicType from './components/relictypes/CreateRelicType.jsx';
 import ComicPublishersList from './components/comicpublishers/ComicPublishersList.jsx';
 import CreateComicPublisher from './components/comicpublishers/CreateComicPublisher.jsx';
+import { useTokenRefresh } from './hooks/useTokenRefresh.js';
 
-// creating routes to each of the pages   
+// creating routes to each of the pages
 const App = () => {
   const { token, setToken, clear } = useToken();
   const { enqueueSnackbar } = useSnackbar();
@@ -45,6 +46,16 @@ const App = () => {
   const location = useLocation();
   const authRoutes = ['/login', '/register', '/logout', '/verify-email', '/forgot-password', '/reset-password', '/resend-verification'];
   const isLoginRoute = authRoutes.includes(location.pathname);
+
+  // Automatic token refresh - refreshes token 2 minutes before expiry
+  useTokenRefresh({
+    refreshBuffer: 2 * 60 * 1000, // Refresh 2 minutes before expiry
+    onRefreshError: (error) => {
+      console.error('Token refresh failed:', error);
+      enqueueSnackbar('Session expired. Please sign in again.', { variant: 'warning' });
+      clear();
+    }
+  });
 
   // Listen for auth logout events (e.g., 401 from API client)
   useEffect(() => {
