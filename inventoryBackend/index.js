@@ -27,6 +27,9 @@ console.log(process.env.NODE_ENV);
 
 const app = express();
 
+// Trust proxy - required for rate limiting and IP detection behind reverse proxy
+app.set('trust proxy', 1);
+
 // middleware for parsing request body
 app.use(express.json());
 
