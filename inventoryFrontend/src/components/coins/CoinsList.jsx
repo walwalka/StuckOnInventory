@@ -4,6 +4,7 @@ import { useSnackbar } from 'notistack';
 import api from '../../api/client';
 import GenericEntityList from '../shared/GenericEntityList';
 import CoinsCard from './CoinsCard';
+import CreateCoins from './CreateCoins';
 import ShowCoin from './ShowCoin';
 import EditCoin from './EditCoin';
 import DeleteCoin from './DeleteCoin';
@@ -58,6 +59,7 @@ const CoinsList = ({ showType }) => {
       showType={showType}
       tableColumns={coinsTableColumns}
       CardComponent={(props) => <CoinsCard coins={props.items} />}
+      CreateComponent={CreateCoins}
       ShowComponent={ShowCoin}
       EditComponent={EditCoin}
       DeleteComponent={DeleteCoin}

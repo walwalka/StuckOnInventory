@@ -4,6 +4,7 @@ import api from '../../api/client';
 import Spinner from '../Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import CoinTypesTable from './CoinTypesTable';
+import CreateCoinType from './CreateCoinType';
 import ShowCoinType from './ShowCoinType';
 import EditCoinType from './EditCoinType';
 import DeleteCoinType from './DeleteCoinType';
@@ -140,8 +141,9 @@ const CoinTypesList = () => {
 
       {loading ? <Spinner /> : <CoinTypesTable coinTypes={sorted} />}
 
-      {/* Render modals as overlays when on details/edit/delete routes */}
+      {/* Render modals as overlays when on create/details/edit/delete routes */}
       <Routes>
+        <Route path="create" element={<CreateCoinType />} />
         <Route path="details/:id" element={<ShowCoinType />} />
         <Route path="edit/:id" element={<EditCoinType />} />
         <Route path="delete/:id" element={<DeleteCoinType />} />

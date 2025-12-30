@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericEntityList from '../shared/GenericEntityList';
 import ComicsCard from './ComicsCard';
+import CreateComics from './CreateComics';
 import ShowComic from './ShowComic';
 import EditComic from './EditComic';
 import DeleteComic from './DeleteComic';
@@ -31,6 +32,7 @@ const ComicsList = ({ showType }) => {
       showType={showType}
       tableColumns={comicsTableColumns}
       CardComponent={(props) => <ComicsCard comics={props.items} />}
+      CreateComponent={CreateComics}
       ShowComponent={ShowComic}
       EditComponent={EditComic}
       DeleteComponent={DeleteComic}

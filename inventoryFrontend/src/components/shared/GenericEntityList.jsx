@@ -15,6 +15,7 @@ import GenericTable from './GenericTable';
  * @param {string} showType - Display type ('table' or 'card')
  * @param {Array} tableColumns - Column configuration for table view
  * @param {Component} CardComponent - Card component for card view
+ * @param {Component} CreateComponent - Create modal component
  * @param {Component} ShowComponent - Show/Details modal component
  * @param {Component} EditComponent - Edit modal component
  * @param {Component} DeleteComponent - Delete modal component
@@ -29,6 +30,7 @@ const GenericEntityList = ({
   showType = 'table',
   tableColumns = [],
   CardComponent = null,
+  CreateComponent = null,
   ShowComponent = null,
   EditComponent = null,
   DeleteComponent = null,
@@ -66,8 +68,9 @@ const GenericEntityList = ({
         </div>
       )}
 
-      {/* Render modals as overlays when on details/edit/delete routes */}
+      {/* Render modals as overlays when on create/details/edit/delete routes */}
       <Routes>
+        {CreateComponent && <Route path="create" element={<CreateComponent />} />}
         {ShowComponent && (
           <Route path="details/:id" element={<ShowComponent />} />
         )}

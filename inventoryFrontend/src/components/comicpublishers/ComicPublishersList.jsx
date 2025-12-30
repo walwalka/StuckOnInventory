@@ -4,6 +4,7 @@ import api from '../../api/client';
 import Spinner from '../Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import ComicPublishersTable from './ComicPublishersTable';
+import CreateComicPublisher from './CreateComicPublisher';
 import ShowComicPublisher from './ShowComicPublisher';
 import EditComicPublisher from './EditComicPublisher';
 import DeleteComicPublisher from './DeleteComicPublisher';
@@ -61,8 +62,9 @@ const ComicPublishersList = () => {
 
       {loading ? <Spinner /> : <ComicPublishersTable publishers={filtered} />}
 
-      {/* Render modals as overlays when on details/edit/delete routes */}
+      {/* Render modals as overlays when on create/details/edit/delete routes */}
       <Routes>
+        <Route path="create" element={<CreateComicPublisher />} />
         <Route path="details/:id" element={<ShowComicPublisher />} />
         <Route path="edit/:id" element={<EditComicPublisher />} />
         <Route path="delete/:id" element={<DeleteComicPublisher />} />

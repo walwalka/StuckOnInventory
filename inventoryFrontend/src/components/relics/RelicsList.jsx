@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericEntityList from '../shared/GenericEntityList';
 import RelicsCard from './RelicsCard';
+import CreateRelics from './CreateRelics';
 import ShowRelic from './ShowRelic';
 import EditRelic from './EditRelic';
 import DeleteRelic from './DeleteRelic';
@@ -31,6 +32,7 @@ const RelicsList = ({ showType }) => {
       showType={showType}
       tableColumns={relicsTableColumns}
       CardComponent={(props) => <RelicsCard relics={props.items} />}
+      CreateComponent={CreateRelics}
       ShowComponent={ShowRelic}
       EditComponent={EditRelic}
       DeleteComponent={DeleteRelic}
