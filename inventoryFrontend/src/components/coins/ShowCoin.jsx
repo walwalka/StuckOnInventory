@@ -74,6 +74,13 @@ const ShowCoin = () => {
       <div className='flex flex-col border-2 usd-border-green bg-white dark:bg-[#2c2c2c] rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
         <div className="flex items-center justify-between mb-4 sticky top-0 bg-white dark:bg-[#2c2c2c] pb-3 border-b usd-border-green">
           <h1 className='text-2xl usd-text-green font-semibold'>Coin Details</h1>
+          <button
+            onClick={() => navigate('/coins')}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-base font-semibold leading-none"
+            aria-label="Close"
+          >
+            Close
+          </button>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -147,18 +154,12 @@ const ShowCoin = () => {
           </div>
         </div>
 
-        <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex gap-3">
+        <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
           <button
-            className='flex-1 p-3 usd-btn-copper rounded hover:opacity-90'
+            className='w-full p-3 usd-btn-copper rounded hover:opacity-90'
             onClick={() => navigate(`/coins/edit/${id}`)}
           >
             Edit Coin
-          </button>
-          <button
-            className='flex-1 p-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600'
-            onClick={() => navigate('/coins')}
-          >
-            Close
           </button>
         </div>
       </div>

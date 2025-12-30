@@ -40,10 +40,17 @@ const ShowMint = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-4 sticky top-0 bg-white dark:bg-[#2c2c2c] pb-3 border-b usd-border-green">
           <h1 className='text-2xl usd-text-green font-semibold'>Mint Location Details</h1>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-base font-semibold leading-none"
+            aria-label="Close"
+          >
+            Close
+          </button>
         </div>
 
         {/* Content Grid */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 flex-grow">
           <div>
             <span className="block text-sm usd-muted mb-1">ID</span>
             <span className="text-lg">{mint.id}</span>
@@ -68,6 +75,17 @@ const ShowMint = () => {
             <span className="block text-sm usd-muted mb-1">Last Updated</span>
             <span className="text-lg">{mint.updatedAt ? new Date(mint.updatedAt).toLocaleString() : 'N/A'}</span>
           </div>
+        </div>
+
+        {/* Bottom Button */}
+        <div className="mt-6 pt-4 border-t usd-border-green">
+          <button
+            onClick={() => navigate(`/mints/${id}/edit`)}
+            className='w-full p-3 usd-btn-green rounded hover:opacity-90 disabled:opacity-60'
+            disabled={loading}
+          >
+            Edit Mint
+          </button>
         </div>
 
       </div>
