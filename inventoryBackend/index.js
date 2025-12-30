@@ -15,6 +15,7 @@ import inviteRoute from './routes/inviteRoute.js';
 import userRoute from './routes/userRoute.js';
 import configurePassport from './config/passport.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -96,6 +97,12 @@ app.use('/api/comics', comicRoute);
 
 // Comic publishers endpoints under /api
 app.use('/api/comicpublishers', comicPublisherRoute);
+
+// Handle 404 errors for undefined routes (must come AFTER all routes)
+app.use(notFoundHandler);
+
+// Global error handler (must be LAST middleware)
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Inventory Backend listening on port ${PORT}`)

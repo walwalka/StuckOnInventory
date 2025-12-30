@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { requireAuth } from '../middleware/auth.js';
+import { asyncHandler, BadRequestError, NotFoundError } from '../middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,72 +50,57 @@ const uploadWithErrors = (req, res, next) => {
   upload.array('images', 3)(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       if (err.code === 'LIMIT_FILE_SIZE') {
-        return res.status(400).json({ error: 'File too large. Max 10MB each.' });
+        throw new BadRequestError('File too large. Max 10MB each.');
       }
       if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-        return res.status(400).json({ error: 'Too many files. Max 3 images.' });
+        throw new BadRequestError('Too many files. Max 3 images.');
       }
-      return res.status(400).json({ error: err.message });
+      throw new BadRequestError(err.message);
     } else if (err) {
-      return res.status(400).json({ error: err.message || 'Upload failed' });
+      throw new BadRequestError(err.message || 'Upload failed');
     }
     next();
   });
 };
 
-router.post('/', async (request, response) => {
+router.post('/', asyncHandler(async (request, response) => {
     const { country, denomination, issueyear, condition, description, image1, image2, image3 } = request.body;
     if (!country || !denomination || !issueyear || !condition) {
-      return response.status(400).send('Required fields: country, denomination, issueyear, condition');
+      throw new BadRequestError('Required fields: country, denomination, issueyear, condition');
     }
-    try {
-      const query = `
-        INSERT INTO stamps (country, denomination, issueyear, condition, description, image1, image2, image3)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING id;
-      `;
-      const values = [country, denomination, issueyear, condition, description || '', image1 || null, image2 || null, image3 || null];
-  
-      const result = await pool.query(query, values);
-      response.status(200).send({ message: 'New stamp record created', stampId: result.rows[0].id });
-    } catch (error) {
-      console.error(error);
-      response.status(500).send('Error occurred');
-    }
-  });
 
-router.get('/', async (request, response) => {
-  try {
+    const query = `
+      INSERT INTO stamps (country, denomination, issueyear, condition, description, image1, image2, image3)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING id;
+    `;
+    const values = [country, denomination, issueyear, condition, description || '', image1 || null, image2 || null, image3 || null];
+
+    const result = await pool.query(query, values);
+    response.status(200).send({ message: 'New stamp record created', stampId: result.rows[0].id });
+  }));
+
+router.get('/', asyncHandler(async (request, response) => {
     const query = 'SELECT * FROM stamps ORDER BY id DESC;';
     const allStamps = await pool.query(query);
     return response.status(200).json({
       data: allStamps.rows
     });
-    } catch (error) {
-    console.error(error);
-    response.status(500).send('Error occurred');
-    }
-});
+}));
 
-router.get('/:id', async (request, response) => {
-  try {
+router.get('/:id', asyncHandler(async (request, response) => {
     const { id } = request.params;
     const query = 'SELECT * FROM stamps WHERE id = $1;';
     const { rows } = await pool.query(query, [id]);
 
     if (rows.length === 0) {
-      return response.status(404).send('Stamp not found');
+      throw new NotFoundError('Stamp not found');
     }
 
     return response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('Error occurred');
-  }
-});
+}));
 
-router.put('/:id', async (request, response) => {
-  try {
+router.put('/:id', asyncHandler(async (request, response) => {
     const { id } = request.params;
     const { country, denomination, issueyear, condition, description, image1, image2, image3 } = request.body;
 
@@ -134,39 +120,29 @@ router.put('/:id', async (request, response) => {
     const { rows } = await pool.query(query, [country, denomination, issueyear, condition, description, image1, image2, image3, id]);
 
     if (rows.length === 0) {
-      return response.status(404).send('Stamp not found');
+      throw new NotFoundError('Stamp not found');
     }
 
     response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('Error occurred');
-  }
-});
+}));
 
-router.delete('/:id', async (request, response) => {
-  try {
+router.delete('/:id', asyncHandler(async (request, response) => {
     const { id } = request.params;
     const query = 'DELETE FROM stamps WHERE id = $1 RETURNING *;';
     const { rows } = await pool.query(query, [id]);
 
     if (rows.length === 0) {
-      return response.status(404).send('Stamp not found');
+      throw new NotFoundError('Stamp not found');
     }
 
     response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('Error occurred');
-  }
-});
+}));
 
-router.post('/upload/:id', uploadWithErrors, async (request, response) => {
-  try {
+router.post('/upload/:id', uploadWithErrors, asyncHandler(async (request, response) => {
     const { id } = request.params;
-    
+
     if (!request.files || request.files.length === 0) {
-      return response.status(400).send('No files uploaded');
+      throw new BadRequestError('No files uploaded');
     }
 
     const imagePaths = {};
@@ -196,28 +172,23 @@ router.post('/upload/:id', uploadWithErrors, async (request, response) => {
     const { rows } = await pool.query(query, values);
 
     if (rows.length === 0) {
-      return response.status(404).send('Stamp not found');
+      throw new NotFoundError('Stamp not found');
     }
 
     response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).json({ error: 'Error uploading images' });
-  }
-});
+}));
 
-router.delete('/image/:id/:slot', async (request, response) => {
-  try {
+router.delete('/image/:id/:slot', asyncHandler(async (request, response) => {
     const { id, slot } = request.params;
     const validSlots = ['image1', 'image2', 'image3'];
     if (!validSlots.includes(slot)) {
-      return response.status(400).send('Invalid image slot');
+      throw new BadRequestError('Invalid image slot');
     }
 
     const selectQuery = `SELECT ${slot} FROM stamps WHERE id = $1;`;
     const { rows } = await pool.query(selectQuery, [id]);
     if (rows.length === 0) {
-      return response.status(404).send('Stamp not found');
+      throw new NotFoundError('Stamp not found');
     }
     const imagePath = rows[0][slot];
 
@@ -231,10 +202,6 @@ router.delete('/image/:id/:slot', async (request, response) => {
     }
 
     response.status(200).json(updated.rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('Error deleting image');
-  }
-});
+}));
 
 export default router;
