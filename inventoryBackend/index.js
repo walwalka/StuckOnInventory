@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { PORT } from './config.js';
 import express from 'express';
 import passport from 'passport';
@@ -99,5 +98,5 @@ app.use('/api/comics', comicRoute);
 app.use('/api/comicpublishers', comicPublisherRoute);
 
 app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}`)
+    console.log(`Inventory Backend listening on port ${PORT}`)
 });
