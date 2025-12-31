@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import Spinner from '../Spinner';
 
@@ -8,6 +9,7 @@ const EditCoinType = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
   const [name, setName] = useState('');
   const [faceValue, setFaceValue] = useState('');
   const [loading, setLoading] = useState(true);
@@ -45,6 +47,7 @@ const EditCoinType = () => {
       .put(`/cointypes/${id}`, { name, face_value: parsed })
       .then(() => {
         enqueueSnackbar('Coin type updated', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['coinTypes'] });
         navigate('/cointypes');
       })
       .catch((error) => {

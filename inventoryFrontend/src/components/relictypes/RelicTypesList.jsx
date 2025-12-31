@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client';
 import Spinner from '../Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
@@ -10,23 +11,18 @@ import EditRelicType from './EditRelicType';
 import DeleteRelicType from './DeleteRelicType';
 
 const RelicTypesList = () => {
-  const [relicTypes, setRelicTypes] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    setLoading(true);
-    api
-      .get('/relictypes')
-      .then((response) => {
-        setRelicTypes(response.data.data || []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  }, []);
+  const {
+    data: relicTypes = [],
+    isLoading: loading,
+  } = useQuery({
+    queryKey: ['relicTypes'],
+    queryFn: async () => {
+      const response = await api.get('/relictypes');
+      return response.data.data || [];
+    },
+  });
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();

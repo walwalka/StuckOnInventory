@@ -3,6 +3,7 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 const EditComicPublisher = () => {
   const [name, setName] = useState('');
@@ -10,6 +11,7 @@ const EditComicPublisher = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setLoading(true);
@@ -39,6 +41,7 @@ const EditComicPublisher = () => {
       .put(`/comicpublishers/${id}`, data)
       .then(() => {
         enqueueSnackbar('Comic publisher updated successfully', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['comicPublishers'] });
         navigate('/comicpublishers');
       })
       .catch((error) => {

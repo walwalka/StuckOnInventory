@@ -3,6 +3,7 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 const EditRelicType = () => {
   const [name, setName] = useState('');
@@ -10,6 +11,7 @@ const EditRelicType = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setLoading(true);
@@ -39,6 +41,7 @@ const EditRelicType = () => {
       .put(`/relictypes/${id}`, data)
       .then(() => {
         enqueueSnackbar('Relic type updated successfully', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['relicTypes'] });
         navigate('/relictypes');
       })
       .catch((error) => {
