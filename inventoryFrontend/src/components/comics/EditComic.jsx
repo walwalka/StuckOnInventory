@@ -18,11 +18,21 @@ const EditComic = () => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [comicData, setComicData] = useState(null);
+  const [publishers, setPublishers] = useState([]);
   const navigate = useNavigate();
   const {id} = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
+    // Fetch publishers
+    api
+      .get('/comicpublishers')
+      .then((response) => {
+        setPublishers(response.data.data || []);
+      })
+      .catch((error) => console.log('Error fetching comic publishers:', error));
+
+    // Fetch comic data
     setLoading(true);
     api
     .get('/comics/'+id)
@@ -118,15 +128,11 @@ const EditComic = () => {
                 onChange={(e) => setPublisher(e.target.value)}
                 className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
               >
-                <option value="Marvel">Marvel</option>
-                <option value="DC Comics">DC Comics</option>
-                <option value="Image Comics">Image Comics</option>
-                <option value="Dark Horse">Dark Horse</option>
-                <option value="IDW Publishing">IDW Publishing</option>
-                <option value="Boom! Studios">Boom! Studios</option>
-                <option value="Valiant">Valiant</option>
-                <option value="Archie Comics">Archie Comics</option>
-                <option value="Other">Other</option>
+                {publishers.map((pub) => (
+                  <option key={pub.id} value={pub.name}>
+                    {pub.name}
+                  </option>
+                ))}
               </select>
             </div>
 
