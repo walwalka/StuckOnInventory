@@ -14,11 +14,21 @@ const EditRelic = () => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [relicData, setRelicData] = useState(null);
+  const [relicTypes, setRelicTypes] = useState([]);
   const navigate = useNavigate();
   const {id} = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
+    // Fetch relic types
+    api
+      .get('/relictypes')
+      .then((response) => {
+        setRelicTypes(response.data.data || []);
+      })
+      .catch((error) => console.log('Error fetching relic types:', error));
+
+    // Fetch relic data
     setLoading(true);
     api
     .get('/relics/'+id)
@@ -96,12 +106,11 @@ const EditRelic = () => {
                 onChange={(e) => setType(e.target.value)}
                 className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
               >
-                <option value="Arrowhead">Arrowhead</option>
-                <option value="Pottery">Pottery</option>
-                <option value="Tool">Tool</option>
-                <option value="Jewelry">Jewelry</option>
-                <option value="Weapon">Weapon</option>
-                <option value="Other">Other</option>
+                {relicTypes.map((rt) => (
+                  <option key={rt.id} value={rt.name}>
+                    {rt.name}
+                  </option>
+                ))}
               </select>
             </div>
 
