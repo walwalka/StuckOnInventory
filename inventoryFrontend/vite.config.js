@@ -5,6 +5,16 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: './',
   plugins: [react()],
+  build: {
+    minify: false,
+    rollupOptions: {
+      output: {
+        entryFileNames: `assets/[name]-[hash]-qrfix.js`,
+        chunkFileNames: `assets/[name]-[hash]-qrfix.js`,
+        assetFileNames: `assets/[name]-[hash]-qrfix.[ext]`
+      }
+    }
+  },
   server: {
     host: true,
     strictPort: true,

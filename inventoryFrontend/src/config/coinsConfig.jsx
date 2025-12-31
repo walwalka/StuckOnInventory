@@ -1,6 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import { BiSolidMagicWand } from 'react-icons/bi';
+import { BsQrCode } from 'react-icons/bs';
 
 /**
  * Coins Entity Configuration
@@ -129,8 +130,18 @@ export const coinsFormFields = [
   },
 ];
 
-// Custom action for AI estimate button
-export const getCoinsCustomActions = (handleGetEstimate, estimating) => [
+// Custom actions for coins table
+export const getCoinsCustomActions = (handleGetEstimate, estimating, handleQRClick) => [
+  {
+    onClick: (coin) => handleQRClick(coin),
+    title: 'View QR Code',
+    icon: (
+      <BsQrCode
+        className="text-xl"
+        style={{ color: 'var(--usd-green)' }}
+      />
+    ),
+  },
   {
     onClick: (coin) => handleGetEstimate(coin.id),
     disabled: (coin) => estimating[coin.id],

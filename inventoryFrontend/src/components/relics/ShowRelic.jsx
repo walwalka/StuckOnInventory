@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Spinner from '../Spinner';
 import heic2any from 'heic2any';
 import { BsQrCode } from 'react-icons/bs';
-import { QRCodeSVG } from 'react-qr-code';
+import QRCode from 'react-qr-code';
 
 const ShowRelic = () => {
   const [relic, setRelic] = useState({});
@@ -86,33 +86,6 @@ const ShowRelic = () => {
         </div>
 
         <div className="overflow-y-auto px-6 py-6 bg-white dark:bg-[#2c2c2c] rounded-b-xl">
-          <div className="mb-4">
-            <button
-              onClick={() => setShowQR(!showQR)}
-              className="flex items-center gap-2 px-4 py-2 usd-btn-green text-white rounded hover:opacity-90 transition"
-            >
-              <BsQrCode className="text-lg" />
-              {showQR ? 'Hide QR Code' : 'Show QR Code'}
-            </button>
-            {showQR && (
-              <div className="mt-4 p-4 bg-gray-50 dark:bg-[#3a3a3a] rounded-lg border usd-border-green">
-                <div className="flex flex-col items-center">
-                  <div className="bg-white p-3 rounded mb-2">
-                    <QRCodeSVG
-                      value={`${window.location.origin}/relics/details/${id}`}
-                      size={200}
-                      level="H"
-                      includeMargin={true}
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                    Scan to view this relic's details
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className='py-2'>
               <div className='text-sm font-semibold usd-text-green mb-1'>ID</div>
@@ -138,6 +111,34 @@ const ShowRelic = () => {
               <div className='text-sm font-semibold usd-text-green mb-1'>Description</div>
               <div className='text-gray-700 dark:text-gray-100'>{relic.description || 'No description provided'}</div>
             </div>
+          </div>
+
+          {/* QR Code Section */}
+          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <button
+              onClick={() => setShowQR(!showQR)}
+              className="flex items-center gap-2 px-4 py-2 usd-btn-green text-white rounded hover:opacity-90 transition"
+            >
+              <BsQrCode className="text-lg" />
+              {showQR ? 'Hide QR Code' : 'Show QR Code'}
+            </button>
+            {showQR && (
+              <div className="mt-4 p-4 bg-gray-50 dark:bg-[#3a3a3a] rounded-lg border usd-border-green">
+                <div className="flex flex-col items-center">
+                  <div className="bg-white p-3 rounded mb-2">
+                    <QRCode
+                      value={`${window.location.origin}/relics/details/${id}`}
+                      size={200}
+                      level="H"
+                      includeMargin={true}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                    Scan to view this relic's details
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Relic Images */}
