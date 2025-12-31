@@ -6,22 +6,38 @@ A web app for cataloging your collections - coins, comics, Native American artif
 
 Track your collectibles with custom fields for each type. Upload photos (HEIC works too), switch between table and card views, and keep everything organized in one place. The coin tracker even has AI value estimation.
 
-## Quick Start
+## Getting Started
 
+### Prerequisites
+
+- Docker and Docker Compose installed on your system
+- Git (to clone the repository)
+
+### Installation
+
+1. **Clone the repository:**
 ```bash
-# Clone and setup
 git clone <repository-url>
 cd StuckOnInventory
-cp .env.example .env
-
-# Start everything
-docker compose build
-docker compose up -d
-
-# Visit http://localhost:8080
 ```
 
-That's it. The database sets itself up on first run.
+2. **Set up environment variables:**
+```bash
+cp .env.example .env
+# Edit .env with your settings (see Environment Variables section below)
+```
+
+3. **Build and start the containers:**
+```bash
+docker compose build
+docker compose up -d
+```
+
+4. **Access the application:**
+- Frontend: http://localhost:8080
+- Backend API: http://localhost:5081
+
+The database migrations will run automatically on first startup.
 
 ## What's Inside
 

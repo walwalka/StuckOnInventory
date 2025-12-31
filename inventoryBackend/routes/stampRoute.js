@@ -7,6 +7,7 @@ import fs from 'fs';
 import { requireAuth } from '../middleware/auth.js';
 import { asyncHandler, BadRequestError, NotFoundError } from '../middleware/errorHandler.js';
 import { processImages } from '../middleware/imageProcessor.js';
+import { generateQRCode, deleteQRCode, regenerateQRCode } from '../utils/qrCodeGenerator.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -78,7 +79,12 @@ router.post('/', asyncHandler(async (request, response) => {
     const values = [country, denomination, issueyear, condition, description || '', image1 || null, image2 || null, image3 || null, quantity || 1];
 
     const result = await pool.query(query, values);
-    response.status(200).send({ message: 'New stamp record created', stampId: result.rows[0].id });
+    const stampId = result.rows[0].id;
+
+    const qrCodePath = await generateQRCode('stamps', stampId);
+    await pool.query('UPDATE stamps SET qr_code = $1 WHERE id = $2', [qrCodePath, stampId]);
+
+    response.status(200).send({ message: 'New stamp record created', stampId });
   }));
 
 router.get('/', asyncHandler(async (request, response) => {
@@ -136,6 +142,8 @@ router.delete('/:id', asyncHandler(async (request, response) => {
     if (rows.length === 0) {
       throw new NotFoundError('Stamp not found');
     }
+
+    await deleteQRCode(rows[0].qr_code);
 
     response.status(200).json(rows[0]);
 }));
@@ -216,6 +224,21 @@ router.delete('/image/:id/:slot', asyncHandler(async (request, response) => {
     }
 
     response.status(200).json(updated.rows[0]);
+}));
+
+router.post('/qr/regenerate/:id', asyncHandler(async (request, response) => {
+  const { id } = request.params;
+  const { rows } = await pool.query('SELECT qr_code FROM stamps WHERE id = $1', [id]);
+  if (rows.length === 0) {
+    throw new NotFoundError('Stamp not found');
+  }
+  const newQrPath = await regenerateQRCode('stamps', id, rows[0].qr_code);
+  const updated = await pool.query('UPDATE stamps SET qr_code = $1 WHERE id = $2 RETURNING *;', [newQrPath, id]);
+  response.status(200).json({
+    message: 'QR code regenerated',
+    qr_code: newQrPath,
+    stamp: updated.rows[0]
+  });
 }));
 
 export default router;

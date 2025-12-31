@@ -5,9 +5,15 @@ import { BsInfoCircle } from 'react-icons/bs';
 import { MdOutlineDelete } from 'react-icons/md';
 import heic2any from 'heic2any';
 import moment from 'moment';
+import { useSnackbar } from 'notistack';
+import QRCodeModal from '../shared/QRCodeModal';
+import QRButton from '../shared/QRButton';
 
-const ComicsTable = ({ comics }) => {
+const ComicsTable = ({ comics, onRefresh }) => {
     const [imageMap, setImageMap] = useState({});
+    const [qrModalOpen, setQrModalOpen] = useState(false);
+    const [selectedQR, setSelectedQR] = useState(null);
+    const { enqueueSnackbar } = useSnackbar();
 
     const getImageUrl = (imagePath) => {
       if (!imagePath) return null;
@@ -52,6 +58,20 @@ const ComicsTable = ({ comics }) => {
         revokeList.forEach((u) => URL.revokeObjectURL(u));
       };
     }, [comics]);
+
+    const handleQRClick = (comic) => {
+      const qrCodeUrl = `${window.location.origin}/comics/details/${comic.id}`;
+      setSelectedQR({ entityType: 'comics', itemId: comic.id, qrCodeUrl });
+      setQrModalOpen(true);
+    };
+
+    const handleQRRegenerate = () => {
+      enqueueSnackbar('QR code regenerated successfully', { variant: 'success' });
+      setQrModalOpen(false);
+      if (onRefresh) {
+        onRefresh();
+      }
+    };
 
   return (
     <div className="overflow-x-auto rounded-lg border-2 usd-border-green shadow-sm">
@@ -120,6 +140,7 @@ const ComicsTable = ({ comics }) => {
               </td>
               <td className='px-4 py-3'>
                 <div className='flex justify-center gap-x-3'>
+                  <QRButton onClick={() => handleQRClick(comic)} />
                   <Link to={`/comics/details/${comic.id}`} className="hover:scale-110 transition-transform">
                     <BsInfoCircle className='text-xl' style={{ color: 'var(--usd-green)' }} />
                   </Link>
@@ -135,6 +156,17 @@ const ComicsTable = ({ comics }) => {
           ))}
         </tbody>
       </table>
+
+      {qrModalOpen && selectedQR && (
+        <QRCodeModal
+          isOpen={qrModalOpen}
+          onClose={() => setQrModalOpen(false)}
+          entityType={selectedQR.entityType}
+          itemId={selectedQR.itemId}
+          qrCodeUrl={selectedQR.qrCodeUrl}
+          onRegenerate={handleQRRegenerate}
+        />
+      )}
     </div>
   );
 };

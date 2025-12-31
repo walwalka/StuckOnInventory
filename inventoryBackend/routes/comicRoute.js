@@ -11,6 +11,7 @@ import {
   NotFoundError
 } from '../middleware/errorHandler.js';
 import { processImages } from '../middleware/imageProcessor.js';
+import { generateQRCode, deleteQRCode, regenerateQRCode } from '../utils/qrCodeGenerator.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -83,7 +84,12 @@ router.post('/', asyncHandler(async (request, response) => {
     const values = [title, publisher, series, issuenumber, publicationyear, grade, condition, variant || '', description || '', image1 || null, image2 || null, image3 || null, quantity || 1];
 
     const result = await pool.query(query, values);
-    response.status(200).send({ message: 'New comic record created', comicId: result.rows[0].id });
+    const comicId = result.rows[0].id;
+
+    const qrCodePath = await generateQRCode('comics', comicId);
+    await pool.query('UPDATE comics SET qr_code = $1 WHERE id = $2', [qrCodePath, comicId]);
+
+    response.status(200).send({ message: 'New comic record created', comicId: comicId, qr_code: qrCodePath });
   }));
 
 // List all comics
@@ -149,6 +155,8 @@ router.delete('/:id', asyncHandler(async (request, response) => {
   if (rows.length === 0) {
     throw new NotFoundError('Comic not found');
   }
+
+  await deleteQRCode(rows[0].qr_code);
 
   response.status(200).json(rows[0]);
 }));
@@ -233,6 +241,21 @@ router.delete('/image/:id/:slot', asyncHandler(async (request, response) => {
   }
 
   response.status(200).json(updated.rows[0]);
+}));
+
+router.post('/qr/regenerate/:id', asyncHandler(async (request, response) => {
+  const { id } = request.params;
+  const { rows } = await pool.query('SELECT qr_code FROM comics WHERE id = $1', [id]);
+  if (rows.length === 0) {
+    throw new NotFoundError('Comic not found');
+  }
+  const newQrPath = await regenerateQRCode('comics', id, rows[0].qr_code);
+  const updated = await pool.query('UPDATE comics SET qr_code = $1 WHERE id = $2 RETURNING *;', [newQrPath, id]);
+  response.status(200).json({
+    message: 'QR code regenerated',
+    qr_code: newQrPath,
+    comic: updated.rows[0]
+  });
 }));
 
 export default router;

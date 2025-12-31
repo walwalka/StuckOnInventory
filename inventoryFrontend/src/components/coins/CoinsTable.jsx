@@ -1,17 +1,21 @@
+// QR Code feature added - includes button in actions column
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AiOutlineEdit } from 'react-icons/ai';
-import { BsInfoCircle } from 'react-icons/bs';
+import { BsInfoCircle, BsQrCode } from 'react-icons/bs';
 import { MdOutlineAddBox, MdOutlineDelete } from 'react-icons/md';
 import { BiSolidMagicWand } from 'react-icons/bi';
 import moment from 'moment';
 import heic2any from 'heic2any';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
+import QRCodeModal from '../shared/QRCodeModal';
 
 const CoinsTable = ({ coins, onRefresh }) => {
     const [imageMap, setImageMap] = useState({});
     const [estimating, setEstimating] = useState({});
+    const [qrModalOpen, setQrModalOpen] = useState(false);
+    const [selectedQR, setSelectedQR] = useState(null);
     const { enqueueSnackbar } = useSnackbar();
 
     const getImageUrl = (imagePath) => {
@@ -73,6 +77,20 @@ const CoinsTable = ({ coins, onRefresh }) => {
         enqueueSnackbar('Failed to get estimate', { variant: 'error' });
       } finally {
         setEstimating((prev) => ({ ...prev, [coinId]: false }));
+      }
+    };
+
+    const handleQRClick = (coin) => {
+      const qrCodeUrl = `${window.location.origin}/coins/details/${coin.id}`;
+      setSelectedQR({ entityType: 'coins', itemId: coin.id, qrCodeUrl });
+      setQrModalOpen(true);
+    };
+
+    const handleQRRegenerate = () => {
+      enqueueSnackbar('QR code regenerated successfully', { variant: 'success' });
+      setQrModalOpen(false);
+      if (onRefresh) {
+        onRefresh();
       }
     };
 
@@ -156,6 +174,13 @@ const CoinsTable = ({ coins, onRefresh }) => {
               <td className='px-4 py-3'>
                 <div className='flex justify-center gap-x-3'>
                   <button
+                    onClick={() => handleQRClick(coin)}
+                    className="hover:scale-110 transition-transform"
+                    title="View QR Code"
+                  >
+                    <BsQrCode className='text-xl' style={{ color: 'var(--usd-green)' }} />
+                  </button>
+                  <button
                     onClick={() => handleGetEstimate(coin.id)}
                     disabled={estimating[coin.id]}
                     className="hover:scale-110 transition-transform disabled:opacity-50"
@@ -178,6 +203,17 @@ const CoinsTable = ({ coins, onRefresh }) => {
           ))}
         </tbody>
       </table>
+
+      {qrModalOpen && selectedQR && (
+        <QRCodeModal
+          isOpen={qrModalOpen}
+          onClose={() => setQrModalOpen(false)}
+          entityType={selectedQR.entityType}
+          itemId={selectedQR.itemId}
+          qrCodeUrl={selectedQR.qrCodeUrl}
+          onRegenerate={handleQRRegenerate}
+        />
+      )}
     </div>
   );
 };

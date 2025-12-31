@@ -16,6 +16,7 @@ import {
   ValidationError
 } from '../middleware/errorHandler.js';
 import { processImages } from '../middleware/imageProcessor.js';
+import { generateQRCode, deleteQRCode, regenerateQRCode } from '../utils/qrCodeGenerator.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -111,7 +112,13 @@ router.post('/', asyncHandler(async (request, response) => {
     const values = [type, mintlocation, mintyear, circulation, grade, image1 || null, image2 || null, image3 || null, resolvedFaceValue ?? null];
 
     const result = await pool.query(query, values);
-    response.status(200).send({ message: 'New coin record created', coinId: result.rows[0].id });
+    const coinId = result.rows[0].id;
+
+    // Generate QR code for the new coin
+    const qrCodePath = await generateQRCode('coins', coinId);
+    await pool.query('UPDATE coins SET qr_code = $1 WHERE id = $2', [qrCodePath, coinId]);
+
+    response.status(200).send({ message: 'New coin record created', coinId });
   }));
 
 // List all coins
@@ -185,6 +192,9 @@ router.delete('/:id', asyncHandler(async (request, response) => {
   if (rows.length === 0) {
     throw new NotFoundError('we have not found that coin');
   }
+
+  // Delete associated QR code
+  await deleteQRCode(rows[0].qr_code);
 
   response.status(200).json(rows[0]);
 }));
@@ -454,6 +464,25 @@ Respond in JSON format: { "estimated_value": number, "explanation": "string" }`
     estimated_value: finalEstimate,
     explanation: estimateData.explanation,
     coin: updateResult.rows[0]
+  });
+}));
+
+// Regenerate QR code for a coin
+router.post('/qr/regenerate/:id', asyncHandler(async (request, response) => {
+  const { id } = request.params;
+  const { rows } = await pool.query('SELECT qr_code FROM coins WHERE id = $1', [id]);
+
+  if (rows.length === 0) {
+    throw new NotFoundError('Coin not found');
+  }
+
+  const newQrPath = await regenerateQRCode('coins', id, rows[0].qr_code);
+  const updated = await pool.query('UPDATE coins SET qr_code = $1 WHERE id = $2 RETURNING *;', [newQrPath, id]);
+
+  response.status(200).json({
+    message: 'QR code regenerated',
+    qr_code: newQrPath,
+    coin: updated.rows[0]
   });
 }));
 
