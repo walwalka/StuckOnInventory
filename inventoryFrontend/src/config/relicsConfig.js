@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { BsQrCode } from 'react-icons/bs';
 
 /**
  * Relics Entity Configuration
@@ -87,5 +88,19 @@ export const relicsFormFields = [
     required: true,
     min: '1',
     placeholder: 'Number of items',
+  },
+];
+
+// Custom actions for relics table
+export const getRelicsCustomActions = (handleQRClick) => [
+  {
+    onClick: (relic) => handleQRClick(relic),
+    title: 'View QR Code',
+    icon: (
+      <BsQrCode
+        className="text-xl"
+        style={{ color: 'var(--usd-green)' }}
+      />
+    ),
   },
 ];

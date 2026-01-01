@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { BsQrCode } from 'react-icons/bs';
 
 /**
  * Stamps Entity Configuration
@@ -87,5 +88,19 @@ export const stampsFormFields = [
     required: true,
     min: '1',
     placeholder: 'Number of items',
+  },
+];
+
+// Custom actions for stamps table
+export const getStampsCustomActions = (handleQRClick) => [
+  {
+    onClick: (stamp) => handleQRClick(stamp),
+    title: 'View QR Code',
+    icon: (
+      <BsQrCode
+        className="text-xl"
+        style={{ color: 'var(--usd-green)' }}
+      />
+    ),
   },
 ];

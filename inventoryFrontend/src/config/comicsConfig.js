@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { BsQrCode } from 'react-icons/bs';
 
 /**
  * Comics Entity Configuration
@@ -143,5 +144,19 @@ export const comicsFormFields = [
     type: 'number',
     min: '1',
     placeholder: '1',
+  },
+];
+
+// Custom actions for comics table
+export const getComicsCustomActions = (handleQRClick) => [
+  {
+    onClick: (comic) => handleQRClick(comic),
+    title: 'View QR Code',
+    icon: (
+      <BsQrCode
+        className="text-xl"
+        style={{ color: 'var(--usd-green)' }}
+      />
+    ),
   },
 ];

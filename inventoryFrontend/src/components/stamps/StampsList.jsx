@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericEntityList from '../shared/GenericEntityList';
@@ -7,9 +7,13 @@ import CreateStamps from './CreateStamps';
 import ShowStamp from './ShowStamp';
 import EditStamp from './EditStamp';
 import DeleteStamp from './DeleteStamp';
-import { stampsTableColumns } from '../../config/stampsConfig';
+import QRCodeModal from '../shared/QRCodeModal';
+import { stampsTableColumns, getStampsCustomActions } from '../../config/stampsConfig';
 
 const StampsList = ({ showType }) => {
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [selectedQR, setSelectedQR] = useState(null);
+
   const {
     data: stamps = [],
     isLoading,
@@ -22,21 +26,45 @@ const StampsList = ({ showType }) => {
     },
   });
 
+  const handleQRClick = (stamp) => {
+    const qrCodeUrl = `${window.location.origin}/stamps/details/${stamp.id}`;
+    setSelectedQR({
+      entityType: 'stamps',
+      itemId: stamp.id,
+      qrCodeUrl,
+      itemDetails: stamp
+    });
+    setQrModalOpen(true);
+  };
+
+  const customActions = getStampsCustomActions(handleQRClick);
+
   return (
-    <GenericEntityList
-      entityName="stamps"
-      entityLabel="Stamps Inventory"
-      items={stamps}
-      loading={isLoading}
-      onRefresh={refetch}
-      showType={showType}
-      tableColumns={stampsTableColumns}
-      CardComponent={(props) => <StampsCard stamps={props.items} />}
-      CreateComponent={CreateStamps}
-      ShowComponent={ShowStamp}
-      EditComponent={EditStamp}
-      DeleteComponent={DeleteStamp}
-    />
+    <>
+      <GenericEntityList
+        entityName="stamps"
+        entityLabel="Stamps Inventory"
+        items={stamps}
+        loading={isLoading}
+        onRefresh={refetch}
+        showType={showType}
+        tableColumns={stampsTableColumns}
+        customActions={customActions}
+        CardComponent={(props) => <StampsCard stamps={props.items} />}
+        CreateComponent={CreateStamps}
+        ShowComponent={ShowStamp}
+        EditComponent={EditStamp}
+        DeleteComponent={DeleteStamp}
+      />
+
+      {qrModalOpen && selectedQR && (
+        <QRCodeModal
+          isOpen={qrModalOpen}
+          onClose={() => setQrModalOpen(false)}
+          qrData={selectedQR}
+        />
+      )}
+    </>
   );
 };
 

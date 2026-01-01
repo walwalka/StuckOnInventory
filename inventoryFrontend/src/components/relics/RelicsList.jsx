@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericEntityList from '../shared/GenericEntityList';
@@ -7,9 +7,13 @@ import CreateRelics from './CreateRelics';
 import ShowRelic from './ShowRelic';
 import EditRelic from './EditRelic';
 import DeleteRelic from './DeleteRelic';
-import { relicsTableColumns } from '../../config/relicsConfig';
+import QRCodeModal from '../shared/QRCodeModal';
+import { relicsTableColumns, getRelicsCustomActions } from '../../config/relicsConfig';
 
 const RelicsList = ({ showType }) => {
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [selectedQR, setSelectedQR] = useState(null);
+
   const {
     data: relics = [],
     isLoading,
@@ -22,21 +26,45 @@ const RelicsList = ({ showType }) => {
     },
   });
 
+  const handleQRClick = (relic) => {
+    const qrCodeUrl = `${window.location.origin}/relics/details/${relic.id}`;
+    setSelectedQR({
+      entityType: 'relics',
+      itemId: relic.id,
+      qrCodeUrl,
+      itemDetails: relic
+    });
+    setQrModalOpen(true);
+  };
+
+  const customActions = getRelicsCustomActions(handleQRClick);
+
   return (
-    <GenericEntityList
-      entityName="relics"
-      entityLabel="Native American Relics Inventory"
-      items={relics}
-      loading={isLoading}
-      onRefresh={refetch}
-      showType={showType}
-      tableColumns={relicsTableColumns}
-      CardComponent={(props) => <RelicsCard relics={props.items} />}
-      CreateComponent={CreateRelics}
-      ShowComponent={ShowRelic}
-      EditComponent={EditRelic}
-      DeleteComponent={DeleteRelic}
-    />
+    <>
+      <GenericEntityList
+        entityName="relics"
+        entityLabel="Native American Relics Inventory"
+        items={relics}
+        loading={isLoading}
+        onRefresh={refetch}
+        showType={showType}
+        tableColumns={relicsTableColumns}
+        customActions={customActions}
+        CardComponent={(props) => <RelicsCard relics={props.items} />}
+        CreateComponent={CreateRelics}
+        ShowComponent={ShowRelic}
+        EditComponent={EditRelic}
+        DeleteComponent={DeleteRelic}
+      />
+
+      {qrModalOpen && selectedQR && (
+        <QRCodeModal
+          isOpen={qrModalOpen}
+          onClose={() => setQrModalOpen(false)}
+          qrData={selectedQR}
+        />
+      )}
+    </>
   );
 };
 

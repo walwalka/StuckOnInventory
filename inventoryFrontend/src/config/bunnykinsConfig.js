@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { BsQrCode } from 'react-icons/bs';
 
 /**
  * Bunnykins Entity Configuration
@@ -86,5 +87,19 @@ export const bunnykinsFormFields = [
     type: 'number',
     min: '1',
     placeholder: '1',
+  },
+];
+
+// Custom actions for bunnykins table
+export const getBunnykinsCustomActions = (handleQRClick) => [
+  {
+    onClick: (bunnykin) => handleQRClick(bunnykin),
+    title: 'View QR Code',
+    icon: (
+      <BsQrCode
+        className="text-xl"
+        style={{ color: 'var(--usd-green)' }}
+      />
+    ),
   },
 ];
