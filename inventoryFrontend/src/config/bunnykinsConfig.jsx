@@ -1,11 +1,12 @@
+import React from 'react';
 import moment from 'moment';
 import { BsQrCode } from 'react-icons/bs';
 
 /**
- * Relics Entity Configuration
+ * Bunnykins Entity Configuration
  */
 
-export const relicsTableColumns = [
+export const bunnykinsTableColumns = [
   {
     field: 'quantity',
     label: 'Quantity',
@@ -24,18 +25,18 @@ export const relicsTableColumns = [
     type: 'image',
   },
   {
-    field: 'type',
-    label: 'Type',
+    field: 'name',
+    label: 'Name',
     bold: true,
   },
   {
-    field: 'origin',
-    label: 'Origin',
+    field: 'series',
+    label: 'Series',
     hideOnMobile: true,
   },
   {
-    field: 'era',
-    label: 'Era',
+    field: 'productionyear',
+    label: 'Production Year',
     hideOnMobile: true,
   },
   {
@@ -45,56 +46,55 @@ export const relicsTableColumns = [
   },
 ];
 
-export const relicsFormFields = [
+export const bunnykinsFormFields = [
   {
-    name: 'type',
-    label: 'Type',
-    type: 'select',
-    required: true,
-    options: [], // Will be populated from API
-  },
-  {
-    name: 'origin',
-    label: 'Origin',
+    name: 'name',
+    label: 'Name',
     type: 'text',
     required: true,
-    placeholder: 'e.g., Cherokee, Navajo, etc.',
+    placeholder: 'e.g., Teacher Bunnykins, etc.',
   },
   {
-    name: 'era',
-    label: 'Era',
+    name: 'series',
+    label: 'Series',
     type: 'text',
     required: true,
-    placeholder: 'e.g., Pre-Columbian, Colonial, etc.',
+    placeholder: 'e.g., Royal Doulton, Bunnykins Series 1, etc.',
+  },
+  {
+    name: 'productionyear',
+    label: 'Production Year',
+    type: 'text',
+    required: true,
+    placeholder: 'e.g., 1990, 1985-1995, etc.',
   },
   {
     name: 'condition',
     label: 'Condition',
     type: 'select',
     required: true,
-    options: ['Excellent', 'Good', 'Fair', 'Poor'],
+    options: ['Mint in Box', 'Mint', 'Excellent', 'Good', 'Fair', 'Damaged'],
   },
   {
     name: 'description',
     label: 'Description',
     type: 'textarea',
     rows: 4,
-    placeholder: 'Additional details about the relic...',
+    placeholder: 'Additional details about the Bunnykins figurine...',
   },
   {
     name: 'quantity',
     label: 'Quantity',
     type: 'number',
-    required: true,
     min: '1',
-    placeholder: 'Number of items',
+    placeholder: '1',
   },
 ];
 
-// Custom actions for relics table
-export const getRelicsCustomActions = (handleQRClick) => [
+// Custom actions for bunnykins table
+export const getBunnykinsCustomActions = (handleQRClick) => [
   {
-    onClick: (relic) => handleQRClick(relic),
+    onClick: (bunnykin) => handleQRClick(bunnykin),
     title: 'View QR Code',
     icon: (
       <BsQrCode

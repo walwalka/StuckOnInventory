@@ -1,3 +1,4 @@
+import React from 'react';
 import moment from 'moment';
 import { BsQrCode } from 'react-icons/bs';
 

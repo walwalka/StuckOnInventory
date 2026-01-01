@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericModal from '../shared/GenericModal';
 import GenericForm from '../shared/GenericForm';
-import { bunnykinsFormFields } from '../../config/bunnykinsConfig';
+import { bunnykinsFormFields } from '../../config/bunnykinsConfig.jsx';
 
 const CreateBunnykins = () => {
   const [loading, setLoading] = useState(false);

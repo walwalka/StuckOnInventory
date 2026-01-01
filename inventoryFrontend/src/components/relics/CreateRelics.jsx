@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericModal from '../shared/GenericModal';
 import GenericForm from '../shared/GenericForm';
-import { relicsFormFields } from '../../config/relicsConfig';
+import { relicsFormFields } from '../../config/relicsConfig.jsx';
 
 const CreateRelics = () => {
   const [loading, setLoading] = useState(false);

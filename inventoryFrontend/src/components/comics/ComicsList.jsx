@@ -8,7 +8,7 @@ import ShowComic from './ShowComic';
 import EditComic from './EditComic';
 import DeleteComic from './DeleteComic';
 import QRCodeModal from '../shared/QRCodeModal';
-import { comicsTableColumns, getComicsCustomActions } from '../../config/comicsConfig';
+import { comicsTableColumns, getComicsCustomActions } from '../../config/comicsConfig.jsx';
 
 const ComicsList = ({ showType }) => {
   const [qrModalOpen, setQrModalOpen] = useState(false);

@@ -8,7 +8,7 @@ import ShowBunnykin from './ShowBunnykin';
 import EditBunnykin from './EditBunnykin';
 import DeleteBunnykin from './DeleteBunnykin';
 import QRCodeModal from '../shared/QRCodeModal';
-import { bunnykinsTableColumns, getBunnykinsCustomActions } from '../../config/bunnykinsConfig';
+import { bunnykinsTableColumns, getBunnykinsCustomActions } from '../../config/bunnykinsConfig.jsx';
 
 const BunnykinsList = ({ showType }) => {
   const [qrModalOpen, setQrModalOpen] = useState(false);

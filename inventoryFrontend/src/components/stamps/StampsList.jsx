@@ -8,7 +8,7 @@ import ShowStamp from './ShowStamp';
 import EditStamp from './EditStamp';
 import DeleteStamp from './DeleteStamp';
 import QRCodeModal from '../shared/QRCodeModal';
-import { stampsTableColumns, getStampsCustomActions } from '../../config/stampsConfig';
+import { stampsTableColumns, getStampsCustomActions } from '../../config/stampsConfig.jsx';
 
 const StampsList = ({ showType }) => {
   const [qrModalOpen, setQrModalOpen] = useState(false);

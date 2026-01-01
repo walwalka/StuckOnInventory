@@ -8,7 +8,7 @@ import ShowRelic from './ShowRelic';
 import EditRelic from './EditRelic';
 import DeleteRelic from './DeleteRelic';
 import QRCodeModal from '../shared/QRCodeModal';
-import { relicsTableColumns, getRelicsCustomActions } from '../../config/relicsConfig';
+import { relicsTableColumns, getRelicsCustomActions } from '../../config/relicsConfig.jsx';
 
 const RelicsList = ({ showType }) => {
   const [qrModalOpen, setQrModalOpen] = useState(false);

@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericModal from '../shared/GenericModal';
 import GenericForm from '../shared/GenericForm';
-import { comicsFormFields } from '../../config/comicsConfig';
+import { comicsFormFields } from '../../config/comicsConfig.jsx';
 
 const CreateComics = () => {
   const [loading, setLoading] = useState(false);

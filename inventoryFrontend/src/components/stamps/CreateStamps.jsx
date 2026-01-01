@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import GenericModal from '../shared/GenericModal';
 import GenericForm from '../shared/GenericForm';
-import { stampsFormFields } from '../../config/stampsConfig';
+import { stampsFormFields } from '../../config/stampsConfig.jsx';
 
 const CreateStamps = () => {
   const [loading, setLoading] = useState(false);
