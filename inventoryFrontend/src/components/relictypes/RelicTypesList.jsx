@@ -1,31 +1,28 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client';
 import Spinner from '../Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import RelicTypesTable from './RelicTypesTable';
+import CreateRelicType from './CreateRelicType';
 import ShowRelicType from './ShowRelicType';
 import EditRelicType from './EditRelicType';
 import DeleteRelicType from './DeleteRelicType';
 
 const RelicTypesList = () => {
-  const [relicTypes, setRelicTypes] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    setLoading(true);
-    api
-      .get('/relictypes')
-      .then((response) => {
-        setRelicTypes(response.data.data || []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  }, []);
+  const {
+    data: relicTypes = [],
+    isLoading: loading,
+  } = useQuery({
+    queryKey: ['relicTypes'],
+    queryFn: async () => {
+      const response = await api.get('/relictypes');
+      return response.data.data || [];
+    },
+  });
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
@@ -61,8 +58,9 @@ const RelicTypesList = () => {
 
       {loading ? <Spinner /> : <RelicTypesTable relicTypes={filtered} />}
 
-      {/* Render modals as overlays when on details/edit/delete routes */}
+      {/* Render modals as overlays when on create/details/edit/delete routes */}
       <Routes>
+        <Route path="create" element={<CreateRelicType />} />
         <Route path="details/:id" element={<ShowRelicType />} />
         <Route path="edit/:id" element={<EditRelicType />} />
         <Route path="delete/:id" element={<DeleteRelicType />} />

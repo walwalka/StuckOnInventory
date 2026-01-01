@@ -1,31 +1,28 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client';
 import Spinner from '../Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import ComicPublishersTable from './ComicPublishersTable';
+import CreateComicPublisher from './CreateComicPublisher';
 import ShowComicPublisher from './ShowComicPublisher';
 import EditComicPublisher from './EditComicPublisher';
 import DeleteComicPublisher from './DeleteComicPublisher';
 
 const ComicPublishersList = () => {
-  const [publishers, setPublishers] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    setLoading(true);
-    api
-      .get('/comicpublishers')
-      .then((response) => {
-        setPublishers(response.data.data || []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  }, []);
+  const {
+    data: publishers = [],
+    isLoading: loading,
+  } = useQuery({
+    queryKey: ['comicPublishers'],
+    queryFn: async () => {
+      const response = await api.get('/comicpublishers');
+      return response.data.data || [];
+    },
+  });
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
@@ -61,8 +58,9 @@ const ComicPublishersList = () => {
 
       {loading ? <Spinner /> : <ComicPublishersTable publishers={filtered} />}
 
-      {/* Render modals as overlays when on details/edit/delete routes */}
+      {/* Render modals as overlays when on create/details/edit/delete routes */}
       <Routes>
+        <Route path="create" element={<CreateComicPublisher />} />
         <Route path="details/:id" element={<ShowComicPublisher />} />
         <Route path="edit/:id" element={<EditComicPublisher />} />
         <Route path="delete/:id" element={<DeleteComicPublisher />} />

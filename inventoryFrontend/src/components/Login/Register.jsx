@@ -67,14 +67,19 @@ const Register = () => {
         inviteToken: token
       });
 
-      // Registration successful
+      // Registration successful - automatically log the user in
       if (response.data.accessToken && response.data.refreshToken) {
+        // Store tokens
+        localStorage.setItem('accessToken', response.data.accessToken);
+        localStorage.setItem('refreshToken', response.data.refreshToken);
+
         enqueueSnackbar(
           response.data.message || 'Account created successfully!',
           { variant: 'success', autoHideDuration: 3000 }
         );
-        // Redirect to login page
-        setTimeout(() => navigate('/login'), 2000);
+
+        // Redirect to home/dashboard
+        setTimeout(() => navigate('/'), 2000);
       }
     } catch (error) {
       console.error('Registration error:', error);

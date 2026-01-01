@@ -5,6 +5,13 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { requireAuth } from '../middleware/auth.js';
+import {
+  asyncHandler,
+  BadRequestError,
+  NotFoundError
+} from '../middleware/errorHandler.js';
+import { processImages } from '../middleware/imageProcessor.js';
+import { generateQRCode, deleteQRCode, regenerateQRCode } from '../utils/qrCodeGenerator.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,192 +56,195 @@ const uploadWithErrors = (req, res, next) => {
   upload.array('images', 3)(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       if (err.code === 'LIMIT_FILE_SIZE') {
-        return res.status(400).json({ error: 'File too large. Max 10MB each.' });
+        throw new BadRequestError('File too large. Max 10MB each.');
       }
       if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-        return res.status(400).json({ error: 'Too many files. Max 3 images.' });
+        throw new BadRequestError('Too many files. Max 3 images.');
       }
-      return res.status(400).json({ error: err.message });
+      throw new BadRequestError(err.message);
     } else if (err) {
-      return res.status(400).json({ error: err.message || 'Upload failed' });
+      throw new BadRequestError(err.message || 'Upload failed');
     }
     next();
   });
 };
 
-router.post('/', async (request, response) => {
-    const { name, series, productionyear, condition, description, image1, image2, image3 } = request.body;
+router.post('/', asyncHandler(async (request, response) => {
+    const { name, series, productionyear, condition, description, image1, image2, image3, quantity } = request.body;
     if (!name || !series || !productionyear || !condition) {
-      return response.status(400).send('Required fields: name, series, productionyear, condition');
+      throw new BadRequestError('Required fields: name, series, productionyear, condition');
     }
-    try {
-      const query = `
-        INSERT INTO bunnykins (name, series, productionyear, condition, description, image1, image2, image3)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING id;
-      `;
-      const values = [name, series, productionyear, condition, description || '', image1 || null, image2 || null, image3 || null];
-  
-      const result = await pool.query(query, values);
-      response.status(200).send({ message: 'New bunnykin record created', bunnykinId: result.rows[0].id });
-    } catch (error) {
-      console.error(error);
-      response.status(500).send('Error occurred');
-    }
+
+    const query = `
+      INSERT INTO bunnykins (name, series, productionyear, condition, description, image1, image2, image3, quantity)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      RETURNING id;
+    `;
+    const values = [name, series, productionyear, condition, description || '', image1 || null, image2 || null, image3 || null, quantity || 1];
+
+    const result = await pool.query(query, values);
+    const bunnykinId = result.rows[0].id;
+
+    // Generate QR code for the new bunnykin
+    const qrCodePath = await generateQRCode('bunnykins', bunnykinId);
+    await pool.query('UPDATE bunnykins SET qr_code = $1 WHERE id = $2', [qrCodePath, bunnykinId]);
+
+    response.status(200).send({ message: 'New bunnykin record created', bunnykinId });
+  }));
+
+router.get('/', asyncHandler(async (request, response) => {
+  const query = 'SELECT * FROM bunnykins ORDER BY id DESC;';
+  const allBunnykins = await pool.query(query);
+  return response.status(200).json({
+    data: allBunnykins.rows
+  });
+}));
+
+router.get('/:id', asyncHandler(async (request, response) => {
+  const { id } = request.params;
+  const query = 'SELECT * FROM bunnykins WHERE id = $1;';
+  const { rows } = await pool.query(query, [id]);
+
+  if (rows.length === 0) {
+    throw new NotFoundError('Bunnykin not found');
+  }
+
+  return response.status(200).json(rows[0]);
+}));
+
+router.put('/:id', asyncHandler(async (request, response) => {
+  const { id } = request.params;
+  const { name, series, productionyear, condition, description, image1, image2, image3, quantity } = request.body;
+
+  const query = `
+    UPDATE bunnykins
+    SET name = COALESCE($1, name),
+        series = COALESCE($2, series),
+        productionyear = COALESCE($3, productionyear),
+        condition = COALESCE($4, condition),
+        description = COALESCE($5, description),
+        image1 = COALESCE($6, image1),
+        image2 = COALESCE($7, image2),
+        image3 = COALESCE($8, image3),
+        quantity = COALESCE($9, quantity)
+    WHERE id = $10
+    RETURNING *;
+  `;
+  const { rows } = await pool.query(query, [name, series, productionyear, condition, description, image1, image2, image3, quantity, id]);
+
+  if (rows.length === 0) {
+    throw new NotFoundError('Bunnykin not found');
+  }
+
+  response.status(200).json(rows[0]);
+}));
+
+router.delete('/:id', asyncHandler(async (request, response) => {
+  const { id } = request.params;
+  const query = 'DELETE FROM bunnykins WHERE id = $1 RETURNING *;';
+  const { rows } = await pool.query(query, [id]);
+
+  if (rows.length === 0) {
+    throw new NotFoundError('Bunnykin not found');
+  }
+
+  // Delete associated QR code
+  await deleteQRCode(rows[0].qr_code);
+
+  response.status(200).json(rows[0]);
+}));
+
+router.post('/upload/:id', uploadWithErrors, processImages, asyncHandler(async (request, response) => {
+  const { id } = request.params;
+
+  if (!request.files || request.files.length === 0) {
+    throw new BadRequestError('No files uploaded');
+  }
+
+  // Use processed file names from the middleware
+  const imagePaths = {};
+  const processedFiles = request.processedFiles || request.files;
+
+  processedFiles.forEach((file, index) => {
+    const filename = file.filename || file.name;
+    imagePaths[`image${index + 1}`] = `/uploads/${filename}`;
   });
 
-router.get('/', async (request, response) => {
-  try {
-    const query = 'SELECT * FROM bunnykins ORDER BY id DESC;';
-    const allBunnykins = await pool.query(query);
-    return response.status(200).json({
-      data: allBunnykins.rows
-    });
-    } catch (error) {
-    console.error(error);
-    response.status(500).send('Error occurred');
-    }
-});
+  const updateFields = [];
+  const values = [];
+  let paramCount = 1;
 
-router.get('/:id', async (request, response) => {
-  try {
-    const { id } = request.params;
-    const query = 'SELECT * FROM bunnykins WHERE id = $1;';
-    const { rows } = await pool.query(query, [id]);
+  Object.keys(imagePaths).forEach(key => {
+    updateFields.push(`${key} = $${paramCount}`);
+    values.push(imagePaths[key]);
+    paramCount++;
+  });
 
-    if (rows.length === 0) {
-      return response.status(404).send('Bunnykin not found');
-    }
+  values.push(id);
 
-    return response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('Error occurred');
+  const query = `
+    UPDATE bunnykins
+    SET ${updateFields.join(', ')}
+    WHERE id = $${paramCount}
+    RETURNING *;
+  `;
+
+  const { rows } = await pool.query(query, values);
+
+  if (rows.length === 0) {
+    throw new NotFoundError('Bunnykin not found');
   }
-});
 
-router.put('/:id', async (request, response) => {
-  try {
-    const { id } = request.params;
-    const { name, series, productionyear, condition, description, image1, image2, image3 } = request.body;
+  response.status(200).json(rows[0]);
+}));
 
-    const query = `
-      UPDATE bunnykins
-      SET name = COALESCE($1, name),
-          series = COALESCE($2, series),
-          productionyear = COALESCE($3, productionyear),
-          condition = COALESCE($4, condition),
-          description = COALESCE($5, description),
-          image1 = COALESCE($6, image1),
-          image2 = COALESCE($7, image2),
-          image3 = COALESCE($8, image3)
-      WHERE id = $9
-      RETURNING *;
-    `;
-    const { rows } = await pool.query(query, [name, series, productionyear, condition, description, image1, image2, image3, id]);
-
-    if (rows.length === 0) {
-      return response.status(404).send('Bunnykin not found');
-    }
-
-    response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('Error occurred');
+router.delete('/image/:id/:slot', asyncHandler(async (request, response) => {
+  const { id, slot } = request.params;
+  const validSlots = ['image1', 'image2', 'image3'];
+  if (!validSlots.includes(slot)) {
+    throw new BadRequestError('Invalid image slot');
   }
-});
 
-router.delete('/:id', async (request, response) => {
-  try {
-    const { id } = request.params;
-    const query = 'DELETE FROM bunnykins WHERE id = $1 RETURNING *;';
-    const { rows } = await pool.query(query, [id]);
-
-    if (rows.length === 0) {
-      return response.status(404).send('Bunnykin not found');
-    }
-
-    response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('Error occurred');
+  const selectQuery = `SELECT ${slot} FROM bunnykins WHERE id = $1;`;
+  const { rows } = await pool.query(selectQuery, [id]);
+  if (rows.length === 0) {
+    throw new NotFoundError('Bunnykin not found');
   }
-});
+  const imagePath = rows[0][slot];
 
-router.post('/upload/:id', uploadWithErrors, async (request, response) => {
-  try {
-    const { id } = request.params;
-    
-    if (!request.files || request.files.length === 0) {
-      return response.status(400).send('No files uploaded');
-    }
+  const updateQuery = `UPDATE bunnykins SET ${slot} = NULL WHERE id = $1 RETURNING *;`;
+  const updated = await pool.query(updateQuery, [id]);
 
-    const imagePaths = {};
-    request.files.forEach((file, index) => {
-      imagePaths[`image${index + 1}`] = `/uploads/${file.filename}`;
-    });
+  // Remove file from disk if exists (including processed versions)
+  if (imagePath) {
+    const filename = path.basename(imagePath);
+    const baseName = path.basename(filename, path.extname(filename));
+    const fileOnDisk = path.join(UPLOAD_DIR, filename);
+    const thumbnailFile = path.join(UPLOAD_DIR, `${baseName}-thumb.jpg`);
+    const webpFile = path.join(UPLOAD_DIR, `${baseName}.webp`);
 
-    const updateFields = [];
-    const values = [];
-    let paramCount = 1;
-
-    Object.keys(imagePaths).forEach(key => {
-      updateFields.push(`${key} = $${paramCount}`);
-      values.push(imagePaths[key]);
-      paramCount++;
-    });
-
-    values.push(id);
-
-    const query = `
-      UPDATE bunnykins
-      SET ${updateFields.join(', ')}
-      WHERE id = $${paramCount}
-      RETURNING *;
-    `;
-
-    const { rows } = await pool.query(query, values);
-
-    if (rows.length === 0) {
-      return response.status(404).send('Bunnykin not found');
-    }
-
-    response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).json({ error: 'Error uploading images' });
+    // Delete main file, thumbnail, and WebP version
+    fs.promises.unlink(fileOnDisk).catch(() => {});
+    fs.promises.unlink(thumbnailFile).catch(() => {});
+    fs.promises.unlink(webpFile).catch(() => {});
   }
-});
 
-router.delete('/image/:id/:slot', async (request, response) => {
-  try {
-    const { id, slot } = request.params;
-    const validSlots = ['image1', 'image2', 'image3'];
-    if (!validSlots.includes(slot)) {
-      return response.status(400).send('Invalid image slot');
-    }
+  response.status(200).json(updated.rows[0]);
+}));
 
-    const selectQuery = `SELECT ${slot} FROM bunnykins WHERE id = $1;`;
-    const { rows } = await pool.query(selectQuery, [id]);
-    if (rows.length === 0) {
-      return response.status(404).send('Bunnykin not found');
-    }
-    const imagePath = rows[0][slot];
-
-    const updateQuery = `UPDATE bunnykins SET ${slot} = NULL WHERE id = $1 RETURNING *;`;
-    const updated = await pool.query(updateQuery, [id]);
-
-    if (imagePath) {
-      const filename = path.basename(imagePath);
-      const fileOnDisk = path.join(UPLOAD_DIR, filename);
-      fs.promises.unlink(fileOnDisk).catch(() => {});
-    }
-
-    response.status(200).json(updated.rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('Error deleting image');
+router.post('/qr/regenerate/:id', asyncHandler(async (request, response) => {
+  const { id } = request.params;
+  const { rows } = await pool.query('SELECT qr_code FROM bunnykins WHERE id = $1', [id]);
+  if (rows.length === 0) {
+    throw new NotFoundError('Bunnykin not found');
   }
-});
+  const newQrPath = await regenerateQRCode('bunnykins', id, rows[0].qr_code);
+  const updated = await pool.query('UPDATE bunnykins SET qr_code = $1 WHERE id = $2 RETURNING *;', [newQrPath, id]);
+  response.status(200).json({
+    message: 'QR code regenerated',
+    qr_code: newQrPath,
+    bunnykin: updated.rows[0]
+  });
+}));
 
 export default router;

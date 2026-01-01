@@ -1,6 +1,15 @@
 import express, { response } from 'express';
 import { pool } from '../database/database.js';
 import { requireAuth } from '../middleware/auth.js';
+import {
+  asyncHandler,
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+  ConflictError,
+  ValidationError
+} from '../middleware/errorHandler.js';
 
 const router = express.Router();
 
@@ -9,146 +18,111 @@ router.use(requireAuth);
 
 // Below are the routes for the mint locations
 
-router.get('/mints', async (request, response) => {
-  try {
-    const query = 'SELECT * FROM mintlocations;';
-    const allMints = await pool.query(query);
-    return response.status(200).json({
-      data: allMints
-    });
-    } catch (error) {
-    console.error(error);
-    response.status(500).send('some error has occured');
-    }
-});
+router.get('/mints', asyncHandler(async (request, response) => {
+  const query = 'SELECT * FROM mintlocations;';
+  const allMints = await pool.query(query);
+  return response.status(200).json({
+    data: allMints
+  });
+}));
 
-router.post('/mints', async (request, response) => {
+router.post('/mints', asyncHandler(async (request, response) => {
   // Validate the incoming JSON data
   const { name, city, usState } = request.body;
   console.log(request.body);
   if (!name || !city || !usState) {
-    return response.status(400).send('One of the name, city, state data points is missing');
+    throw new BadRequestError('One of the name, city, state data points is missing');
   }
 
-  try {
-    // try to send data to the database
-    const query = `
-      INSERT INTO mintlocations (name, city, state)
-      VALUES ($1, $2, $3)
-      RETURNING id;
-    `;
-    const values = [name, city, usState];
+  // try to send data to the database
+  const query = `
+    INSERT INTO mintlocations (name, city, state)
+    VALUES ($1, $2, $3)
+    RETURNING id;
+  `;
+  const values = [name, city, usState];
 
-    const result = await pool.query(query, values);
-    response.status(200).send({ message: 'New mint saved!', mintId: result.rows[0].id });
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('some error has occured');
-  }
-});
+  const result = await pool.query(query, values);
+  response.status(200).send({ message: 'New mint saved!', mintId: result.rows[0].id });
+}));
 
-router.post('/mints/create', async (request, response) => {
+router.post('/mints/create', asyncHandler(async (request, response) => {
   // Validate the incoming JSON data
   const { name, city, usState } = request.body;
   console.log(request.body);
   if (!name || !city || !usState) {
-    return response.status(400).send('One of the name, city or state data points is missing');
+    throw new BadRequestError('One of the name, city or state data points is missing');
   }
 
-  try {
-    // try to send data to the database
-    const query = `
-      INSERT INTO mintlocations (name, city, state)
-      VALUES ($1, $2, $3)
-      RETURNING id;
-    `;
-    const values = [name, city, usState];
+  // try to send data to the database
+  const query = `
+    INSERT INTO mintlocations (name, city, state)
+    VALUES ($1, $2, $3)
+    RETURNING id;
+  `;
+  const values = [name, city, usState];
 
-    const result = await pool.query(query, values);
-    response.status(200).send({ message: 'New mint saved!', mintId: result.rows[0].id });
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('some error has occured');
+  const result = await pool.query(query, values);
+  response.status(200).send({ message: 'New mint saved!', mintId: result.rows[0].id });
+}));
+
+router.get('/mints/:id', asyncHandler(async (request, response) => {
+  const { id } = request.params;
+  const query = 'SELECT * FROM mintlocations WHERE id = $1;';
+  const { rows } = await pool.query(query, [id]);
+
+  if (rows.length === 0) {
+    throw new NotFoundError('this mint is not in the database');
   }
-});
 
-router.get('/mints/:id', async (request, response) => {
-  try {
-    const { id } = request.params;
-    const query = 'SELECT * FROM mintlocations WHERE id = $1;';
-    const { rows } = await pool.query(query, [id]);
+  return response.status(200).json(rows[0]);
+}));
 
-    if (rows.length === 0) {
-      return response.status(404).send('this mint is not in the database');
-    }
+router.put('/mints/:id', asyncHandler(async (request, response) => {
+  const { id } = request.params;
+  const { name, city, state } = request.body;
 
-    return response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('some error has occured');
+  if (!name && !city && !state) {
+    throw new BadRequestError('provide a field name, city and state.');
   }
-});
 
-router.put('/mints/:id', async (request, response) => {
-  try {
-    const { id } = request.params;
-    const { name, city, state } = request.body;
+  const query = `
+    UPDATE mintlocations
+    SET name = COALESCE($1, name),
+        city = COALESCE($2, city),
+        state = COALESCE($3, state)
+    WHERE id = $4
+    RETURNING *;
+  `;
+  const { rows } = await pool.query(query, [name, city, state, id]);
 
-    if (!name && !city && !state) {
-      return response.status(400).send('provide a field name, city and state.');
-    }
-
-    const query = `
-      UPDATE mintlocations
-      SET name = COALESCE($1, name),
-          city = COALESCE($2, city),
-          state = COALESCE($3, state)
-      WHERE id = $4
-      RETURNING *;
-    `;
-    const { rows } = await pool.query(query, [name, city, state, id]);
-
-    if (rows.length === 0) {
-      return response.status(404).send('Cannot find anything');
-    }
-
-    response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('Some error has occured failed');
+  if (rows.length === 0) {
+    throw new NotFoundError('Cannot find anything');
   }
-});
 
-router.delete('/mints/:id', async (request, response) => {
-  try {
-    const { id } = request.params;
-    const query = 'DELETE FROM mintlocations WHERE id = $1 RETURNING *;';
-    const { rows } = await pool.query(query, [id]);
+  response.status(200).json(rows[0]);
+}));
 
-    if (rows.length === 0) {
-      return response.status(404).send('we have not found that mint');
-    }
+router.delete('/mints/:id', asyncHandler(async (request, response) => {
+  const { id } = request.params;
+  const query = 'DELETE FROM mintlocations WHERE id = $1 RETURNING *;';
+  const { rows } = await pool.query(query, [id]);
 
-    response.status(200).json(rows[0]);
-  } catch (error) {
-    console.error(error);
-    response.status(500).send('some error has occured');
+  if (rows.length === 0) {
+    throw new NotFoundError('we have not found that mint');
   }
-});
+
+  response.status(200).json(rows[0]);
+}));
 
 
 // Mint location name route
-router.get('/locations', async (request, response) => {
-  try {
-    const query = 'SELECT name FROM mintlocations;';
-    const mintLocations = await pool.query(query);
-    return response.status(200).json({
-      name: mintLocations,
-    });
-    } catch (error) {
-    console.error(error);
-    response.status(500).send('some error has occured');
-    }
-});
+router.get('/locations', asyncHandler(async (request, response) => {
+  const query = 'SELECT name FROM mintlocations;';
+  const mintLocations = await pool.query(query);
+  return response.status(200).json({
+    name: mintLocations,
+  });
+}));
 
 export default router;

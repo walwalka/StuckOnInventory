@@ -1,35 +1,32 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, Routes, Route } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client';
 import Spinner from '../Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import CoinTypesTable from './CoinTypesTable';
+import CreateCoinType from './CreateCoinType';
 import ShowCoinType from './ShowCoinType';
 import EditCoinType from './EditCoinType';
 import DeleteCoinType from './DeleteCoinType';
 
 const CoinTypesList = () => {
-  const [coinTypes, setCoinTypes] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [minFace, setMinFace] = useState('');
   const [maxFace, setMaxFace] = useState('');
   const [sortBy, setSortBy] = useState('name'); // 'name' | 'face_value'
   const [sortDir, setSortDir] = useState('asc'); // 'asc' | 'desc'
 
-  useEffect(() => {
-    setLoading(true);
-    api
-      .get('/cointypes')
-      .then((response) => {
-        setCoinTypes(response.data.data || []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  }, []);
+  const {
+    data: coinTypes = [],
+    isLoading: loading,
+  } = useQuery({
+    queryKey: ['coinTypes'],
+    queryFn: async () => {
+      const response = await api.get('/cointypes');
+      return response.data.data || [];
+    },
+  });
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
@@ -140,8 +137,9 @@ const CoinTypesList = () => {
 
       {loading ? <Spinner /> : <CoinTypesTable coinTypes={sorted} />}
 
-      {/* Render modals as overlays when on details/edit/delete routes */}
+      {/* Render modals as overlays when on create/details/edit/delete routes */}
       <Routes>
+        <Route path="create" element={<CreateCoinType />} />
         <Route path="details/:id" element={<ShowCoinType />} />
         <Route path="edit/:id" element={<EditCoinType />} />
         <Route path="delete/:id" element={<DeleteCoinType />} />

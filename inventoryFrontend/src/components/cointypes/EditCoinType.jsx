@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 import Spinner from '../Spinner';
 
@@ -8,6 +9,7 @@ const EditCoinType = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
   const [name, setName] = useState('');
   const [faceValue, setFaceValue] = useState('');
   const [loading, setLoading] = useState(true);
@@ -45,6 +47,7 @@ const EditCoinType = () => {
       .put(`/cointypes/${id}`, { name, face_value: parsed })
       .then(() => {
         enqueueSnackbar('Coin type updated', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['coinTypes'] });
         navigate('/cointypes');
       })
       .catch((error) => {
@@ -55,43 +58,69 @@ const EditCoinType = () => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50 p-4 overflow-y-auto">
-      <div className='flex flex-col border-2 usd-border-green bg-white dark:bg-[#2c2c2c] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 mx-auto shadow-2xl relative my-8'>
-        <button
-          onClick={() => navigate('/cointypes')}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold"
-        >
-          ✕
-        </button>
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      {/* Blurred backdrop overlay */}
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-md"></div>
 
-        <h1 className='text-3xl mb-6 usd-text-green'>Edit Coin Type</h1>
-        {loading ? <Spinner /> : null}
-        <div className='my-4'>
-          <label className='text-xl mr-4 usd-muted'>Name</label>
-          <input
-            type='text'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
-          />
+      {/* Content container */}
+      <div className="flex min-h-full items-center justify-center p-4">
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center z-50">
+            <Spinner />
+          </div>
+        )}
+
+        {/* Modal content - solid background */}
+        <div className='flex flex-col border-2 usd-border-green bg-white dark:bg-[#2c2c2c] rounded-xl max-w-2xl w-full max-h-[90vh] shadow-2xl relative my-8 z-10'>
+          <div className="flex items-center justify-between px-6 py-4 bg-white dark:bg-[#2c2c2c] border-b usd-border-green rounded-t-xl flex-shrink-0">
+            <h1 className='text-2xl usd-text-green font-semibold'>Edit Coin Type</h1>
+            <button
+              onClick={() => navigate('/cointypes')}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-base font-semibold leading-none"
+              aria-label="Close"
+            >
+              Close
+            </button>
+          </div>
+
+          <div className="overflow-y-auto px-6 py-6 bg-white dark:bg-[#2c2c2c] rounded-b-xl">
+            <div className='my-4'>
+              <label className='text-sm font-semibold usd-text-green mb-2 block'>Name</label>
+              <input
+                type='text'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
+              />
+            </div>
+            <div className='my-4'>
+              <label className='text-sm font-semibold usd-text-green mb-2 block'>Face Value (USD)</label>
+              <input
+                type='number'
+                step='0.01'
+                value={faceValue}
+                onChange={(e) => setFaceValue(e.target.value)}
+                className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
+              />
+            </div>
+            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex gap-3">
+              <button
+                className='flex-1 p-3 usd-btn-green rounded hover:opacity-90 disabled:opacity-60'
+                onClick={handleUpdate}
+                disabled={loading}
+              >
+                Save Changes
+              </button>
+              <button
+                className='flex-1 p-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-60'
+                onClick={() => navigate('/cointypes')}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
-        <div className='my-4'>
-          <label className='text-xl mr-4 usd-muted'>Face Value (USD)</label>
-          <input
-            type='number'
-            step='0.01'
-            value={faceValue}
-            onChange={(e) => setFaceValue(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full rounded text-gray-900 dark:text-gray-100 usd-input'
-          />
-        </div>
-        <button
-          className='p-2 usd-btn-green m-8 rounded hover:opacity-90'
-          onClick={handleUpdate}
-          disabled={loading}
-        >
-          Save Changes
-        </button>
       </div>
     </div>
   );

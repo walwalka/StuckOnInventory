@@ -3,12 +3,14 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CreateComicPublisher = () => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleSavePublisher = () => {
     if (!name) {
@@ -24,6 +26,7 @@ const CreateComicPublisher = () => {
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Comic publisher created successfully', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['comicPublishers'] });
         navigate('/comicpublishers');
       })
       .catch((error) => {
@@ -40,7 +43,7 @@ const CreateComicPublisher = () => {
           onClick={() => navigate('/comicpublishers')}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold"
         >
-          ✕
+          X
         </button>
 
         <h1 className='text-3xl mb-6'>Create Comic Publisher</h1>

@@ -4,12 +4,14 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 const DeleteRelicType = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleDeleteRelicType = () => {
     setLoading(true);
@@ -18,6 +20,7 @@ const DeleteRelicType = () => {
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Relic type deleted successfully', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['relicTypes'] });
         navigate('/relictypes');
       })
       .catch((error) => {
@@ -28,19 +31,41 @@ const DeleteRelicType = () => {
   };
 
   return (
-    <div className='p-4'>
-      <BackButton destination='/relictypes' />
-      <h1 className='text-3xl my-4'>Delete Relic Type</h1>
-      {loading ? <Spinner /> : ''}
-      <div className='flex flex-col items-center border-2 usd-border-green rounded-xl w-[600px] p-8 mx-auto usd-panel'>
-        <h3 className='text-2xl'>Are you sure you want to delete this relic type?</h3>
-
+    <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4">
+      <div className='flex flex-col border-2 usd-border-green bg-white dark:bg-[#2c2c2c] rounded-xl max-w-md w-full p-6 shadow-2xl relative'>
         <button
-          className='p-4 usd-btn-copper w-full rounded hover:opacity-90 m-8'
-          onClick={handleDeleteRelicType}
+          onClick={() => navigate('/relictypes')}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold leading-none"
+          aria-label="Close"
         >
-          Yes, Delete it
+          X
         </button>
+
+        <h1 className='text-2xl mb-4 usd-text-green font-semibold'>Delete Relic Type</h1>
+        {loading && <Spinner />}
+
+        <div className='my-4'>
+          <p className='text-lg text-center text-gray-700 dark:text-gray-300'>
+            Are you sure you want to delete this relic type?
+          </p>
+        </div>
+
+        <div className="mt-6 flex gap-3">
+          <button
+            className='flex-1 p-3 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-60'
+            onClick={handleDeleteRelicType}
+            disabled={loading}
+          >
+            Yes, Delete it
+          </button>
+          <button
+            className='flex-1 p-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-60'
+            onClick={() => navigate('/relictypes')}
+            disabled={loading}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );

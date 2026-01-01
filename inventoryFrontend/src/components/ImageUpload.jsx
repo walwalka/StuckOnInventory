@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api/client';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
+import LazyImage from './shared/LazyImage';
 
 const ImageUpload = ({ coinId, existingImages = {}, onUploadSuccess }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -44,11 +45,7 @@ const ImageUpload = ({ coinId, existingImages = {}, onUploadSuccess }) => {
     });
 
     try {
-      const response = await axios.post(`/api/coins/upload/${coinId}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await api.post(`/coins/upload/${coinId}`, formData);
       
       setSelectedFiles([]);
       setPreviews([]);
@@ -83,9 +80,9 @@ const ImageUpload = ({ coinId, existingImages = {}, onUploadSuccess }) => {
             {['image1','image2','image3'].map((slot, idx) => (
               existingImages[slot] ? (
                 <div key={slot} className="flex flex-col items-center space-y-1">
-                  <img 
-                    src={getImageUrl(existingImages[slot])} 
-                    alt={`Coin ${idx + 1}`} 
+                  <LazyImage
+                    src={getImageUrl(existingImages[slot])}
+                    alt={`Coin ${idx + 1}`}
                     className="w-full h-24 object-cover rounded border-2 usd-border-silver"
                   />
                   <button
@@ -93,11 +90,11 @@ const ImageUpload = ({ coinId, existingImages = {}, onUploadSuccess }) => {
                     className="text-xs px-2 py-1 usd-btn-copper rounded"
                     onClick={async () => {
                       try {
-                        await axios.delete(`/api/coins/image/${coinId}/${slot}`);
+                        await api.delete(`/coins/image/${coinId}/${slot}`);
                         // Refresh after delete
                         if (onUploadSuccess) {
                           // Fetch updated coin
-                          const res = await axios.get(`/api/coins/${coinId}`);
+                          const res = await api.get(`/coins/${coinId}`);
                           onUploadSuccess(res.data);
                         }
                       } catch (err) {
@@ -155,7 +152,7 @@ const ImageUpload = ({ coinId, existingImages = {}, onUploadSuccess }) => {
                   onClick={() => removeFile(index)}
                   className="absolute top-1 right-1 px-2 py-1 text-xs usd-btn-copper rounded opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  ✕
+                  X
                 </button>
               </div>
             ))}

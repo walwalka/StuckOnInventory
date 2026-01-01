@@ -3,11 +3,14 @@ import api from '../../api/client';
 import { useParams, useNavigate } from 'react-router-dom';
 import Spinner from '../Spinner';
 import heic2any from 'heic2any';
+import { BsQrCode } from 'react-icons/bs';
+import QRCode from 'react-qr-code';
 
 const ShowComic = () => {
   const [comic, setComic] = useState({});
   const [loading, setLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState([]);
+  const [showQR, setShowQR] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -75,10 +78,10 @@ const ShowComic = () => {
           <h1 className='text-2xl usd-text-green font-semibold'>Comic Details</h1>
           <button
             onClick={() => navigate('/comics')}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold leading-none"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-base font-semibold leading-none"
             aria-label="Close"
           >
-            ✕
+            Close
           </button>
         </div>
 
@@ -125,6 +128,34 @@ const ShowComic = () => {
           </div>
         </div>
 
+        {/* QR Code Section */}
+        <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <button
+            onClick={() => setShowQR(!showQR)}
+            className="flex items-center gap-2 px-4 py-2 usd-btn-green text-white rounded hover:opacity-90 transition"
+          >
+            <BsQrCode className="text-lg" />
+            {showQR ? 'Hide QR Code' : 'Show QR Code'}
+          </button>
+          {showQR && (
+            <div className="mt-4 p-4 bg-gray-50 dark:bg-[#3a3a3a] rounded-lg border usd-border-green">
+              <div className="flex flex-col items-center">
+                <div className="bg-white p-3 rounded mb-2">
+                  <QRCode
+                    value={`${window.location.origin}/comics/details/${id}`}
+                    size={200}
+                    level="H"
+                    includeMargin={true}
+                  />
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                  Scan to view this comic's details
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Comic Images */}
         {(comic.image1 || comic.image2 || comic.image3) && (
           <div className='mt-6'>
@@ -160,7 +191,7 @@ const ShowComic = () => {
 
         <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
           <button
-            className='w-full p-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600'
+            className='w-full p-3 usd-btn-green rounded hover:opacity-90'
             onClick={() => navigate(`/comics/edit/${id}`)}
           >
             Edit Comic

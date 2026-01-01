@@ -1,9 +1,18 @@
 import process from 'node:process';
 import * as dotenv from 'dotenv'
 
-// Try to load environment-specific .env file first, then fall back to default .env
-dotenv.config({path: `.env.${process.env.NODE_ENV}` });
-dotenv.config(); // Load default .env as fallback
+/**
+ * Environment variable loading strategy:
+ * - In Docker: Environment variables are injected via docker-compose.yml (DOCKER_ENV=true)
+ * - Local development: Load from .env files (npm run dev, npm run local)
+ *
+ * This conditional approach prevents dotenv from attempting to load files in Docker
+ * where they don't exist, eliminating unnecessary log messages.
+ */
+if (!process.env.DOCKER_ENV) {
+  dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+  dotenv.config(); // Load default .env as fallback
+}
 
 export const PORT = process.env.APP_PORT;
 export const sqlIp = process.env.SQL_SERVER_IP;

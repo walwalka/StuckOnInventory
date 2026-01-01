@@ -3,6 +3,7 @@ import Spinner from '../Spinner';
 import api from '../../api/client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Setting the const for the environments url
 // Uses shared API client baseURL
@@ -13,6 +14,7 @@ const DeleteCoin = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
 
   const handleDeleteCoin = () => {
     setLoading(true);
@@ -21,6 +23,7 @@ const DeleteCoin = () => {
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Coin deleted', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['coins'] });
         navigate('/coins');
       })
       .catch((error) => {
