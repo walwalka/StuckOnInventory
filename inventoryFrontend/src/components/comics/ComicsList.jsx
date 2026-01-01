@@ -62,7 +62,10 @@ const ComicsList = ({ showType }) => {
         <QRCodeModal
           isOpen={qrModalOpen}
           onClose={() => setQrModalOpen(false)}
-          qrData={selectedQR}
+          entityType={selectedQR.entityType}
+          itemId={selectedQR.itemId}
+          qrCodeUrl={selectedQR.qrCodeUrl}
+          itemDetails={selectedQR.itemDetails}
         />
       )}
     </>
