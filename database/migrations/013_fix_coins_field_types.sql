@@ -33,6 +33,7 @@ DO $$
 DECLARE
     table_record RECORD;
     physical_table_name TEXT;
+    column_type TEXT;
 BEGIN
     -- Find all users who have coin tables
     FOR table_record IN
@@ -50,13 +51,27 @@ BEGIN
             WHERE table_schema = 'public'
             AND table_name = physical_table_name
         ) THEN
-            -- Alter mintyear column from date to text
-            EXECUTE format(
-                'ALTER TABLE %I ALTER COLUMN mintyear TYPE TEXT USING EXTRACT(YEAR FROM mintyear)::TEXT',
-                physical_table_name
-            );
+            -- Check current column type
+            SELECT data_type INTO column_type
+            FROM information_schema.columns
+            WHERE table_schema = 'public'
+            AND table_name = physical_table_name
+            AND column_name = 'mintyear';
 
-            RAISE NOTICE 'Updated table: %', physical_table_name;
+            -- Only alter if it's currently a date type
+            IF column_type = 'date' THEN
+                -- Alter mintyear column from date to text
+                EXECUTE format(
+                    'ALTER TABLE %I ALTER COLUMN mintyear TYPE TEXT USING EXTRACT(YEAR FROM mintyear)::TEXT',
+                    physical_table_name
+                );
+
+                RAISE NOTICE 'Updated table: % (was date type)', physical_table_name;
+            ELSIF column_type = 'text' OR column_type = 'character varying' THEN
+                RAISE NOTICE 'Skipped table: % (already text type)', physical_table_name;
+            ELSE
+                RAISE NOTICE 'Skipped table: % (unexpected type: %)', physical_table_name, column_type;
+            END IF;
         END IF;
     END LOOP;
 END $$;

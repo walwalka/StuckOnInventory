@@ -4,6 +4,7 @@ import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
 import LazyImage from './LazyImage';
 import GenericModal from './GenericModal';
+import heic2any from 'heic2any';
 
 const ImageUploadModal = ({ isOpen, onClose, tableName, itemId, existingImages = {}, onUploadSuccess }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -12,43 +13,108 @@ const ImageUploadModal = ({ isOpen, onClose, tableName, itemId, existingImages =
   const [deleting, setDeleting] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Cleanup preview URLs on unmount
-  useEffect(() => {
-    return () => {
-      previews.forEach(url => URL.revokeObjectURL(url));
-    };
-  }, [previews]);
+  // Store refs to track preview data URLs (no cleanup needed for data URLs)
+  const previewUrlsRef = React.useRef([]);
 
   const handleFileSelect = (e) => {
-    // Revoke old preview URLs
-    previews.forEach(url => URL.revokeObjectURL(url));
+    console.log('File select triggered, files:', e.target.files);
 
     const newFiles = Array.from(e.target.files);
-    const combined = [...selectedFiles, ...newFiles];
+    console.log('New files array:', newFiles);
+
+    // Validate files are images
+    const validFiles = newFiles.filter(file => {
+      const isImage = file.type.startsWith('image/') ||
+                      file.name.toLowerCase().endsWith('.heic') ||
+                      file.name.toLowerCase().endsWith('.heif');
+      if (!isImage) {
+        console.warn('Skipping non-image file:', file.name);
+      }
+      return isImage;
+    });
+
+    console.log('Valid image files:', validFiles);
+
+    const combined = [...selectedFiles, ...validFiles];
     const limitedFiles = combined.slice(0, 3); // Limit to 3 files total
     setSelectedFiles(limitedFiles);
 
-    // Create preview URLs for all files
-    const previewUrls = limitedFiles.map(file => {
-      const url = URL.createObjectURL(file);
-      return url;
+    // Create preview URLs, converting HEIC to JPEG if needed
+    const previewPromises = limitedFiles.map(async (file, idx) => {
+      try {
+        let fileToRead = file;
+
+        // Check if file is HEIC/HEIF format
+        const isHEIC = file.type === 'image/heic' ||
+                       file.type === 'image/heif' ||
+                       file.name.toLowerCase().endsWith('.heic') ||
+                       file.name.toLowerCase().endsWith('.heif');
+
+        if (isHEIC) {
+          console.log(`Converting HEIC file ${idx} to JPEG:`, file.name);
+          try {
+            // Convert HEIC to JPEG blob
+            const convertedBlob = await heic2any({
+              blob: file,
+              toType: 'image/jpeg',
+              quality: 0.9
+            });
+
+            // heic2any might return an array of blobs for multi-image HEICs
+            const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+            fileToRead = blob;
+            console.log(`HEIC conversion successful for file ${idx}`);
+          } catch (conversionError) {
+            console.error(`HEIC conversion failed for file ${idx}:`, conversionError);
+            // Fall back to original file
+            fileToRead = file;
+          }
+        }
+
+        // Read file as data URL
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            console.log(`FileReader loaded file ${idx}:`, file.name, 'Data URL length:', e.target.result.length);
+            resolve(e.target.result);
+          };
+          reader.onerror = (error) => {
+            console.error(`FileReader failed for file ${idx}:`, file.name, error);
+            reject(error);
+          };
+          reader.readAsDataURL(fileToRead);
+        });
+      } catch (error) {
+        console.error(`Error processing file ${idx}:`, error);
+        throw error;
+      }
     });
-    setPreviews(previewUrls);
+
+    // Wait for all files to be read
+    Promise.all(previewPromises)
+      .then(previewUrls => {
+        console.log('All preview data URLs created:', previewUrls.length);
+        // Store URLs in ref for cleanup (though data URLs don't need revoking)
+        previewUrlsRef.current = previewUrls;
+        setPreviews(previewUrls);
+        console.log('State updated with previews, length:', previewUrls.length);
+      })
+      .catch(error => {
+        console.error('Failed to create preview URLs:', error);
+      });
 
     // Clear the input so selecting the same file again triggers onChange
     e.target.value = '';
   };
 
   const removeFile = (indexToRemove) => {
-    // Revoke the URL for the removed file
-    if (previews[indexToRemove]) {
-      URL.revokeObjectURL(previews[indexToRemove]);
-    }
+    console.log('Removing file at index:', indexToRemove);
 
     const updated = selectedFiles.filter((_, idx) => idx !== indexToRemove);
     setSelectedFiles(updated);
 
     const updatedPreviews = previews.filter((_, idx) => idx !== indexToRemove);
+    previewUrlsRef.current = updatedPreviews;
     setPreviews(updatedPreviews);
   };
 
@@ -68,8 +134,11 @@ const ImageUploadModal = ({ isOpen, onClose, tableName, itemId, existingImages =
     try {
       await api.post(`/entities/${tableName}/upload/${itemId}`, formData);
 
+      // Clear preview data (no need to revoke data URLs)
+      previewUrlsRef.current = [];
       setSelectedFiles([]);
       setPreviews([]);
+
       if (onUploadSuccess) {
         onUploadSuccess();
       }
@@ -168,31 +237,34 @@ const ImageUploadModal = ({ isOpen, onClose, tableName, itemId, existingImages =
         {/* Previews */}
         {previews.length > 0 && (
           <div>
-            <label className="block font-semibold mb-2 usd-text-green">Preview - New Images to Upload</label>
+            <label className="block font-semibold mb-2 usd-text-green">
+              Preview - New Images to Upload ({previews.length} file{previews.length !== 1 ? 's' : ''})
+            </label>
             <div className="grid grid-cols-3 gap-3">
-              {previews.map((preview, index) => (
-                <div key={index} className="relative group">
-                  <div className="relative w-full h-32 border-2 border-green-500 rounded overflow-hidden">
-                    <img
-                      src={preview}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        console.error('Preview image failed to load:', preview);
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-red-500 text-xs">Failed to load preview</div>';
-                      }}
-                    />
+              {previews.map((preview, index) => {
+                console.log(`Rendering preview ${index}:`, preview);
+                return (
+                  <div key={index} className="relative">
+                    <div className="relative w-full h-32 border-2 border-green-500 rounded overflow-hidden bg-gray-100 dark:bg-gray-800">
+                      <img
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        onLoad={() => console.log(`Image ${index} loaded successfully from:`, preview)}
+                        onError={(e) => console.error(`Image ${index} failed to load from:`, preview, 'Error:', e)}
+                        style={{ pointerEvents: 'none' }}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(index)}
+                      className="absolute top-2 right-2 px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition shadow-lg"
+                    >
+                      Remove
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => removeFile(index)}
-                    className="absolute top-2 right-2 px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition shadow-lg"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

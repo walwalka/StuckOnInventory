@@ -319,7 +319,14 @@ export const uploadImages = asyncHandler(async (req, res) => {
   const processedFiles = req.processedFiles || req.files;
 
   processedFiles.forEach((file, index) => {
-    const filename = file.filename || file.name;
+    // Prefer webp version if available (from processed files), otherwise fall back to filename
+    let filename;
+    if (file.webpPath) {
+      // Extract just the filename from the full path
+      filename = path.basename(file.webpPath);
+    } else {
+      filename = file.filename || file.name;
+    }
     imagePaths[`image${index + 1}`] = `/uploads/${filename}`;
   });
 
