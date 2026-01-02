@@ -7,6 +7,7 @@ import {
 } from '../middleware/errorHandler.js';
 import { generateQRCode, deleteQRCode, regenerateQRCode } from '../utils/qrCodeGenerator.js';
 import { sanitizeIdentifier, extractUsername } from '../utils/ddlManager.js';
+import path from 'path';
 
 /**
  * Get table metadata and check user permissions
