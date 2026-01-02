@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../../api/client';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
@@ -12,14 +12,27 @@ const ImageUploadModal = ({ isOpen, onClose, tableName, itemId, existingImages =
   const [deleting, setDeleting] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Cleanup preview URLs on unmount
+  useEffect(() => {
+    return () => {
+      previews.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [previews]);
+
   const handleFileSelect = (e) => {
+    // Revoke old preview URLs
+    previews.forEach(url => URL.revokeObjectURL(url));
+
     const newFiles = Array.from(e.target.files);
     const combined = [...selectedFiles, ...newFiles];
     const limitedFiles = combined.slice(0, 3); // Limit to 3 files total
     setSelectedFiles(limitedFiles);
 
     // Create preview URLs for all files
-    const previewUrls = limitedFiles.map(file => URL.createObjectURL(file));
+    const previewUrls = limitedFiles.map(file => {
+      const url = URL.createObjectURL(file);
+      return url;
+    });
     setPreviews(previewUrls);
 
     // Clear the input so selecting the same file again triggers onChange
@@ -27,6 +40,11 @@ const ImageUploadModal = ({ isOpen, onClose, tableName, itemId, existingImages =
   };
 
   const removeFile = (indexToRemove) => {
+    // Revoke the URL for the removed file
+    if (previews[indexToRemove]) {
+      URL.revokeObjectURL(previews[indexToRemove]);
+    }
+
     const updated = selectedFiles.filter((_, idx) => idx !== indexToRemove);
     setSelectedFiles(updated);
 
@@ -150,21 +168,28 @@ const ImageUploadModal = ({ isOpen, onClose, tableName, itemId, existingImages =
         {/* Previews */}
         {previews.length > 0 && (
           <div>
-            <label className="block font-semibold mb-2 usd-text-green">Preview</label>
-            <div className="grid grid-cols-3 gap-2">
+            <label className="block font-semibold mb-2 usd-text-green">Preview - New Images to Upload</label>
+            <div className="grid grid-cols-3 gap-3">
               {previews.map((preview, index) => (
                 <div key={index} className="relative group">
-                  <img
-                    src={preview}
-                    alt={`Preview ${index + 1}`}
-                    className="w-full h-24 object-cover rounded border-2 usd-border-green"
-                  />
+                  <div className="relative w-full h-32 border-2 border-green-500 rounded overflow-hidden">
+                    <img
+                      src={preview}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.error('Preview image failed to load:', preview);
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-red-500 text-xs">Failed to load preview</div>';
+                      }}
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={() => removeFile(index)}
-                    className="absolute top-1 right-1 px-2 py-1 text-xs usd-btn-copper rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition shadow-lg"
                   >
-                    X
+                    Remove
                   </button>
                 </div>
               ))}
