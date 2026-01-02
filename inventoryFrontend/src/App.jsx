@@ -4,17 +4,9 @@ import ThemeToggle from './components/ThemeToggle.jsx';
 import WaffleMenu from './components/WaffleMenu.jsx';
 import { useSnackbar } from 'notistack';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { RiAdminLine } from 'react-icons/ri';
 import { MdLogout } from "react-icons/md";
 import Home from './pages/Home.jsx';
-import CoinsList from './components/coins/CoinsList.jsx';
-import RelicsList from './components/relics/RelicsList.jsx';
-import StampsList from './components/stamps/StampsList.jsx';
-import BunnykinsList from './components/bunnykins/BunnykinsList.jsx';
-import ComicsList from './components/comics/ComicsList.jsx';
 import Admin from './pages/Admin.jsx';
-import MintsList from './components/mints/MintsList.jsx';
-import SelectMint from './components/mints/mintSelect.jsx';
 import Login from './components/Login/Login.jsx';
 import Register from './components/Login/Register.jsx';
 import Logout from './components/Login/Logout.jsx';
@@ -24,9 +16,8 @@ import ForgotPassword from './components/Login/ForgotPassword.jsx';
 import ResetPassword from './components/Login/ResetPassword.jsx';
 import ResendVerification from './components/Login/ResendVerification.jsx';
 import useToken from './components/useToken.jsx';
-import CoinTypesList from './components/cointypes/CoinTypesList.jsx';
-import RelicTypesList from './components/relictypes/RelicTypesList.jsx';
-import ComicPublishersList from './components/comicpublishers/ComicPublishersList.jsx';
+import DynamicEntityPage from './pages/DynamicEntityPage.jsx';
+import TableDesigner from './components/TableDesigner/TableDesigner.jsx';
 import { useTokenRefresh } from './hooks/useTokenRefresh.js';
 
 // creating routes to each of the pages
@@ -89,18 +80,16 @@ const App = () => {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/resend-verification" element={<ResendVerification />} />
           <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
-          <Route path='/coins/*' element={<CoinsList showType={showType} onShowTypeChange={setShowType} />} />
-          <Route path='/relics/*' element={<RelicsList showType={showType} onShowTypeChange={setShowType} />} />
-          <Route path='/stamps/*' element={<StampsList showType={showType} onShowTypeChange={setShowType} />} />
-          <Route path='/bunnykins/*' element={<BunnykinsList showType={showType} onShowTypeChange={setShowType} />} />
-          <Route path='/comics/*' element={<ComicsList showType={showType} onShowTypeChange={setShowType} />} />
-          <Route path='/admin' element={<Admin />} />
+
+          {/* Table Designer */}
+          <Route path="/table-designer" element={<RequireAuth><TableDesigner /></RequireAuth>} />
+
+          {/* Admin routes */}
+          <Route path='/admin' element={<RequireAuth><Admin /></RequireAuth>} />
           <Route path='/admin/users' element={<RequireAuth><UserManagement /></RequireAuth>} />
-          <Route path='/mintlocations/*' element={<MintsList showType={showType} onShowTypeChange={setShowType} />} />
-          <Route path='/mintselect' element={<SelectMint />} />
-          <Route path='/cointypes/*' element={<CoinTypesList />} />
-          <Route path='/relictypes/*' element={<RelicTypesList />} />
-          <Route path='/comicpublishers/*' element={<ComicPublishersList />} />
+
+          {/* Dynamic entity route - must come LAST to avoid conflicting with other routes */}
+          <Route path='/:tableName/*' element={<RequireAuth><DynamicEntityPage showType={showType} onShowTypeChange={setShowType} /></RequireAuth>} />
         </Routes>
       </main>
     </div>

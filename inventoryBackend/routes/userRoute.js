@@ -1,7 +1,7 @@
 import express from 'express';
 import { pool } from '../database/database.js';
 import bcrypt from 'bcrypt';
-import { requireAdminAuth } from '../middleware/auth.js';
+import { requireAdminAuth, requireAuth } from '../middleware/auth.js';
 import { generatePasswordResetToken, calculateExpiry } from '../utils/jwt.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
 import { passwordResetExpiry } from '../config.js';
@@ -13,6 +13,24 @@ import {
 
 const router = express.Router();
 const SALT_ROUNDS = 10;
+
+// ==================== GET USER BY EMAIL ====================
+// GET /api/users/by-email/:email
+// Look up user ID by email (authenticated users only)
+router.get('/by-email/:email', requireAuth, asyncHandler(async (req, res) => {
+  const { email } = req.params;
+
+  const result = await pool.query(
+    'SELECT id, email FROM users WHERE LOWER(email) = LOWER($1) AND is_active = true',
+    [email]
+  );
+
+  if (result.rows.length === 0) {
+    throw new NotFoundError('User not found or inactive');
+  }
+
+  res.json(result.rows[0]);
+}));
 
 // ==================== GET ALL USERS ====================
 // GET /api/users

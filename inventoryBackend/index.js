@@ -1,18 +1,11 @@
 import { PORT } from './config.js';
 import express from 'express';
 import passport from 'passport';
-import coinRoute from './routes/coinRoute.js';
-import mintRoute from './routes/mintRoute.js';
-import coinTypeRoute from './routes/coinTypeRoute.js';
-import relicRoute from './routes/relicRoute.js';
-import relicTypeRoute from './routes/relicTypeRoute.js';
-import stampRoute from './routes/stampRoute.js';
-import bunnykinRoute from './routes/bunnykinRoute.js';
-import comicRoute from './routes/comicRoute.js';
-import comicPublisherRoute from './routes/comicPublisherRoute.js';
 import authRoute from './routes/authRoute.js';
 import inviteRoute from './routes/inviteRoute.js';
 import userRoute from './routes/userRoute.js';
+import dynamicEntityRoute from './routes/dynamicEntityRoute.js';
+import tableManagementRoute from './routes/tableManagementRoute.js';
 import configurePassport from './config/passport.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
@@ -45,7 +38,7 @@ app.use(generalLimiter);
 
 // OpenAI key presence check (no value logged)
 if (!process.env.OPENAI_API_KEY) {
-  console.warn("OPENAI_API_KEY is not set. /api/coins/estimate will return 500.");
+  console.warn("OPENAI_API_KEY is not set. AI estimation features will not be available.");
 }
 
 // Serve uploaded images statically
@@ -61,42 +54,21 @@ app.use('/api/invites', inviteRoute);
 // User management endpoints under /api/users
 app.use('/api/users', userRoute);
 
+// Table management endpoints (new dynamic system)
+app.use('/api/tables', tableManagementRoute);
+
+// Dynamic entity CRUD endpoints (new dynamic system)
+app.use('/api/entities', dynamicEntityRoute);
+
 app.get('/', (request, response) => {
     console.log(request);
-    return response.status(234).send('coinList backend server');
+    return response.status(234).send('StuckOnInventory backend server');
 });
 
 app.get('/api/health', (request, response) => {
   console.log('Health Check');
-  return response.status(200).send('coinList backend server online');
+  return response.status(200).send('StuckOnInventory backend server online');
 });
-
-// Coins endpoints under /api
-app.use('/api/coins', coinRoute);
-
-// Mint locations endpoints under /api
-app.use('/api/mintlocations', mintRoute);
-
-// Coin types endpoints under /api
-app.use('/api/cointypes', coinTypeRoute);
-
-// Relics endpoints under /api
-app.use('/api/relics', relicRoute);
-
-// Relic types endpoints under /api
-app.use('/api/relictypes', relicTypeRoute);
-
-// Stamps endpoints under /api
-app.use('/api/stamps', stampRoute);
-
-// Bunnykins endpoints under /api
-app.use('/api/bunnykins', bunnykinRoute);
-
-// Comics endpoints under /api
-app.use('/api/comics', comicRoute);
-
-// Comic publishers endpoints under /api
-app.use('/api/comicpublishers', comicPublisherRoute);
 
 // Handle 404 errors for undefined routes (must come AFTER all routes)
 app.use(notFoundHandler);

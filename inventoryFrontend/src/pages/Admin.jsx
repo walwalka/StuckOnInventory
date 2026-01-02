@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MdOutlineTableRows, MdMenuBook, MdEmail } from 'react-icons/md';
-import { GiTwoCoins, GiArrowhead } from 'react-icons/gi';
+import { MdEmail } from 'react-icons/md';
 
 // Reusable card component for consistent styling
 const AdminCard = ({ to, icon: Icon, title, description }) => (
@@ -37,30 +36,6 @@ const Admin = () => {
             icon={MdEmail}
             title="User Management"
             description="Manage users, roles, invitations, and account settings."
-          />
-          <AdminCard
-            to="/mintlocations"
-            icon={MdOutlineTableRows}
-            title="Mint Locations"
-            description="View, create, edit, and delete mint locations used for coin records."
-          />
-          <AdminCard
-            to="/cointypes"
-            icon={GiTwoCoins}
-            title="Coin Types"
-            description="View, create, edit, and delete coin types used to auto-fill face values."
-          />
-          <AdminCard
-            to="/relictypes"
-            icon={GiArrowhead}
-            title="Relic Types"
-            description="View, create, edit, and delete relic types used for classifying Indian relics."
-          />
-          <AdminCard
-            to="/comicpublishers"
-            icon={MdMenuBook}
-            title="Comic Publishers"
-            description="View, create, edit, and delete comic publishers used for comic book records."
           />
         </div>
       </div>

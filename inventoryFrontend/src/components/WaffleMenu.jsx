@@ -1,29 +1,61 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { GiTwoCoins, GiArrowhead, GiStamper, GiRabbit } from 'react-icons/gi';
+import { useQuery } from '@tanstack/react-query';
+import api from '../api/client';
+import * as GiIcons from 'react-icons/gi';
+import * as FaIcons from 'react-icons/fa';
+import * as MdIcons from 'react-icons/md';
 import { RiAdminLine } from 'react-icons/ri';
-import { MdDashboard, MdLocationOn, MdMenuBook } from 'react-icons/md';
 import { BsGrid3X3Gap } from 'react-icons/bs';
 import { isAdmin } from '../auth/token';
+
+// Helper function to get icon component from icon name
+const getIcon = (iconName) => {
+  // Try GiIcons first (most common for collectibles)
+  if (GiIcons[iconName]) return GiIcons[iconName];
+  // Then FaIcons
+  if (FaIcons[iconName]) return FaIcons[iconName];
+  // Then MdIcons
+  if (MdIcons[iconName]) return MdIcons[iconName];
+  // Default fallback
+  return MdIcons.MdFolder;
+};
 
 const WaffleMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const userIsAdmin = isAdmin();
 
-  // Navigation items - add new pages here and they'll automatically appear
-  const allNavItems = [
-    { path: '/', title: 'Inventory Hub', icon: MdDashboard, color: 'usd-btn-green' },
-    { path: '/coins', title: 'Coins', icon: GiTwoCoins, color: 'usd-btn-green' },
-    { path: '/relics', title: 'Native American Relics', icon: GiArrowhead, color: 'usd-btn-green' },
-    { path: '/stamps', title: 'Stamps', icon: GiStamper, color: 'usd-btn-green' },
-    { path: '/bunnykins', title: 'Bunnykins', icon: GiRabbit, color: 'usd-btn-green' },
-    { path: '/comics', title: 'Comics', icon: MdMenuBook, color: 'usd-btn-green' },
-    { path: '/admin', title: 'Admin', icon: RiAdminLine, color: 'usd-btn-copper', adminOnly: true },
+  // Fetch dynamic tables
+  const { data: tables = [] } = useQuery({
+    queryKey: ['tables'],
+    queryFn: async () => {
+      const response = await api.get('/tables');
+      return response.data.tables || [];
+    },
+    enabled: isOpen // Only fetch when menu is opened
+  });
+
+  // Build navigation items from dynamic tables
+  const tableNavItems = tables.map(table => ({
+    path: `/${table.table_name}`,
+    title: table.display_name,
+    icon: getIcon(table.icon),
+    color: 'usd-btn-green'
+  }));
+
+  // Static navigation items
+  const staticNavItems = [
+    { path: '/', title: 'Inventory Hub', icon: MdIcons.MdDashboard, color: 'usd-btn-green' },
   ];
 
-  // Filter navigation items based on admin status
-  const navItems = allNavItems.filter(item => !item.adminOnly || userIsAdmin);
+  // Admin items
+  const adminNavItems = userIsAdmin
+    ? [{ path: '/admin', title: 'Admin', icon: RiAdminLine, color: 'usd-btn-copper' }]
+    : [];
+
+  // Combine all nav items
+  const navItems = [...staticNavItems, ...tableNavItems, ...adminNavItems];
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -55,7 +87,7 @@ const WaffleMenu = () => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-          <div className="absolute right-0 mt-2 w-80 usd-panel rounded-lg shadow-lg p-4 z-50">
+        <div className="absolute right-0 mt-2 w-80 usd-panel rounded-lg shadow-lg p-4 z-50">
           <div className="grid grid-cols-2 gap-3">
             {navItems.map((item) => {
               const Icon = item.icon;

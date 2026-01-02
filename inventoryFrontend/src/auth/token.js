@@ -153,3 +153,18 @@ export const getUserRole = () => {
 export const isAdmin = () => {
   return getUserRole() === 'admin';
 };
+
+/**
+ * Get user ID from access token
+ * @returns {number|null} - User ID or null if not found
+ */
+export const getUserId = () => {
+  const token = getAccessToken();
+
+  if (!token) {
+    return null;
+  }
+
+  const decoded = decodeJWT(token);
+  return decoded?.userId || null;
+};

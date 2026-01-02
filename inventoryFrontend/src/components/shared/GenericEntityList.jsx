@@ -20,6 +20,7 @@ import GenericTable from './GenericTable';
  * @param {Component} EditComponent - Edit modal component
  * @param {Component} DeleteComponent - Delete modal component
  * @param {Array} customActions - Optional custom action buttons for table
+ * @param {ReactNode} headerActions - Optional custom actions to render in the header
  */
 const GenericEntityList = ({
   entityName,
@@ -35,12 +36,14 @@ const GenericEntityList = ({
   EditComponent = null,
   DeleteComponent = null,
   customActions = [],
+  headerActions = null,
 }) => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl my-8">{entityLabel}</h1>
-        <div className="flex gap-x-4 justify-end">
+        <div className="flex gap-x-4 justify-end items-center">
+          {headerActions}
           <Link to={`/${entityName}/create`}>
             <MdOutlineAddBox
               className="text-4xl"
