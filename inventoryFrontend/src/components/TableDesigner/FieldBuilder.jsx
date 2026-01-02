@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { MdAdd, MdDelete, MdArrowUpward, MdArrowDownward } from 'react-icons/md';
+import api from '../../api/client';
 
 const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
   const [currentField, setCurrentField] = useState({
@@ -9,10 +11,21 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
     is_required: false,
     placeholder: '',
     options: [],
+    use_lookup: false,
+    lookup_table_id: null,
     show_in_table: true,
     show_in_mobile: true,
     is_bold: false,
     help_text: ''
+  });
+
+  // Fetch all lookup tables for selection
+  const { data: lookups } = useQuery({
+    queryKey: ['lookups'],
+    queryFn: async () => {
+      const response = await api.get('/tables/lookups');
+      return response.data.lookups;
+    }
   });
 
   const [errors, setErrors] = useState({});
@@ -49,6 +62,8 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
       is_required: false,
       placeholder: '',
       options: [],
+      use_lookup: false,
+      lookup_table_id: null,
       show_in_table: true,
       show_in_mobile: true,
       is_bold: false,
@@ -143,18 +158,66 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
         </div>
 
         {currentField.field_type === 'select' && (
-          <div className="mt-4">
-            <label className="block font-semibold mb-2">Dropdown Options (comma-separated)</label>
-            <input
-              type="text"
-              placeholder="Option 1, Option 2, Option 3"
-              onChange={(e) => {
-                const options = e.target.value.split(',').map(opt => opt.trim()).filter(opt => opt);
-                setCurrentField({ ...currentField, options });
-              }}
-              className="w-full p-2 border rounded"
-            />
-          </div>
+          <>
+            <div className="mt-4">
+              <label className="block font-semibold mb-2">Data Source</label>
+              <select
+                value={currentField.use_lookup ? 'lookup' : 'manual'}
+                onChange={(e) => {
+                  const useLookup = e.target.value === 'lookup';
+                  setCurrentField({
+                    ...currentField,
+                    use_lookup: useLookup,
+                    options: useLookup ? [] : currentField.options,
+                    lookup_table_id: useLookup ? currentField.lookup_table_id : null
+                  });
+                }}
+                className="w-full p-2 border rounded"
+              >
+                <option value="manual">Manual Options (comma-separated)</option>
+                <option value="lookup">Use Lookup Table</option>
+              </select>
+            </div>
+
+            {currentField.use_lookup ? (
+              <div className="mt-4">
+                <label className="block font-semibold mb-2">Select Lookup Table</label>
+                <select
+                  value={currentField.lookup_table_id || ''}
+                  onChange={(e) => setCurrentField({
+                    ...currentField,
+                    lookup_table_id: e.target.value ? parseInt(e.target.value) : null
+                  })}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">Select a lookup table...</option>
+                  {lookups?.map(lookup => (
+                    <option key={lookup.id} value={lookup.id}>
+                      {lookup.display_name} ({lookup.value_count || 0} values)
+                    </option>
+                  ))}
+                </select>
+                {lookups && lookups.length === 0 && (
+                  <p className="text-sm usd-muted mt-1">
+                    No lookup tables available. Create one in the Admin panel first.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="mt-4">
+                <label className="block font-semibold mb-2">Dropdown Options (comma-separated)</label>
+                <input
+                  type="text"
+                  placeholder="Option 1, Option 2, Option 3"
+                  onChange={(e) => {
+                    const options = e.target.value.split(',').map(opt => opt.trim()).filter(opt => opt);
+                    setCurrentField({ ...currentField, options });
+                  }}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+            )}
+          </>
         )}
 
         <div className="mt-4">

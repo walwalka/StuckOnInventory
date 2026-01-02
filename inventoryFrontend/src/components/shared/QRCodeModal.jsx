@@ -173,7 +173,7 @@ const QRCodeModal = ({ isOpen, onClose, entityType, itemId, qrCodeUrl, onRegener
 
   const handleRegenerateClick = async () => {
     try {
-      await api.post(`/${entityType}/qr/regenerate/${itemId}`);
+      await api.post(`/entities/${entityType}/qr/regenerate/${itemId}`);
       if (onRegenerate) {
         onRegenerate();
       }

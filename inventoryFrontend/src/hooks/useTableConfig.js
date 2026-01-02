@@ -64,7 +64,7 @@ export const useTableConfig = (tableName) => {
       });
 
       // Transform fields to form fields format
-      const formFields = data.fields.map(field => {
+      const formFields = await Promise.all(data.fields.map(async (field) => {
         const formField = {
           name: field.field_name,
           label: field.field_label,
@@ -73,8 +73,27 @@ export const useTableConfig = (tableName) => {
           placeholder: field.placeholder || `Enter ${field.field_label}`
         };
 
-        // Parse options from JSON if present
-        if (field.options) {
+        // If field has lookup_table_name, fetch lookup values dynamically
+        if (field.lookup_table_name && field.field_type === 'select') {
+          try {
+            const lookupResponse = await api.get(`/tables/lookups/${field.lookup_table_name}`);
+            const lookupValues = lookupResponse.data.values;
+
+            // Extract first key from value_data as display value
+            formField.options = lookupValues.map(val => {
+              const firstKey = Object.keys(val.value_data)[0];
+              return {
+                value: val.value_data[firstKey],
+                label: val.value_data[firstKey]
+              };
+            });
+          } catch (error) {
+            console.error(`Failed to fetch lookup values for ${field.lookup_table_name}`, error);
+            formField.options = [];
+          }
+        }
+        // Fallback to hardcoded options from field definition
+        else if (field.options) {
           try {
             formField.options = typeof field.options === 'string'
               ? JSON.parse(field.options)
@@ -115,7 +134,7 @@ export const useTableConfig = (tableName) => {
         }
 
         return formField;
-      });
+      }));
 
       return {
         table: data.table,
