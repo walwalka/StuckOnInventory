@@ -70,10 +70,9 @@ const Home = () => {
           </div>
           <Link
             to="/table-designer"
-            className="usd-panel border-2 border-dashed usd-border-copper rounded-lg px-4 py-2 hover:shadow-lg transition flex items-center gap-2"
+            className="usd-btn-green px-4 py-2 rounded flex items-center gap-2"
           >
-            <MdAdd className="text-xl" style={{ color: 'var(--usd-copper)' }} />
-            <span className="font-semibold">Create New Table</span>
+            <MdAdd /> Create New Table
           </Link>
         </div>
 

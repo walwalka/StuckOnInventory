@@ -119,24 +119,22 @@ const TableManagement = () => {
                   <td className="p-4 text-sm usd-muted">
                     {new Date(table.created_at).toLocaleDateString()}
                   </td>
-                  <td className="p-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => handleViewDetails(table)}
-                        className="p-2 usd-btn-green rounded hover:opacity-80 transition"
-                        title="View & Edit"
-                      >
-                        <MdEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(table)}
-                        className="p-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-                        title="Delete Table"
-                        disabled={deleteMutation.isLoading}
-                      >
-                        <MdDelete />
-                      </button>
-                    </div>
+                  <td className="p-4 text-right">
+                    <button
+                      onClick={() => handleViewDetails(table)}
+                      className="usd-btn-green px-3 py-1 rounded mr-2 inline-flex items-center gap-1"
+                      title="View & Edit"
+                    >
+                      <MdEdit /> Manage
+                    </button>
+                    <button
+                      onClick={() => handleDelete(table)}
+                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition inline-flex items-center gap-1"
+                      title="Delete Table"
+                      disabled={deleteMutation.isLoading}
+                    >
+                      <MdDelete /> Delete
+                    </button>
                   </td>
                 </tr>
               ))}
