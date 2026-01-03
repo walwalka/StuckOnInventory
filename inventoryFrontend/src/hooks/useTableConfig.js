@@ -38,6 +38,13 @@ export const useTableConfig = (tableName) => {
               if (!value) return '-';
               return moment.utc(value).format('MM/DD/YYYY');
             };
+          } else if (field.field_type === 'month-year') {
+            column.type = 'date';
+            column.format = 'MM/YYYY';
+            column.render = (value) => {
+              if (!value) return '-';
+              return moment.utc(value).format('MM/YYYY');
+            };
           }
 
           return column;

@@ -174,14 +174,24 @@ export async function createCustomTable(tableDef, fields, userId, userEmail) {
       const nullable = field.is_required ? 'NOT NULL' : '';
       columnDefs.push(`${fieldName} ${dataType} ${nullable}`.trim());
 
+      // Resolve lookup_table_id if it's a string (table name)
+      let lookupTableId = field.lookup_table_id || null;
+      if (lookupTableId && typeof lookupTableId === 'string') {
+        const lookupResult = await client.query(
+          'SELECT id FROM custom_lookup_tables WHERE table_name = $1',
+          [lookupTableId]
+        );
+        lookupTableId = lookupResult.rows.length > 0 ? lookupResult.rows[0].id : null;
+      }
+
       // Insert field metadata
       await client.query(`
         INSERT INTO custom_fields (
           table_id, field_name, field_label, field_type, is_required,
           display_order, placeholder, options, show_in_table, show_in_mobile,
-          is_bold, help_text
+          is_bold, help_text, lookup_table_id
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       `, [
         tableId,
         fieldName,
@@ -194,7 +204,8 @@ export async function createCustomTable(tableDef, fields, userId, userEmail) {
         field.show_in_table !== false,
         field.show_in_mobile !== false,
         field.is_bold || false,
-        field.help_text || null
+        field.help_text || null,
+        lookupTableId
       ]);
     }
 
