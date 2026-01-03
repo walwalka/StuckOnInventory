@@ -148,7 +148,6 @@ const TableManagement = () => {
               No custom tables found in the system.
             </div>
           )}
-        </div>
       </div>
 
       {/* Table Details Modal */}
