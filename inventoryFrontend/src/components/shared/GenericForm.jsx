@@ -228,6 +228,20 @@ const GenericForm = ({
           />
         );
 
+      case 'year':
+        return (
+          <input
+            type="number"
+            min="1000"
+            max="2100"
+            value={formData[field.name] || ''}
+            onChange={(e) => handleChange(field.name, e.target.value)}
+            className={`${commonClasses} ${errorClasses}`}
+            placeholder={field.placeholder}
+            disabled={field.disabled}
+          />
+        );
+
       default:
         return null;
     }

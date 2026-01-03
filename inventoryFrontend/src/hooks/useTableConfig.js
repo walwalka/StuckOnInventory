@@ -92,9 +92,13 @@ export const useTableConfig = (tableName) => {
               const displayValue = val.value_data.name || val.value_data[Object.keys(val.value_data)[0]];
               return {
                 value: displayValue,
-                label: displayValue
+                label: displayValue,
+                data: val.value_data // Preserve full data for auto-population
               };
             });
+
+            // Store lookup table name for later use
+            formField.lookupTableName = field.lookup_table_name;
           } catch (error) {
             console.error(`Failed to fetch lookup values for ${field.lookup_table_name}`, error);
             formField.options = [];

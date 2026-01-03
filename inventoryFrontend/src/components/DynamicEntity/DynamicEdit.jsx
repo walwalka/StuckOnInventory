@@ -21,6 +21,23 @@ const DynamicEdit = ({ tableName, config, onRefresh }) => {
     enabled: !!id
   });
 
+  const handleFieldChange = (fieldName, value, currentFormData, setFormData) => {
+    // Auto-populate face_value when coin type is selected
+    if (fieldName === 'type') {
+      const typeField = config.formFields.find(f => f.name === 'type');
+      if (typeField && typeField.lookupTableName === 'lookup_cointypes') {
+        const selectedOption = typeField.options?.find(opt => opt.value === value);
+        if (selectedOption?.data?.face_value) {
+          setFormData({
+            ...currentFormData,
+            [fieldName]: value,
+            face_value: selectedOption.data.face_value
+          });
+        }
+      }
+    }
+  };
+
   const handleSubmit = async (formData) => {
     try {
       await api.put(`/entities/${tableName}/${id}`, formData);
@@ -57,6 +74,7 @@ const DynamicEdit = ({ tableName, config, onRefresh }) => {
           fields={config.formFields}
           initialData={item}
           onSubmit={handleSubmit}
+          onFieldChange={handleFieldChange}
           onCancel={handleClose}
           submitLabel="Update"
           entityName={tableName}

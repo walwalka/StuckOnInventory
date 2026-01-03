@@ -10,6 +10,7 @@ const ALLOWED_DATA_TYPES = {
   textarea: 'TEXT',
   date: 'DATE',
   'month-year': 'DATE',
+  year: 'INTEGER',
   currency: 'DECIMAL(10,2)'
 };
 
