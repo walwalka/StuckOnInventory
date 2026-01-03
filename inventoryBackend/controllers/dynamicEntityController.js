@@ -151,7 +151,22 @@ export const createItem = asyncHandler(async (req, res) => {
   // Build dynamic INSERT
   const fieldNames = fields.map(f => f.field_name);
   const columns = ['created_by', ...fieldNames];
-  const values = [userId, ...fieldNames.map(name => req.body[name] !== undefined ? req.body[name] : null)];
+
+  // Transform values based on field type
+  const values = [userId, ...fieldNames.map(name => {
+    const fieldDef = fields.find(f => f.field_name === name);
+    let value = req.body[name] !== undefined ? req.body[name] : null;
+
+    // Convert month-year format (YYYY-MM) to full date (YYYY-MM-01)
+    if (fieldDef && fieldDef.field_type === 'month-year' && value) {
+      if (/^\d{4}-\d{2}$/.test(value)) {
+        value = `${value}-01`;
+      }
+    }
+
+    return value;
+  })];
+
   const placeholders = columns.map((_, i) => `$${i + 1}`);
 
   const query = `
@@ -212,7 +227,17 @@ export const updateItem = asyncHandler(async (req, res) => {
   for (const field of fields) {
     if (req.body[field.field_name] !== undefined) {
       updateFields.push(`${field.field_name} = $${paramCount}`);
-      values.push(req.body[field.field_name]);
+
+      let value = req.body[field.field_name];
+
+      // Convert month-year format (YYYY-MM) to full date (YYYY-MM-01)
+      if (field.field_type === 'month-year' && value) {
+        if (/^\d{4}-\d{2}$/.test(value)) {
+          value = `${value}-01`;
+        }
+      }
+
+      values.push(value);
       paramCount++;
     }
   }
