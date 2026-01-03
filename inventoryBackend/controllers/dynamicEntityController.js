@@ -319,7 +319,14 @@ export const uploadImages = asyncHandler(async (req, res) => {
   const imagePaths = {};
   const processedFiles = req.processedFiles || req.files;
 
+  console.log('[uploadImages] Processing files:', processedFiles.length);
   processedFiles.forEach((file, index) => {
+    console.log(`[uploadImages] File ${index}:`, {
+      webpPath: file.webpPath,
+      filename: file.filename,
+      name: file.name
+    });
+
     // Prefer webp version if available (from processed files), otherwise fall back to filename
     let filename;
     if (file.webpPath) {
@@ -329,6 +336,7 @@ export const uploadImages = asyncHandler(async (req, res) => {
       filename = file.filename || file.name;
     }
     imagePaths[`image${index + 1}`] = `/uploads/${filename}`;
+    console.log(`[uploadImages] Set image${index + 1} to:`, imagePaths[`image${index + 1}`]);
   });
 
   // Update the database with image paths
@@ -351,7 +359,12 @@ export const uploadImages = asyncHandler(async (req, res) => {
     RETURNING *
   `;
 
+  console.log('[uploadImages] Final query:', query);
+  console.log('[uploadImages] Values:', values);
+
   const { rows } = await pool.query(query, values);
+
+  console.log('[uploadImages] Updated item:', rows[0]);
 
   res.status(200).json(rows[0]);
 });

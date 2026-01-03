@@ -79,12 +79,13 @@ export const useTableConfig = (tableName) => {
             const lookupResponse = await api.get(`/tables/lookups/${field.lookup_table_name}`);
             const lookupValues = lookupResponse.data.values;
 
-            // Extract first key from value_data as display value
+            // Extract display value from value_data
+            // Prefer 'name' field if it exists, otherwise use first key
             formField.options = lookupValues.map(val => {
-              const firstKey = Object.keys(val.value_data)[0];
+              const displayValue = val.value_data.name || val.value_data[Object.keys(val.value_data)[0]];
               return {
-                value: val.value_data[firstKey],
-                label: val.value_data[firstKey]
+                value: displayValue,
+                label: displayValue
               };
             });
           } catch (error) {

@@ -150,10 +150,28 @@ const DynamicEntityPage = ({ showType, onShowTypeChange }) => {
             image2: selectedItem.image2,
             image3: selectedItem.image3
           }}
-          onUploadSuccess={() => {
-            refetch();
-            setImageUploadModalOpen(false);
-            setSelectedItem(null);
+          onUploadSuccess={async () => {
+            console.log('[DynamicEntityPage] onUploadSuccess called');
+            console.log('[DynamicEntityPage] Current selectedItem:', selectedItem);
+
+            // Refetch the data first
+            const { data: refreshedItems } = await refetch();
+            console.log('[DynamicEntityPage] Refetched items:', refreshedItems?.length);
+
+            // Find the updated item and update selectedItem
+            if (refreshedItems) {
+              const updatedItem = refreshedItems.find(item => item.id === selectedItem.id);
+              console.log('[DynamicEntityPage] Found updated item:', updatedItem);
+              if (updatedItem) {
+                console.log('[DynamicEntityPage] Updating selectedItem with:', {
+                  image1: updatedItem.image1,
+                  image2: updatedItem.image2,
+                  image3: updatedItem.image3
+                });
+                setSelectedItem(updatedItem);
+              }
+            }
+            // Don't close the modal - let user see the uploaded images
           }}
         />
       )}

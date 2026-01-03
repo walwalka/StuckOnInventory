@@ -13,6 +13,16 @@ const ImageUploadModal = ({ isOpen, onClose, tableName, itemId, existingImages =
   const [deleting, setDeleting] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('[ImageUploadModal] Props changed:', {
+      isOpen,
+      tableName,
+      itemId,
+      existingImages
+    });
+  }, [isOpen, tableName, itemId, existingImages]);
+
   // Store refs to track preview data URLs (no cleanup needed for data URLs)
   const previewUrlsRef = React.useRef([]);
 
@@ -132,7 +142,9 @@ const ImageUploadModal = ({ isOpen, onClose, tableName, itemId, existingImages =
     });
 
     try {
-      await api.post(`/entities/${tableName}/upload/${itemId}`, formData);
+      console.log('[ImageUploadModal] Uploading to:', `/entities/${tableName}/upload/${itemId}`);
+      const response = await api.post(`/entities/${tableName}/upload/${itemId}`, formData);
+      console.log('[ImageUploadModal] Upload response:', response.data);
 
       // Clear preview data (no need to revoke data URLs)
       previewUrlsRef.current = [];
@@ -140,10 +152,11 @@ const ImageUploadModal = ({ isOpen, onClose, tableName, itemId, existingImages =
       setPreviews([]);
 
       if (onUploadSuccess) {
+        console.log('[ImageUploadModal] Calling onUploadSuccess callback');
         onUploadSuccess();
       }
     } catch (error) {
-      console.error('Error uploading images:', error);
+      console.error('[ImageUploadModal] Error uploading images:', error);
       const serverMsg = error?.response?.data?.error;
       setErrorMsg(serverMsg || 'Failed to upload images. Allowed: JPEG, PNG, GIF, HEIC. Max 10MB each, max 3 files.');
     } finally {
