@@ -91,8 +91,7 @@ const TableManagement = () => {
                   <td className="p-4 font-semibold">{table.display_name}</td>
                   <td className="p-4">
                     <div className="text-sm">
-                      <div>{table.creator_username || 'Unknown'}</div>
-                      <div className="usd-muted text-xs">{table.creator_email}</div>
+                      <div className="usd-muted">{table.creator_email}</div>
                     </div>
                   </td>
                   <td className="p-4 text-center">{table.field_count}</td>

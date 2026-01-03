@@ -111,7 +111,7 @@ const TableDetailsModal = ({ isOpen, onClose, table, onUpdate }) => {
       isOpen={isOpen}
       onClose={onClose}
       title={`Manage Table: ${table.display_name}`}
-      size="large"
+      size="sm"
     >
       <div className="space-y-6">
         {/* Table Info */}

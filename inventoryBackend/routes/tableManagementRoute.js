@@ -39,7 +39,7 @@ router.get('/', asyncHandler(async (req, res) => {
       FROM information_schema.tables ist
       WHERE ist.table_name = LOWER(REGEXP_REPLACE(SPLIT_PART(u.email, '@', 1), '[^a-z0-9]', '_', 'g')) || '_data_' || ct.table_name
     ) item_counts ON true
-    WHERE ct.created_by = $1 OR tp.user_id = $1
+    WHERE ct.created_by = $1 OR ct.is_shared = TRUE OR tp.user_id = $1
     ORDER BY ct.created_at DESC
   `, [userId]);
 
@@ -60,7 +60,6 @@ router.get('/admin/all', asyncHandler(async (req, res) => {
     SELECT
       ct.*,
       u.email as creator_email,
-      u.username as creator_username,
       (SELECT COUNT(*) FROM custom_fields WHERE table_id = ct.id) as field_count,
       (SELECT COUNT(*) FROM table_permissions WHERE table_id = ct.id) as permission_count
     FROM custom_tables ct
