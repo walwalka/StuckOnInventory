@@ -63,8 +63,19 @@ const Home = () => {
   return (
     <div className="flex justify-center p-4">
       <div className="max-w-full">
-        <h1 className='text-3xl my-8'>Inventory Hub</h1>
-        <p className='usd-muted mb-6'>Manage your collectibles inventory.</p>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className='text-3xl my-8'>Inventory Hub</h1>
+            <p className='usd-muted'>Manage your collectibles inventory.</p>
+          </div>
+          <Link
+            to="/table-designer"
+            className="usd-panel border-2 border-dashed usd-border-copper rounded-lg px-4 py-2 hover:shadow-lg transition flex items-center gap-2"
+          >
+            <MdAdd className="text-xl" style={{ color: 'var(--usd-copper)' }} />
+            <span className="font-semibold">Create New Table</span>
+          </Link>
+        </div>
 
         {isLoading ? (
           <Spinner />
@@ -75,20 +86,6 @@ const Home = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-start items-stretch gap-6 mt-10">
-            {/* Create New Table Button */}
-            <div className="w-full md:w-96">
-              <Link
-                to="/table-designer"
-                className="block usd-panel border-2 border-dashed usd-border-copper rounded-lg p-6 hover:shadow-lg transition h-full flex flex-col items-center justify-center gap-4"
-              >
-                <MdAdd className="text-5xl" style={{ color: 'var(--usd-copper)' }} />
-                <div className="text-2xl font-semibold">Create New Table</div>
-                <div className="text-sm usd-muted text-center">
-                  Design a custom inventory table
-                </div>
-              </Link>
-            </div>
-
             {/* Dynamic table cards */}
             {tables.map((table) => {
               const Icon = getIcon(table.icon);
