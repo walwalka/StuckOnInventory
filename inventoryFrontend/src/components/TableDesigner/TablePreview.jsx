@@ -54,7 +54,7 @@ const TablePreview = ({ tableDef, fields, onCreate, onBack }) => {
         <h3 className="text-xl font-semibold mb-3 usd-text-green">Fields ({fields.length})</h3>
         <div className="overflow-x-auto">
           <table className="min-w-full border">
-            <thead className="bg-gray-100">
+            <thead className="usd-panel">
               <tr>
                 <th className="border px-4 py-2 text-left">#</th>
                 <th className="border px-4 py-2 text-left">Label</th>
@@ -67,12 +67,12 @@ const TablePreview = ({ tableDef, fields, onCreate, onBack }) => {
             </thead>
             <tbody>
               {fields.map((field, index) => (
-                <tr key={index} className="hover:bg-gray-50">
+                <tr key={index}>
                   <td className="border px-4 py-2">{index + 1}</td>
                   <td className="border px-4 py-2 font-semibold">{field.field_label}</td>
                   <td className="border px-4 py-2 usd-muted">{field.field_name}</td>
                   <td className="border px-4 py-2">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
+                    <span className="px-2 py-1 usd-btn-green rounded text-sm">
                       {field.field_type}
                     </span>
                   </td>
@@ -99,7 +99,7 @@ const TablePreview = ({ tableDef, fields, onCreate, onBack }) => {
       </div>
 
       {/* Standard Fields Note */}
-      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded">
+      <div className="mb-6 p-4 usd-panel border usd-border-green rounded">
         <h4 className="font-semibold mb-2">Automatically Included Fields:</h4>
         <p className="text-sm usd-muted">
           Your table will also include these standard fields: <strong>ID</strong>, <strong>Created By</strong>,{' '}

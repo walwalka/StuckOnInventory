@@ -59,6 +59,14 @@ const refreshAccessToken = async () => {
 
     if (accessToken) {
       saveAccessToken(accessToken);
+
+      // Dispatch event to notify other parts of the app that token was refreshed
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('token:refreshed', {
+          detail: { accessToken }
+        }));
+      }
+
       return accessToken;
     }
 

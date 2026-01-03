@@ -86,27 +86,27 @@ const LookupTablesList = () => {
         </button>
       </div>
 
-      <div className="usd-panel">
+      <div className="overflow-x-auto rounded-lg border-2 usd-border-green shadow-sm">
         {data && data.length === 0 ? (
-          <div className="text-center py-12 usd-muted">
+          <div className="text-center py-12 usd-muted bg-white dark:bg-[#3c3c3c]">
             <p>No lookup tables found.</p>
             <p className="text-sm mt-2">Create your first lookup table to get started.</p>
           </div>
         ) : (
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-3">Display Name</th>
-                <th className="text-left p-3">Table Name</th>
-                <th className="text-left p-3">Values</th>
-                <th className="text-left p-3">Shared</th>
-                <th className="text-left p-3">Creator</th>
-                <th className="text-right p-3">Actions</th>
+          <table className="w-full border-collapse">
+            <thead className="bg-gray-100 dark:bg-[#3c3c3c]">
+              <tr>
+                <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Display Name</th>
+                <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Table Name</th>
+                <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Values</th>
+                <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Shared</th>
+                <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Creator</th>
+                <th className="border-b-2 usd-border-green px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-stone-200">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-white dark:bg-[#3c3c3c] divide-y divide-gray-200 dark:divide-stone-700">
               {data?.map(lookup => (
-                <tr key={lookup.id} className="border-b hover:bg-gray-50">
+                <tr key={lookup.id}>
                   <td className="p-3 font-semibold">{lookup.display_name}</td>
                   <td className="p-3 font-mono text-sm usd-muted">{lookup.table_name}</td>
                   <td className="p-3">{lookup.value_count || 0} entries</td>

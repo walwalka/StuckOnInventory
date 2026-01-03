@@ -106,7 +106,7 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
               placeholder="e.g., artist_name"
               value={currentField.field_name}
               onChange={(e) => setCurrentField({ ...currentField, field_name: e.target.value.toLowerCase() })}
-              className={`w-full p-2 border rounded ${errors.field_name ? 'border-red-500' : ''}`}
+              className={`w-full p-2 border rounded usd-input usd-text ${errors.field_name ? 'border-red-500' : ''}`}
             />
             {errors.field_name && (
               <p className="text-red-500 text-sm mt-1">{errors.field_name}</p>
@@ -122,7 +122,7 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
               placeholder="e.g., Artist Name"
               value={currentField.field_label}
               onChange={(e) => setCurrentField({ ...currentField, field_label: e.target.value })}
-              className={`w-full p-2 border rounded ${errors.field_label ? 'border-red-500' : ''}`}
+              className={`w-full p-2 border rounded usd-input usd-text ${errors.field_label ? 'border-red-500' : ''}`}
             />
             {errors.field_label && (
               <p className="text-red-500 text-sm mt-1">{errors.field_label}</p>
@@ -134,7 +134,7 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
             <select
               value={currentField.field_type}
               onChange={(e) => setCurrentField({ ...currentField, field_type: e.target.value })}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded usd-input usd-text"
             >
               <option value="text">Text</option>
               <option value="number">Number</option>
@@ -152,7 +152,7 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
               placeholder="Placeholder text"
               value={currentField.placeholder}
               onChange={(e) => setCurrentField({ ...currentField, placeholder: e.target.value })}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded usd-input usd-text"
             />
           </div>
         </div>
@@ -172,7 +172,7 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
                     lookup_table_id: useLookup ? currentField.lookup_table_id : null
                   });
                 }}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded usd-input usd-text"
               >
                 <option value="manual">Manual Options (comma-separated)</option>
                 <option value="lookup">Use Lookup Table</option>
@@ -188,7 +188,7 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
                     ...currentField,
                     lookup_table_id: e.target.value ? parseInt(e.target.value) : null
                   })}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded usd-input usd-text"
                 >
                   <option value="">Select a lookup table...</option>
                   {lookups?.map(lookup => (
@@ -213,7 +213,7 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
                     const options = e.target.value.split(',').map(opt => opt.trim()).filter(opt => opt);
                     setCurrentField({ ...currentField, options });
                   }}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded usd-input usd-text"
                 />
               </div>
             )}
@@ -227,7 +227,7 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
             placeholder="Optional help text for this field"
             value={currentField.help_text}
             onChange={(e) => setCurrentField({ ...currentField, help_text: e.target.value })}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded usd-input usd-text"
           />
         </div>
 
@@ -294,7 +294,7 @@ const FieldBuilder = ({ fields, setFields, onNext, onBack }) => {
             {fields.map((field, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 border rounded hover:bg-gray-50"
+                className="flex items-center justify-between p-3 border rounded usd-panel"
               >
                 <div className="flex-1">
                   <div className="font-semibold">

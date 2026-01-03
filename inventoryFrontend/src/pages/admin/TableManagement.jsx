@@ -67,24 +67,23 @@ const TableManagement = () => {
         </div>
       </div>
 
-      <div className="usd-panel overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="usd-bg-silver">
-              <tr>
-                <th className="text-left p-4">Table Name</th>
-                <th className="text-left p-4">Display Name</th>
-                <th className="text-left p-4">Owner</th>
-                <th className="text-left p-4">Fields</th>
-                <th className="text-left p-4">Permissions</th>
-                <th className="text-left p-4">Visibility</th>
-                <th className="text-left p-4">Created</th>
-                <th className="text-right p-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tables?.map((table) => (
-                <tr key={table.id} className="border-b usd-border hover:bg-gray-50 dark:hover:bg-gray-800">
+      <div className="overflow-x-auto rounded-lg border-2 usd-border-green shadow-sm">
+        <table className="w-full border-collapse">
+          <thead className="bg-gray-100 dark:bg-[#3c3c3c]">
+            <tr>
+              <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Table Name</th>
+              <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Display Name</th>
+              <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Owner</th>
+              <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Fields</th>
+              <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Permissions</th>
+              <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Visibility</th>
+              <th className="border-b-2 usd-border-green px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-stone-200">Created</th>
+              <th className="border-b-2 usd-border-green px-4 py-3 text-center text-sm font-semibold text-gray-700 dark:text-stone-200">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white dark:bg-[#3c3c3c] divide-y divide-gray-200 dark:divide-stone-700">
+            {tables?.map((table) => (
+              <tr key={table.id}>
                   <td className="p-4">
                     <code className="text-sm usd-text-copper">{table.table_name}</code>
                   </td>
@@ -145,7 +144,7 @@ const TableManagement = () => {
           </table>
 
           {(!tables || tables.length === 0) && (
-            <div className="text-center py-12 usd-muted">
+            <div className="text-center py-12 usd-muted bg-white dark:bg-[#3c3c3c]">
               No custom tables found in the system.
             </div>
           )}

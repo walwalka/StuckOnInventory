@@ -42,6 +42,14 @@ export const useTokenRefresh = ({ refreshBuffer = 2 * 60 * 1000, onRefreshError 
       if (accessToken) {
         saveAccessToken(accessToken);
         console.log('[TokenRefresh] Access token refreshed successfully');
+
+        // Dispatch event to notify other parts of the app
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('token:refreshed', {
+            detail: { accessToken }
+          }));
+        }
+
         scheduleNextRefresh(accessToken);
         return true;
       }
@@ -103,7 +111,7 @@ export const useTokenRefresh = ({ refreshBuffer = 2 * 60 * 1000, onRefreshError 
   };
 
   /**
-   * Initialize token refresh on mount and when token changes
+   * Initialize token refresh on mount and monitor token changes
    */
   useEffect(() => {
     const accessToken = getAccessToken();
@@ -113,12 +121,45 @@ export const useTokenRefresh = ({ refreshBuffer = 2 * 60 * 1000, onRefreshError 
       scheduleNextRefresh(accessToken);
     }
 
+    // Listen for storage events to detect token changes (cross-tab)
+    const handleStorageChange = (e) => {
+      if (e.key === 'accessToken' && e.newValue) {
+        console.log('[TokenRefresh] Token changed in storage, re-scheduling refresh');
+        scheduleNextRefresh(e.newValue);
+      }
+    };
+
+    // Listen for custom token refresh events (same tab)
+    const handleTokenRefresh = (e) => {
+      const newToken = e.detail?.accessToken || getAccessToken();
+      if (newToken) {
+        console.log('[TokenRefresh] Token refresh event received, re-scheduling');
+        scheduleNextRefresh(newToken);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('token:refreshed', handleTokenRefresh);
+
+    // Set up an interval to check if token has changed
+    // Fallback in case events don't fire
+    const intervalId = setInterval(() => {
+      const currentToken = getAccessToken();
+      if (currentToken && !timerRef.current) {
+        console.log('[TokenRefresh] No active timer, re-scheduling refresh');
+        scheduleNextRefresh(currentToken);
+      }
+    }, 60000); // Check every minute
+
     // Cleanup on unmount
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
         timerRef.current = null;
       }
+      clearInterval(intervalId);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('token:refreshed', handleTokenRefresh);
     };
   }, []); // Run once on mount
 

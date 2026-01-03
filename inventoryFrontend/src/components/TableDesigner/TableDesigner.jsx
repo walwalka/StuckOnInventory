@@ -128,7 +128,7 @@ const TableDesigner = () => {
                 placeholder="e.g., vinyl_records"
                 value={tableDef.table_name}
                 onChange={(e) => setTableDef({ ...tableDef, table_name: e.target.value.toLowerCase() })}
-                className={`w-full p-2 border rounded ${errors.table_name ? 'border-red-500' : ''}`}
+                className={`w-full p-2 border rounded usd-input usd-text ${errors.table_name ? 'border-red-500' : ''}`}
               />
               {errors.table_name && (
                 <p className="text-red-500 text-sm mt-1">{errors.table_name}</p>
@@ -147,7 +147,7 @@ const TableDesigner = () => {
                 placeholder="e.g., Vinyl Records"
                 value={tableDef.display_name}
                 onChange={(e) => setTableDef({ ...tableDef, display_name: e.target.value })}
-                className={`w-full p-2 border rounded ${errors.display_name ? 'border-red-500' : ''}`}
+                className={`w-full p-2 border rounded usd-input usd-text ${errors.display_name ? 'border-red-500' : ''}`}
               />
               {errors.display_name && (
                 <p className="text-red-500 text-sm mt-1">{errors.display_name}</p>
@@ -161,7 +161,7 @@ const TableDesigner = () => {
                 placeholder="Brief description of this collection"
                 value={tableDef.description}
                 onChange={(e) => setTableDef({ ...tableDef, description: e.target.value })}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded usd-input usd-text"
                 rows={3}
               />
             </div>
@@ -173,7 +173,7 @@ const TableDesigner = () => {
                 placeholder="e.g., MdAlbum, GiVinylRecord"
                 value={tableDef.icon}
                 onChange={(e) => setTableDef({ ...tableDef, icon: e.target.value })}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded usd-input usd-text"
               />
               <p className="text-sm usd-muted mt-1">
                 Icon name from react-icons (optional)

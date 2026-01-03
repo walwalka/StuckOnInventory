@@ -109,7 +109,7 @@ const TablePermissionsModal = ({ isOpen, onClose, tableName, tableDisplayName })
                 placeholder="user@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded usd-input usd-text"
                 disabled={grantPermissionMutation.isPending}
               />
             </div>
@@ -119,7 +119,7 @@ const TablePermissionsModal = ({ isOpen, onClose, tableName, tableDisplayName })
               <select
                 value={permissionLevel}
                 onChange={(e) => setPermissionLevel(e.target.value)}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded usd-input usd-text"
                 disabled={grantPermissionMutation.isPending}
               >
                 <option value="view">View Only - Can view items but not modify</option>
@@ -154,7 +154,7 @@ const TablePermissionsModal = ({ isOpen, onClose, tableName, tableDisplayName })
               {permissions.map((perm) => (
                 <div
                   key={perm.user_id}
-                  className="flex items-center justify-between p-3 border rounded hover:bg-gray-50"
+                  className="flex items-center justify-between p-3 border rounded usd-panel"
                 >
                   <div className="flex-1">
                     <div className="font-semibold">{perm.email}</div>
