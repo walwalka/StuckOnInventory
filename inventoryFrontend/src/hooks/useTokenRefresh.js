@@ -21,11 +21,8 @@ export const useTokenRefresh = ({ refreshBuffer = 2 * 60 * 1000, onRefreshError 
       const refreshToken = getRefreshToken();
 
       if (!refreshToken) {
-        console.log('[TokenRefresh] No refresh token available');
         return false;
       }
-
-      console.log('[TokenRefresh] Refreshing access token...');
 
       // Call refresh endpoint directly (without axios interceptors)
       const response = await axios.post(
@@ -41,7 +38,6 @@ export const useTokenRefresh = ({ refreshBuffer = 2 * 60 * 1000, onRefreshError 
 
       if (accessToken) {
         saveAccessToken(accessToken);
-        console.log('[TokenRefresh] Access token refreshed successfully');
 
         // Dispatch event to notify other parts of the app
         if (typeof window !== 'undefined') {
@@ -97,13 +93,9 @@ export const useTokenRefresh = ({ refreshBuffer = 2 * 60 * 1000, onRefreshError 
 
     if (timeUntilRefresh <= 0) {
       // Token is already expired or about to expire, refresh immediately
-      console.log('[TokenRefresh] Token expired or expiring soon, refreshing immediately');
       refreshAccessToken();
     } else {
       // Schedule refresh for later
-      const refreshInMinutes = Math.floor(timeUntilRefresh / 60000);
-      console.log(`[TokenRefresh] Next refresh scheduled in ${refreshInMinutes} minutes`);
-
       timerRef.current = setTimeout(() => {
         refreshAccessToken();
       }, timeUntilRefresh);
@@ -117,14 +109,12 @@ export const useTokenRefresh = ({ refreshBuffer = 2 * 60 * 1000, onRefreshError 
     const accessToken = getAccessToken();
 
     if (accessToken) {
-      console.log('[TokenRefresh] Initializing automatic token refresh');
       scheduleNextRefresh(accessToken);
     }
 
     // Listen for storage events to detect token changes (cross-tab)
     const handleStorageChange = (e) => {
       if (e.key === 'accessToken' && e.newValue) {
-        console.log('[TokenRefresh] Token changed in storage, re-scheduling refresh');
         scheduleNextRefresh(e.newValue);
       }
     };
@@ -133,7 +123,6 @@ export const useTokenRefresh = ({ refreshBuffer = 2 * 60 * 1000, onRefreshError 
     const handleTokenRefresh = (e) => {
       const newToken = e.detail?.accessToken || getAccessToken();
       if (newToken) {
-        console.log('[TokenRefresh] Token refresh event received, re-scheduling');
         scheduleNextRefresh(newToken);
       }
     };
@@ -146,7 +135,6 @@ export const useTokenRefresh = ({ refreshBuffer = 2 * 60 * 1000, onRefreshError 
     const intervalId = setInterval(() => {
       const currentToken = getAccessToken();
       if (currentToken && !timerRef.current) {
-        console.log('[TokenRefresh] No active timer, re-scheduling refresh');
         scheduleNextRefresh(currentToken);
       }
     }, 60000); // Check every minute

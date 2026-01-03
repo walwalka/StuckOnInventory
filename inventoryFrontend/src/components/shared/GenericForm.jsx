@@ -65,10 +65,8 @@ const GenericForm = ({
 
   const handleFileSelect = async (e) => {
     const newFiles = Array.from(e.target.files);
-    console.log('[GenericForm] Files selected:', newFiles.length);
     const combined = [...selectedFiles, ...newFiles];
     const limitedFiles = combined.slice(0, 3);
-    console.log('[GenericForm] Total files after limiting:', limitedFiles.length);
     setSelectedFiles(limitedFiles);
 
     // Revoke old preview URLs before creating new ones
@@ -149,8 +147,6 @@ const GenericForm = ({
       return;
     }
 
-    console.log('[GenericForm] Submitting form with data:', formData);
-    console.log('[GenericForm] Submitting with files:', selectedFiles.length);
     onSubmit(formData, selectedFiles);
   };
 
@@ -216,6 +212,18 @@ const GenericForm = ({
             value={formData[field.name] || ''}
             onChange={(e) => handleChange(field.name, e.target.value)}
             className={`${commonClasses} ${errorClasses}`}
+            disabled={field.disabled}
+          />
+        );
+
+      case 'month-year':
+        return (
+          <input
+            type="month"
+            value={formData[field.name] || ''}
+            onChange={(e) => handleChange(field.name, e.target.value)}
+            className={`${commonClasses} ${errorClasses}`}
+            placeholder={field.placeholder}
             disabled={field.disabled}
           />
         );

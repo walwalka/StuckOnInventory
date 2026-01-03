@@ -143,19 +143,19 @@ const GenericTable = ({
                       to={`/${entityName}/details/${item.id}`}
                       className="hover:scale-110 transition-transform"
                     >
-                      <BsInfoCircle className='text-xl' style={{ color: 'var(--usd-green)' }} />
+                      <BsInfoCircle className='text-xl text-green-600 dark:text-green-400' />
                     </Link>
                     <Link
                       to={`/${entityName}/edit/${item.id}`}
                       className="hover:scale-110 transition-transform"
                     >
-                      <AiOutlineEdit className='text-xl' style={{ color: 'var(--usd-copper)' }} />
+                      <AiOutlineEdit className='text-xl text-orange-600 dark:text-orange-400' />
                     </Link>
                     <Link
                       to={`/${entityName}/delete/${item.id}`}
                       className="hover:scale-110 transition-transform"
                     >
-                      <MdOutlineDelete className='text-xl' style={{ color: 'var(--usd-copper-dark)' }} />
+                      <MdOutlineDelete className='text-xl text-red-600 dark:text-red-400' />
                     </Link>
                   </div>
                 </td>

@@ -184,14 +184,14 @@ export const tableTemplates = [
       },
       {
         field_name: 'publicationyear',
-        field_label: 'Publication Year',
-        field_type: 'text',
+        field_label: 'Publication Date',
+        field_type: 'month-year',
         is_required: true,
-        placeholder: 'e.g., 1962',
+        placeholder: 'Select month and year',
         show_in_table: true,
         show_in_mobile: false,
         is_bold: false,
-        help_text: 'Year published',
+        help_text: 'Month and year published',
         display_order: 4
       },
       {
