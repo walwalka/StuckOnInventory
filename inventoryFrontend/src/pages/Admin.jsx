@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MdEmail, MdList } from 'react-icons/md';
+import { MdEmail, MdList, MdTableChart } from 'react-icons/md';
 
 // Reusable card component for consistent styling
 const AdminCard = ({ to, icon: Icon, title, description }) => (
@@ -42,6 +42,12 @@ const Admin = () => {
             icon={MdList}
             title="Lookup Tables"
             description="Manage dropdown reference data for custom tables."
+          />
+          <AdminCard
+            to="/admin/tables"
+            icon={MdTableChart}
+            title="Table Management"
+            description="View and manage all custom tables, permissions, and settings."
           />
         </div>
       </div>

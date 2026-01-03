@@ -47,6 +47,31 @@ router.get('/', asyncHandler(async (req, res) => {
 }));
 
 /**
+ * List ALL tables (admin only)
+ */
+router.get('/admin/all', asyncHandler(async (req, res) => {
+  const isAdmin = req.user.role === 'admin';
+
+  if (!isAdmin) {
+    throw new ForbiddenError('Admin access required');
+  }
+
+  const { rows } = await pool.query(`
+    SELECT
+      ct.*,
+      u.email as creator_email,
+      u.username as creator_username,
+      (SELECT COUNT(*) FROM custom_fields WHERE table_id = ct.id) as field_count,
+      (SELECT COUNT(*) FROM table_permissions WHERE table_id = ct.id) as permission_count
+    FROM custom_tables ct
+    INNER JOIN users u ON ct.created_by = u.id
+    ORDER BY ct.created_at DESC
+  `);
+
+  res.json({ tables: rows });
+}));
+
+/**
  * Get table definition (metadata + fields)
  */
 router.get('/:tableName/definition', asyncHandler(async (req, res) => {

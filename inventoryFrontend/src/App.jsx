@@ -20,6 +20,7 @@ import DynamicEntityPage from './pages/DynamicEntityPage.jsx';
 import TableDesigner from './components/TableDesigner/TableDesigner.jsx';
 import LookupTablesList from './pages/admin/LookupTablesList.jsx';
 import LookupValueManager from './pages/admin/LookupValueManager.jsx';
+import TableManagement from './pages/admin/TableManagement.jsx';
 import { useTokenRefresh } from './hooks/useTokenRefresh.js';
 
 // creating routes to each of the pages
@@ -91,6 +92,7 @@ const App = () => {
           <Route path='/admin/users' element={<RequireAuth><UserManagement /></RequireAuth>} />
           <Route path='/admin/lookups' element={<RequireAuth><LookupTablesList /></RequireAuth>} />
           <Route path='/admin/lookups/:lookupId' element={<RequireAuth><LookupValueManager /></RequireAuth>} />
+          <Route path='/admin/tables' element={<RequireAuth><TableManagement /></RequireAuth>} />
 
           {/* Dynamic entity route - must come LAST to avoid conflicting with other routes */}
           <Route path='/:tableName/*' element={<RequireAuth><DynamicEntityPage showType={showType} onShowTypeChange={setShowType} /></RequireAuth>} />
