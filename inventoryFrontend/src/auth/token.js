@@ -101,8 +101,12 @@ export const saveTokens = (accessToken, refreshToken) => {
  */
 export const saveAccessToken = (accessToken) => {
   if (typeof accessToken === 'string' && accessToken.trim().length > 0) {
+    const decoded = decodeJWT(accessToken);
+    const expiresIn = decoded?.exp ? Math.floor((decoded.exp * 1000 - Date.now()) / 1000 / 60) : 'unknown';
+    console.log(`[Token] Saving new access token (expires in ${expiresIn} minutes)`);
     localStorage.setItem('accessToken', accessToken);
   } else {
+    console.log('[Token] Removing access token (invalid or empty)');
     localStorage.removeItem('accessToken');
   }
 };
@@ -111,6 +115,8 @@ export const saveAccessToken = (accessToken) => {
  * Clear all tokens from localStorage
  */
 export const clearTokens = () => {
+  console.log('[Token] Clearing all tokens - USER WILL BE LOGGED OUT');
+  console.trace('[Token] clearTokens() called from:');
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
 };
