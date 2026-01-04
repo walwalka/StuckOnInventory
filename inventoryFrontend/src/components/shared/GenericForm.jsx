@@ -228,19 +228,36 @@ const GenericForm = ({
           />
         );
 
-      case 'year':
+      case 'year': {
+        // Generate year options from current year down to 1600 (or custom range)
+        const currentYear = new Date().getFullYear();
+        const startYear = field.minYear || 1600;
+        const endYear = field.maxYear || currentYear;
+        const years = [];
+
+        // Build array in descending order (most recent first)
+        for (let year = endYear; year >= startYear; year--) {
+          years.push(year);
+        }
+
         return (
-          <input
-            type="number"
-            min="1000"
-            max="2100"
+          <select
             value={formData[field.name] || ''}
             onChange={(e) => handleChange(field.name, e.target.value)}
             className={`${commonClasses} ${errorClasses}`}
-            placeholder={field.placeholder}
             disabled={field.disabled}
-          />
+          >
+            <option value="">
+              {field.placeholder || 'Select year'}
+            </option>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
         );
+      }
 
       default:
         return null;
